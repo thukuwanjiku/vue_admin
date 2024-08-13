@@ -4,8 +4,8 @@
 import { ref } from 'vue';
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
-import store from "@/store";
 import {useRouter} from "vue-router";
+import {useStore} from "vuex";
 
 /**
  * All variables definitions
@@ -14,6 +14,7 @@ const email = ref("");
 const password = ref("");
 const rememberMe = ref(false);
 const router = useRouter();
+const store = useStore();
 
 
 /**
@@ -28,7 +29,7 @@ function login(){
     }
 
     //make api call
-    api.post(apiRoutes.login, payload)
+    api.post(apiRoutes.LOGIN, payload)
             .then(response => {
                 //store access token
                 store.commit('STORE_AUTH_TOKEN', response.data.token);

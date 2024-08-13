@@ -1,12 +1,13 @@
 <script setup>
 
-import store from "@/store";
 import {useRouter} from "vue-router";
+import {useStore} from "vuex";
 
 /**
  * Variables
  * */
 const router = useRouter();
+const store = useStore();
 
 /**
  * Methods

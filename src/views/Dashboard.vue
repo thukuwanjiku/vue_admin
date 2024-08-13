@@ -1,7 +1,13 @@
 <script setup>
 
 import {computed} from "vue";
-import store from "@/store";
+import {useStore} from "vuex";
+
+
+/**
+ * Variables
+ * */
+const store = useStore();
 
 /**
  * Computed Properties

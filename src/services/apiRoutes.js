@@ -5,7 +5,10 @@ const baseUrl = process.env.NODE_ENV === 'production'
 
 //define the api routes
 const apiRoutes = {
-    login: `${baseUrl}/auth/login`,
+    LOGIN: `${baseUrl}/auth/login`,
+
+    //Explore hub
+    GET_EXPLORE_LISTED_COMPANIES: `${baseUrl}/explore-hub/get-listed-companies`,
 };
 
 export { baseUrl, apiRoutes };

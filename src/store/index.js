@@ -1,5 +1,8 @@
 import { createStore } from 'vuex'
 
+//modules imports
+import explore from "@/store/modules/explore";
+
 export default createStore({
   state: {
 
@@ -37,5 +40,6 @@ export default createStore({
   },
 
   modules: {
+    explore
   }
 })
