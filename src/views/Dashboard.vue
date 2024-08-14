@@ -13,8 +13,8 @@ const store = useStore();
  * Computed Properties
  * */
 const userFirstName = computed(()=> {
-    if(store.getters.user){
-        return store.getters.user.name.toString().split(" ")[0];
+    if(store.state.auth.user){
+        return store.state.auth.user.name.toString().split(" ")[0];
     }
     return "";
 })

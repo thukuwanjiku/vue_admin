@@ -1,7 +1,8 @@
 import axios from "axios";
 import store from "@/store";
 import { baseUrl, apiRoutes } from "@/services/apiRoutes";
-import {useRouter} from "vue-router";
+import router from "@/router";
+
 
 //create axios instance
 const api = axios.create({
@@ -10,11 +11,8 @@ const api = axios.create({
 
 //define routes which are exempted from Authorization
 const exemptedRoutes = [
-    apiRoutes.login
+    apiRoutes.LOGIN
 ];
-
-//get vue route for navigation where required
-const router = useRouter();
 
 //define interceptors for adding Authorization headers
 api.interceptors
@@ -22,7 +20,7 @@ api.interceptors
         .use(
         (config) => {
             if (!exemptedRoutes.includes(config.url)) {
-                const token = store.getters.accessToken;
+                const token = store.state.auth.accessToken;
                 if (token) {
                     config.headers.Authorization = `Bearer ${token}`;
                 }
@@ -30,7 +28,7 @@ api.interceptors
 
             //set content type & accept headers
             config.headers.Accept = "application/json";
-            config.headers["Content-Type"] = "application/json";
+            //config.headers["Content-Type"] = "application/json";
 
             return config;
         },
@@ -52,7 +50,8 @@ api.interceptors.response.use(
             }*/
             if (error?.response?.status === 401) {
                 $.growl.error({ message: "You session has expired, please login and continue" });
-                router.push({name: 'login'});
+                store.commit('auth/LOGOUT');
+                router.replace({name: 'login'});
                 throw error;
             }
             if (error?.response?.status === 422) {
