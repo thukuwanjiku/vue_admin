@@ -14,7 +14,7 @@ const store = useStore();
  * */
 function logout(){
     //clear token & user details from store & local storage
-    store.commit('LOGOUT');
+    store.commit('auth/LOGOUT');
     //redirect user to login page
     router.replace({name: 'login'});
 }
@@ -25,8 +25,8 @@ function logout(){
 
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-            <a class="navbar-brand brand-logo me-5" href="#"><img src="@/assets/images/myzola_logo.png" class="me-2" alt="logo" /></a>
-            <a class="navbar-brand brand-logo-mini" href="#"><img src="@/assets/images/myzola_icon.png" alt="logo" /></a>
+            <router-link :to="{name: 'dashboard'}" class="navbar-brand brand-logo me-5" href="#"><img src="@/assets/images/myzola_logo.png" class="me-2" alt="logo" /></router-link>
+            <router-link :to="{name: 'dashboard'}" class="navbar-brand brand-logo-mini" href="#"><img src="@/assets/images/myzola_icon.png" alt="logo" /></router-link>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">

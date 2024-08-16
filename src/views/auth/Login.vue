@@ -10,11 +10,13 @@ import {useStore} from "vuex";
 /**
  * All variables definitions
  * */
+const router = useRouter();
+const store = useStore();
+
 const email = ref("");
 const password = ref("");
 const rememberMe = ref(false);
-const router = useRouter();
-const store = useStore();
+const isLoading = ref(false)
 
 
 /**
@@ -28,14 +30,17 @@ function login(){
         password: password.value.trim()
     }
 
+    //show loader
+    isLoading.value = true;
+
     //make api call
     api.post(apiRoutes.LOGIN, payload)
             .then(response => {
                 //store access token
-                store.commit('STORE_AUTH_TOKEN', response.data.token);
+                store.commit('auth/STORE_AUTH_TOKEN', response.data.token);
 
                 //store user details
-                store.commit('STORE_AUTH_USER', response.data.user)
+                store.commit('auth/STORE_AUTH_USER', response.data.user)
 
                 //if "Remember Me" is checked, save the details in localStorage
                 if(rememberMe){
@@ -43,10 +48,13 @@ function login(){
                     localStorage.setItem('bearer_token', response.data.token);
                 }
 
+                //dismiss loader
+                isLoading.value = false;
+
                 //redirect user to dashboard
                 router.replace({ name: 'dashboard'}); //TODO Implement intended route logic
             })
-            .catch(error => console.log())
+            .catch(error => isLoading.value = false)
 }
 
 </script>
@@ -58,7 +66,7 @@ function login(){
             <div class="content-wrapper d-flex align-items-center auth px-0">
                 <div class="row w-100 mx-0">
                     <div class="col-lg-4 mx-auto">
-                        <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+                        <div v-loading="isLoading" class="auth-form-light text-left py-5 px-4 px-sm-5">
                             <div class="brand-logo">
                                 <img src="@/assets/images/myzola_logo.png" alt="logo">
                             </div>
