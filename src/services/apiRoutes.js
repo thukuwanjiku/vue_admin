@@ -1,6 +1,6 @@
 //determine the base URL base on the env
 const baseUrl = process.env.NODE_ENV === 'production'
-        ? 'https://zola-api.codebreeze.co.ke/api/admin'
+        ? 'https://staging.myzola.io/api/admin'
         : 'https://zola-api.codebreeze.co.ke/api/admin';
 
 //define the api routes
