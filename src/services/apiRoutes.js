@@ -3,6 +3,8 @@ const baseUrl = process.env.NODE_ENV === 'production'
         ? 'https://staging.myzola.io/api/admin'
         : 'https://zola-api.codebreeze.co.ke/api/admin';
 
+//const baseUrl = 'https://staging.myzola.io/api/admin';
+
 //define the api routes
 const apiRoutes = {
     LOGIN: `${baseUrl}/auth/login`,
