@@ -1,8 +1,8 @@
 //determine the base URL base on the env
-//const baseUrl = 'http://zola-api.codebreeze.co.ke/api/admin';
-const baseUrl = process.env.NODE_ENV === 'production'
+/*const baseUrl = process.env.NODE_ENV === 'production'
         ? 'https://staging.myzola.io'
-        : 'http://127.0.0.1:8000';
+        : 'http://127.0.0.1:8000';*/
+const baseUrl = 'https://staging.myzola.io';
 
 const apiBaseUrl = `${baseUrl}/api/admin`;
 
