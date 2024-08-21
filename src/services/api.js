@@ -7,11 +7,13 @@ import router from "@/router";
 //create axios instance
 const api = axios.create({
     baseURL: baseUrl,
+    withCredentials: true,
+    withXSRFToken: true
 });
 
 //define routes which are exempted from Authorization
 const exemptedRoutes = [
-    apiRoutes.LOGIN
+    apiRoutes.LOGIN, apiRoutes.SANCTUM_CSRF_TOKEN
 ];
 
 //define interceptors for adding Authorization headers
