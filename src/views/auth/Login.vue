@@ -23,12 +23,16 @@ const isLoading = ref(false)
  * Methods definitions
  * */
 function getSanctumCSRFToken(){
+    //show loader
+    isLoading.value = true;
+
     api.get(apiRoutes.SANCTUM_CSRF_TOKEN)
             //call method to login user
             .then(response => {
                 console.log('Sanctum response', response);
                 return login();
             })
+            .catch(error => isLoading.value = false)
 }
 function login(){
 
@@ -37,9 +41,6 @@ function login(){
         email: email.value.trim(),
         password: password.value.trim()
     }
-
-    //show loader
-    isLoading.value = true;
 
     //make api call
     api.post(apiRoutes.LOGIN, payload)
