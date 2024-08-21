@@ -22,6 +22,14 @@ const isLoading = ref(false)
 /**
  * Methods definitions
  * */
+function getSanctumCSRFToken(){
+    api.get(apiRoutes.SANCTUM_CSRF_TOKEN)
+            //call method to login user
+            .then(response => {
+                console.log('Sanctum response', response);
+                return login();
+            })
+}
 function login(){
 
     //prepare request payload
@@ -71,7 +79,7 @@ function login(){
                                 <img src="@/assets/images/myzola_logo.png" alt="logo">
                             </div>
                             <h4 class="font-weight-light">Sign in to continue.</h4>
-                            <form @submit.prevent="login" class="pt-3">
+                            <form @submit.prevent="getSanctumCSRFToken" class="pt-3">
                                 <div class="form-group">
                                     <input type="email" class="form-control form-control-lg" placeholder="Email" v-model="email" required>
                                 </div>

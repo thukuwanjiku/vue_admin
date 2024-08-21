@@ -29,9 +29,9 @@ function logout(){
             <router-link :to="{name: 'dashboard'}" class="navbar-brand brand-logo-mini" href="#"><img src="@/assets/images/myzola_icon.png" alt="logo" /></router-link>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <!--<button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <span class="icon-menu"></span>
-            </button>
+            </button>-->
             <ul class="navbar-nav mr-lg-2">
                 <li class="nav-item nav-search d-none d-lg-block">
                     <div class="input-group">
