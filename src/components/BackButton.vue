@@ -8,10 +8,13 @@ const router = useRouter();
 
 <template>
 
-    <a href="#" @click="router.back()">
-        <i class="mdi mdi-chevron-left fa-2x"></i>
+    <button
+            type="button"
+            class="btn btn-light text-muted"
+            @click="router.back()">
+        <i class="ri ri-arrow-left-line"></i>
         Back
-    </a>
+    </button>
 
 </template>
 

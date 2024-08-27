@@ -29,7 +29,6 @@ function getSanctumCSRFToken(){
     api.get(apiRoutes.SANCTUM_CSRF_TOKEN)
             //call method to login user
             .then(response => {
-                console.log('Sanctum response', response);
                 return login();
             })
             .catch(error => isLoading.value = false)
@@ -70,46 +69,74 @@ function login(){
 
 <template>
 
-    <div class="container-scroller">
-        <div class="container-fluid page-body-wrapper full-page-wrapper">
-            <div class="content-wrapper d-flex align-items-center auth px-0">
-                <div class="row w-100 mx-0">
-                    <div class="col-lg-4 mx-auto">
-                        <div v-loading="isLoading" class="auth-form-light text-left py-5 px-4 px-sm-5">
-                            <div class="brand-logo">
-                                <img src="@/assets/images/myzola_logo.png" alt="logo">
-                            </div>
-                            <h4 class="font-weight-light">Sign in to continue.</h4>
-                            <form @submit.prevent="getSanctumCSRFToken" class="pt-3">
-                                <div class="form-group">
-                                    <input type="email" class="form-control form-control-lg" placeholder="Email" v-model="email" required>
+    <main>
+        <div class="container">
+
+            <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+                            <div class="d-flex justify-content-center py-4">
+                                <div class="logo d-flex align-items-center w-auto">
+                                    <img src="@/assets/images/myzola_icon.png" alt="">
+                                    <span class="d-none d-lg-block">MyZola Admin</span>
                                 </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control form-control-lg" placeholder="Password" v-model="password" required>
-                                </div>
-                                <div class="mt-3 d-grid gap-2">
-                                    <button type="submit"
-                                            class="btn btn-block btn-lg font-weight-medium auth-form-btn mz-bg mz-bg-hover text-white"
-                                    >SIGN IN</button>
-                                </div>
-                                <div class="my-2 d-flex justify-content-between align-items-center">
-                                    <div class="form-check">
-                                        <label class="form-check-label text-muted">
-                                            <input type="checkbox" class="form-check-input" v-model="rememberMe">
-                                            <a href="#">Remember me</a>
-                                            <i class="input-helper"></i><i class="input-helper"></i></label>
+                            </div><!-- End Logo -->
+
+                            <div class="card mb-3">
+
+                                <div class="card-body" v-loading="isLoading">
+
+                                    <div class="pt-4 pb-2">
+                                        <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
+                                        <p class="text-center small">Enter your username & password to login</p>
                                     </div>
-                                    <a href="#" class="auth-link text-black">Forgot password?</a>
+
+                                    <form @submit.prevent="getSanctumCSRFToken" class="row g-3 needs-validation">
+
+                                        <div class="col-12">
+                                            <div class="form-floating">
+                                                <input type="email" class="form-control" id="email"
+                                                       placeholder="Email" v-model="email" required>
+                                                <label for="email">Email</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-floating">
+                                                <input type="password" class="form-control" id="password"
+                                                       placeholder="Password" v-model="password" required>
+                                                <label for="password">Password</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe" v-model="rememberMe">
+                                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <button class="btn btn-primary w-100" type="submit">Login</button>
+                                        </div>
+                                        <!--<div class="col-12">
+                                            <p class="small mb-0">Don't have account? <a href="pages-register.html">Create an account</a></p>
+                                        </div>-->
+                                    </form>
+
                                 </div>
-                            </form>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- content-wrapper ends -->
+
+            </section>
+
         </div>
-        <!-- page-body-wrapper ends -->
-    </div>
+    </main>
+    <!-- End #main -->
 
 </template>
 

@@ -36,28 +36,42 @@ export default [
                             {
                                 path: "",
                                 name: 'explore.companies',
-                                component: ()=> import('@/views/explore/companies/List.vue'),
+                                component: ()=> import('@/views/explore/companies/Main.vue'),
                                 meta: {
-                                    title: `Explore Hub: Listed Companies ${pageTitleSuffix}`
-                                }
+                                    title: `Explore Hub Companies ${pageTitleSuffix}`
+                                },
+                                children: [
+                                    {
+                                        path: "",
+                                        name: 'explore.companies.listed',
+                                        components: {
+                                            explore_companies_listed: ()=> import('@/views/explore/companies/listed/List.vue')
+                                        },
+                                        meta: {
+                                            title: `Explore Hub: Listed Companies ${pageTitleSuffix}`
+                                        }
+                                    },
+                                    {
+                                        path: "add",
+                                        name: 'explore.companies.add',
+                                        components: {
+                                            explore_companies_listed: ()=> import('@/views/explore/companies/listed/Add.vue')
+                                        },
+                                        meta: {
+                                            title: `Explore Hub: Add Company ${pageTitleSuffix}`
+                                        }
+                                    },
+                                    {
+                                        path: ":name_slug",
+                                        name: 'explore.companies.view',
+                                        component: ()=> import('@/views/explore/companies/listed/View.vue'),
+                                        props: true,
+                                        meta: {
+                                            title: `Explore Hub: View Company ${pageTitleSuffix}`
+                                        }
+                                    }
+                                ]
                             },
-                            {
-                                path: "add",
-                                name: 'explore.companies.add',
-                                component: ()=> import('@/views/explore/companies/Add.vue'),
-                                meta: {
-                                    title: `Explore Hub: Add Company ${pageTitleSuffix}`
-                                }
-                            },
-                            {
-                                path: ":name_slug",
-                                name: 'explore.companies.view',
-                                component: ()=> import('@/views/explore/companies/View.vue'),
-                                props: true,
-                                meta: {
-                                    title: `Explore Hub: View Company ${pageTitleSuffix}`
-                                }
-                            }
                         ]
                     },
                     {

@@ -1,10 +1,8 @@
 <script setup>
 
-//imports
-import { ref } from 'vue';
-import Header from "@/components/Header.vue"
+import AppHeader from "@/components/AppHeader.vue";
 import SideMenu from "@/components/SideMenu.vue";
-import Footer from "@/components/Footer.vue";
+import AppFooter from "@/components/AppFooter.vue";
 
 /**
  * All variables definitions
@@ -15,28 +13,21 @@ import Footer from "@/components/Footer.vue";
 
 <template>
 
-    <div class="container-scroller">
-        <!-- Main header -->
-        <Header></Header>
+    <!-- ======= Header ======= -->
+    <app-header></app-header>
+    <!-- End Header -->
 
-        <!-- partial -->
-        <div class="container-fluid page-body-wrapper">
-            <!-- Side menu navigation -->
-            <side-menu></side-menu>
+    <!-- ======= Sidebar ======= -->
+    <side-menu></side-menu>
+    <!-- End Sidebar-->
 
-            <!-- partial -->
-            <div class="main-panel">
-                <div class="content-wrapper">
-                    <router-view></router-view>
-                </div>
-                <!-- content-wrapper ends -->
+    <main id="main" class="main">
+        <router-view></router-view>
+    </main>
+    <!-- End #main -->
 
-                <!-- Footer -->
-                <footer></footer>
-            </div>
-            <!-- main-panel ends -->
-        </div>
-        <!-- page-body-wrapper ends -->
-    </div>
+    <!-- ======= Footer ======= -->
+    <app-footer></app-footer>
+    <!-- End Footer -->
 
 </template>

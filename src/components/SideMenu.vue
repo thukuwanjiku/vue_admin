@@ -1,59 +1,49 @@
 <script setup>
 
-/**
- * Imports
- * */
-import {useRouter} from "vue-router";
-import {computed} from "vue";
-
-/**
- * Variables definitions
- * */
-const router = useRouter();
-
-/**
- * Computed properties
- * */
-const currentRoute = computed(()=> router.currentRoute.value.name);
-
 </script>
 
 <template>
 
-    <nav class="sidebar sidebar-offcanvas" id="sidebar">
-        <ul class="nav">
-            <li class="nav-item" :class="{'active': currentRoute == 'dashboard'}">
-                <router-link class="nav-link" :to="{name:'dashboard'}" id="menu_dashboard">
-                    <i class="icon-grid menu-icon"></i>
-                    <span class="menu-title">Dashboard</span>
+    <aside id="sidebar" class="sidebar">
+
+        <ul class="sidebar-nav" id="sidebar-nav">
+
+            <li class="nav-item">
+                <router-link :to="{name:'dashboard'}" class="nav-link collapsed">
+                    <i class="bi bi-grid"></i>
+                    <span>Dashboard</span>
                 </router-link>
-            </li>
-            <li class="nav-item" :class="{'active': currentRoute.toString().includes('explore')}">
-                <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                    <i class="icon-layout menu-icon"></i>
-                    <span class="menu-title">Explore</span>
-                    <i class="menu-arrow"></i>
+            </li><!-- End Dashboard Nav -->
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bx bxs-map"></i><span>Explore</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
-                <div class="collapse" id="ui-basic">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <router-link class="nav-link" :to="{name: 'explore.companies'}">Companies</router-link></li>
-                        <li class="nav-item"> <router-link class="nav-link" :to="{name: 'explore.listings'}">Listings</router-link></li>
-                    </ul>
-                </div>
+                <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <router-link :to="{name:'explore.companies'}">
+                            <i class="bi bi-circle"></i><span>Companies</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <a href="forms-layouts.html">
+                            <i class="bi bi-circle"></i><span>Categories</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="forms-editors.html">
+                            <i class="bi bi-circle"></i><span>Listings</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
-            <!--<li class="nav-item">
-                <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
-                    <i class="icon-columns menu-icon"></i>
-                    <span class="menu-title">Form elements</span>
-                    <i class="menu-arrow"></i>
-                </a>
-                <div class="collapse" id="form-elements">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Basic Elements</a></li>
-                    </ul>
-                </div>
-            </li>-->
+
         </ul>
-    </nav>
+
+    </aside>
 
 </template>
+
+<style scoped>
+
+</style>
