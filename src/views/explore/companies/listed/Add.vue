@@ -6,6 +6,8 @@ import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
 import BackButton from "@/components/BackButton.vue";
+import { VueTelInput } from 'vue-tel-input';
+import 'vue-tel-input/vue-tel-input.css';
 
 /* ------------------------------
 * Variables & Properties
@@ -53,11 +55,20 @@ function submit(){
     }
     company.value['about'] = about;
 
+    //validate that phone number is entered
+    if(!company.value.contact_phone || !company.value.contact_phone.toString().length) {
+        return $.growl.warning({message: "Please enter contact phone"})
+    }
+
     //prepare request payload
     let payload = new FormData();
     //add all company details to the form data
     Object.keys(company.value)
-            .forEach(key => payload.append(key, company.value[key]));
+            .forEach(key => {
+                let value = company.value[key];
+                if(key == 'contact_phone') value = value.toString().replaceAll(" ", "");
+                payload.append(key, value)
+            });
 
     //add logo to payload
     payload.append('company_logo', logoUpload.value);
@@ -157,18 +168,17 @@ function submit(){
             </div>
             <div class="col-md-1">&nbsp;</div>
             <div class="col-md-5">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="companyContactPhone"
-                           placeholder="Company Phone" v-model="company.contact_phone" required>
-                    <label for="companyContactPhone">Contact Phone</label>
-                </div>
+                <small class="text-muted">Contact Phone</small>
+                <vue-tel-input
+                        v-model="company.contact_phone"
+                        mode="international"></vue-tel-input>
             </div>
         </div>
         <br>
         <div class="row">
             <div class="col-md-5">
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="companyContactEmail"
+                    <input type="email" class="form-control" id="companyContactEmail"
                            placeholder="Email" v-model="company.email" required>
                     <label for="companyContactEmail">Email</label>
                 </div>
