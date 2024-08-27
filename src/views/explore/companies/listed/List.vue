@@ -67,6 +67,14 @@ function viewCompany(company){
     return isViewingCompany.value = true;
 }
 
+function editCompany(company){
+    //store the company to be edited in vuex store
+    store.commit('explore/SET_EDIT_COMPANY', JSON.parse(JSON.stringify(company)));
+
+    //navigate to edit route
+    router.push({name: 'explore.companies.edit'});
+}
+
 function confirmDelete(company){
     ElMessageBox.prompt('Sure you want to delete this company?\nPlease give a reason why you want to delete', 'Confirm Delete', {
         confirmButtonText: 'Delete',
@@ -151,7 +159,7 @@ function deleteCompany(payload){
                 <td>
                     <div class="btn-group" role="group" aria-label="Basic outlined example">
                         <button @click="viewCompany(company)" type="button" class="btn btn-outline-primary"><i class="bi bi-eye-fill"></i></button>
-                        <button @click="console.log('Edit', company)" type="button" class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></button>
+                        <button @click="editCompany(company)" type="button" class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></button>
                         <button @click="confirmDelete(company)" type="button" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
                     </div>
                 </td>

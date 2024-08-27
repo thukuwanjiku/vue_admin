@@ -62,14 +62,15 @@ export default [
                                         }
                                     },
                                     {
-                                        path: ":name_slug",
-                                        name: 'explore.companies.view',
-                                        component: ()=> import('@/views/explore/companies/listed/View.vue'),
-                                        props: true,
+                                        path: "edit",
+                                        name: 'explore.companies.edit',
+                                        components: {
+                                            explore_companies_listed: ()=> import('@/views/explore/companies/listed/Edit.vue')
+                                        },
                                         meta: {
-                                            title: `Explore Hub: View Company ${pageTitleSuffix}`
+                                            title: `Explore Hub: Edit Company ${pageTitleSuffix}`
                                         }
-                                    }
+                                    },
                                 ]
                             },
                         ]

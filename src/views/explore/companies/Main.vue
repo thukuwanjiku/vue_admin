@@ -1,6 +1,5 @@
 <script setup>
 
-import ListedCompanies from "@/views/explore/companies/listed/List.vue";
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
 
