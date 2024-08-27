@@ -4,13 +4,15 @@ import {computed} from "vue";
 import {useStore} from "vuex";
 
 
-/**
+/* -----------------------------
  * Variables
+ * -----------------------------
  * */
 const store = useStore();
 
-/**
+/* -----------------------------
  * Computed Properties
+ * -----------------------------
  * */
 const userFirstName = computed(()=> {
     if(store.state.auth.user){

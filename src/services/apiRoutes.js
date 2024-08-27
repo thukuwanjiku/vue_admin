@@ -8,7 +8,7 @@
 * */
 const baseUrl = process.env.NODE_ENV === 'production'
         ? 'https://staging.myzola.io'
-        : 'http://127.0.0.1:8000';
+        : 'https://zola-api.codebreeze.co.ke';
 
 const apiBaseUrl = `${baseUrl}/api/admin`;
 
@@ -21,6 +21,7 @@ const apiRoutes = {
     //Explore hub
     GET_EXPLORE_LISTED_COMPANIES: `${apiBaseUrl}/explore-hub/get-listed-companies`,
     ADD_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/add-listed-company`,
+    EDIT_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/edit-listed-company`,
     DELETE_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/delete-listed-company`,
 };
 
