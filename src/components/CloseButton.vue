@@ -1,6 +1,7 @@
 <script setup>
 
 import {useRouter} from "vue-router";
+import {Close} from "@element-plus/icons-vue";
 
 const router = useRouter();
 
@@ -8,12 +9,7 @@ const router = useRouter();
 
 <template>
 
-    <button
-            type="button"
-            class="btn btn-secondary text-muted"
-            @click="router.back()">
-        <i class="ri ri-close-line text-white"></i>
-    </button>
+    <el-button @click="router.back()" :icon="Close" size="large" type="info" plain circle />
 
 </template>
 

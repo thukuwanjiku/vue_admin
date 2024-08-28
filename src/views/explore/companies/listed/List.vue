@@ -6,6 +6,7 @@ import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
 import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
+import {AwesomeSocialButton} from "awesome-social-button";
 
 /* -----------------------------
  * Variables
@@ -196,8 +197,17 @@ function deleteCompany(payload){
                             {{ activeCompany.contact_phone }}
                         </p>
                     </div>
-                    <div class="col-sm-6">
-                        Company Socials here
+                    <div v-if="activeCompany.socials.length" class="col-sm-6">
+                        <h6>Social Media Handles</h6>
+                        <div class="d-inline-flex">
+                            <div class="p-1"
+                                 v-for="(social, index) in activeCompany.socials" :key="'form-current-socials-'+index">
+                                <AwesomeSocialButton
+                                        :type="social.platform"
+                                        :link="{src: social.link}"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -227,7 +237,8 @@ function deleteCompany(payload){
     border-radius: 50%;
 }
 .view_company_logo{
-    max-height: 150px;
-    border-radius: 50%;
+    max-height: 130px;
+    max-width: 150px;
+    //border-radius: 50%;
 }
 </style>
