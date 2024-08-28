@@ -5,7 +5,7 @@ import {onMounted, ref} from "vue";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
-import BackButton from "@/components/BackButton.vue";
+import BackButton from "@/components/CloseButton.vue";
 import { VueTelInput } from 'vue-tel-input';
 import 'vue-tel-input/vue-tel-input.css';
 

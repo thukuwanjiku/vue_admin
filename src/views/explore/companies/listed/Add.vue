@@ -5,7 +5,7 @@ import {onMounted, ref} from "vue";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
-import BackButton from "@/components/BackButton.vue";
+import CloseButton from "@/components/CloseButton.vue";
 import { VueTelInput } from 'vue-tel-input';
 import 'vue-tel-input/vue-tel-input.css';
 
@@ -102,14 +102,12 @@ function submit(){
 
 <template>
 
-    <div class="col-sm-12">
-        <back-button></back-button>
+    <div class="col-sm-12 mb-3 d-inline-flex align-items-center justify-content-between">
+        <h6 class="fw-bold mb-0" style="margin-left: 20px;">Add a new Company</h6>
+        <close-button></close-button>
     </div>
 
-    <br>
-
     <form @submit.prevent="submit" v-loading="isLoading">
-        <h6 class="text-muted fw-bold">Company Details</h6>
         <div class="row">
             <div class="col-md-5">
                 <div class="form-floating">

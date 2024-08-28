@@ -10,10 +10,9 @@ const router = useRouter();
 
     <button
             type="button"
-            class="btn btn-light text-muted"
+            class="btn btn-secondary text-muted"
             @click="router.back()">
-        <i class="ri ri-arrow-left-line"></i>
-        Back
+        <i class="ri ri-close-line text-white"></i>
     </button>
 
 </template>
