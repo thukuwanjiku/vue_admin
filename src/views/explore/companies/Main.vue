@@ -14,13 +14,13 @@ const router = useRouter();
 * ------------------------------
 * */
 onMounted(()=>{
-    router.push({name: 'explore.companies.listed'});
+    router.push({name: 'explore_hub.companies.listed'});
 });
 
 function tabChanged(tab){
     switch (tab){
         case 'listed':
-            router.push({name: 'explore.companies.listed'})
+            router.push({name: 'explore_hub.companies.listed'})
         case 'reviews':
             //router.push({name: 'explore.companies.listed'})
         case 'deleted':

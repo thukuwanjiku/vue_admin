@@ -28,14 +28,14 @@ export default [
 
             //Explore Hub Routes
             {
-                path: 'explore',
+                path: 'explore-hub',
                 children: [
                     {
                         path: 'companies',
                         children: [
                             {
                                 path: "",
-                                name: 'explore.companies',
+                                name: 'explore_hub.companies',
                                 component: ()=> import('@/views/explore/companies/Main.vue'),
                                 meta: {
                                     title: `Explore Hub Companies ${pageTitleSuffix}`
@@ -43,7 +43,7 @@ export default [
                                 children: [
                                     {
                                         path: "",
-                                        name: 'explore.companies.listed',
+                                        name: 'explore_hub.companies.listed',
                                         components: {
                                             explore_companies_listed: ()=> import('@/views/explore/companies/listed/List.vue')
                                         },
@@ -53,7 +53,7 @@ export default [
                                     },
                                     {
                                         path: "add",
-                                        name: 'explore.companies.add',
+                                        name: 'explore_hub.companies.add',
                                         components: {
                                             explore_companies_listed: ()=> import('@/views/explore/companies/listed/Add.vue')
                                         },
@@ -63,7 +63,7 @@ export default [
                                     },
                                     {
                                         path: "edit",
-                                        name: 'explore.companies.edit',
+                                        name: 'explore_hub.companies.edit',
                                         components: {
                                             explore_companies_listed: ()=> import('@/views/explore/companies/listed/Edit.vue')
                                         },
@@ -72,6 +72,19 @@ export default [
                                         }
                                     },
                                 ]
+                            },
+                        ]
+                    },
+                    {
+                        path: 'categories',
+                        children: [
+                            {
+                                path: "",
+                                name: 'explore_hub.categories',
+                                component: ()=> import('@/views/explore/categories/Main.vue'),
+                                meta: {
+                                    title: `Explore Hub Listing Categories ${pageTitleSuffix}`
+                                },
                             },
                         ]
                     },

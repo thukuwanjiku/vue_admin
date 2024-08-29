@@ -7,6 +7,7 @@ import {useStore} from "vuex";
 import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
 import {AwesomeSocialButton} from "awesome-social-button";
+import {Plus} from "@element-plus/icons-vue";
 
 /* -----------------------------
  * Variables
@@ -73,7 +74,7 @@ function editCompany(company){
     store.commit('explore/SET_EDIT_COMPANY', JSON.parse(JSON.stringify(company)));
 
     //navigate to edit route
-    router.push({name: 'explore.companies.edit'});
+    router.push({name: 'explore_hub.companies.edit'});
 }
 
 function confirmDelete(company){
@@ -132,9 +133,9 @@ function deleteCompany(payload){
 
 <template>
 
-    <div class="col-md-12 p-2" v-loading="isLoading">
-        <div class="col-sm-12 d-flex flex-row-reverse">
-            <button type="button" class="btn btn-primary" @click="router.push({name: 'explore.companies.add'})"><i class="bi bi-plus-circle me-1"></i> Add Company</button>
+    <div class="row p-2" v-loading="isLoading">
+        <div class="col-sm-12 d-flex m-b-10">
+            <el-button @click="router.push({name: 'explore_hub.companies.add'})" type="primary" :icon="Plus" plain>Add Company</el-button>
         </div>
         <br>
 

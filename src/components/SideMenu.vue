@@ -23,14 +23,14 @@
                 </a>
                 <ul id="explore-hub-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                     <li>
-                        <router-link :to="{name:'explore.companies'}">
+                        <router-link :to="{name:'explore_hub.companies'}">
                             <i class="bi bi-circle"></i><span>Companies</span>
                         </router-link>
                     </li>
                     <li>
-                        <a href="">
+                        <router-link :to="{name: 'explore_hub.categories'}">
                             <i class="bi bi-circle"></i><span>Categories</span>
-                        </a>
+                        </router-link>
                     </li>
                     <li>
                         <a href="#">
@@ -43,7 +43,7 @@
             <!-- Explore Hub -->
             <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-target="#investment-hub-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bx bxs-map"></i><span>Investment Hub</span><i class="bi bi-chevron-down ms-auto"></i>
+                    <i class="bx bx-dollar"></i><span>Investment Hub</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
                 <ul id="investment-hub-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                     <li>
