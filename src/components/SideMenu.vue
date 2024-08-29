@@ -8,30 +8,59 @@
 
         <ul class="sidebar-nav" id="sidebar-nav">
 
-            <li class="nav-item">
+            <li class="nav-item" data-bs-parent="#sidebar-nav">
                 <router-link :to="{name:'dashboard'}" class="nav-link collapsed">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </router-link>
-            </li><!-- End Dashboard Nav -->
+            </li>
+            <!-- End Dashboard Nav -->
 
+            <!-- Explore Hub -->
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bx bxs-map"></i><span>Explore</span><i class="bi bi-chevron-down ms-auto"></i>
+                <a class="nav-link collapsed" data-bs-target="#explore-hub-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bx bxs-map"></i><span>Explore Hub</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
-                <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <ul id="explore-hub-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                     <li>
-                        <router-link :to="{name:'explore.companies'}">
+                        <router-link :to="{name:'explore_hub.companies'}">
                             <i class="bi bi-circle"></i><span>Companies</span>
                         </router-link>
                     </li>
                     <li>
-                        <a href="forms-layouts.html">
+                        <router-link :to="{name: 'explore_hub.categories'}">
+                            <i class="bi bi-circle"></i><span>Categories</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="bi bi-circle"></i><span>Listings</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Explore Hub -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#investment-hub-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bx bx-dollar"></i><span>Investment Hub</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="investment-hub-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <!--<router-link :to="{name:'explore.companies'}">
+                            <i class="bi bi-circle"></i><span>Companies</span>
+                        </router-link>-->
+                        <a href="#">
+                            <i class="bi bi-circle"></i><span>Companies</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
                             <i class="bi bi-circle"></i><span>Categories</span>
                         </a>
                     </li>
                     <li>
-                        <a href="forms-editors.html">
+                        <a href="#">
                             <i class="bi bi-circle"></i><span>Listings</span>
                         </a>
                     </li>

@@ -2,7 +2,7 @@
 
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
-import {computed} from 'vue';
+import {computed, onMounted} from 'vue';
 
 /* -----------------------------
  * Variables & Properties
@@ -21,6 +21,18 @@ const userFirstName = computed(()=> {
     }
     return "";
 })
+
+
+/* -----------------------------
+ * Lifecycle hooks
+ * -----------------------------
+ * */
+onMounted(()=>{
+    /*$(".toggle-sidebar-btn").on('click', function(){
+        console.log("Menu clicked");
+        $('body').classList.toggle('toggle-sidebar');
+    });*/
+});
 
 /* -----------------------------
  * Methods

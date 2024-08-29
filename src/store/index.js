@@ -1,8 +1,9 @@
 import { createStore } from 'vuex'
 
 //modules imports
-import explore from "@/store/modules/explore";
 import auth from "@/store/modules/auth";
+import shared from "@/store/modules/shared";
+import explore from "@/store/modules/explore";
 
 export default createStore({
   state: {},
@@ -11,6 +12,7 @@ export default createStore({
 
   modules: {
     auth,
+    shared,
     explore,
   }
 })

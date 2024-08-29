@@ -6,6 +6,8 @@ import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
 import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
+import {AwesomeSocialButton} from "awesome-social-button";
+import {Plus} from "@element-plus/icons-vue";
 
 /* -----------------------------
  * Variables
@@ -72,7 +74,7 @@ function editCompany(company){
     store.commit('explore/SET_EDIT_COMPANY', JSON.parse(JSON.stringify(company)));
 
     //navigate to edit route
-    router.push({name: 'explore.companies.edit'});
+    router.push({name: 'explore_hub.companies.edit'});
 }
 
 function confirmDelete(company){
@@ -131,9 +133,9 @@ function deleteCompany(payload){
 
 <template>
 
-    <div class="col-md-12 p-2" v-loading="isLoading">
-        <div class="col-sm-12 d-flex flex-row-reverse">
-            <button type="button" class="btn btn-primary" @click="router.push({name: 'explore.companies.add'})"><i class="bi bi-plus-circle me-1"></i> Add Company</button>
+    <div class="row p-2" v-loading="isLoading">
+        <div class="col-sm-12 d-flex m-b-10">
+            <el-button @click="router.push({name: 'explore_hub.companies.add'})" type="primary" :icon="Plus" plain>Add Company</el-button>
         </div>
         <br>
 
@@ -196,8 +198,17 @@ function deleteCompany(payload){
                             {{ activeCompany.contact_phone }}
                         </p>
                     </div>
-                    <div class="col-sm-6">
-                        Company Socials here
+                    <div v-if="activeCompany.socials.length" class="col-sm-6">
+                        <h6>Social Media Handles</h6>
+                        <div class="d-inline-flex">
+                            <div class="p-1"
+                                 v-for="(social, index) in activeCompany.socials" :key="'form-current-socials-'+index">
+                                <AwesomeSocialButton
+                                        :type="social.platform"
+                                        :link="{src: social.link}"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -227,7 +238,8 @@ function deleteCompany(payload){
     border-radius: 50%;
 }
 .view_company_logo{
-    max-height: 150px;
-    border-radius: 50%;
+    max-height: 130px;
+    max-width: 150px;
+    //border-radius: 50%;
 }
 </style>
