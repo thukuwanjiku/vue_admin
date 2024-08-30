@@ -61,7 +61,7 @@ function tabChanged(tab){
                     <button class="nav-link"
                             @click="tabChanged('deleted')"
                             data-bs-toggle="tab" data-bs-target="#explore_categories_deleted"
-                            type="button" role="tab" aria-controls="contact" aria-selected="true">Deleted</button>
+                            type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
@@ -69,7 +69,7 @@ function tabChanged(tab){
                     <manage-categories></manage-categories>
                 </div>
                 <div class="tab-pane fade" id="explore_categories_deleted" role="tabpanel" aria-labelledby="contact-tab">
-                    Browse delete categories
+                    Will browse archived categories here
                 </div>
             </div>
             <!-- End Default Tabs -->

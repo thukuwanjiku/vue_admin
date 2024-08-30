@@ -24,6 +24,9 @@ router.beforeEach((to, from, next) => {
     //set page title
     document.title = title;
 
+    //set favicon
+    document.querySelector('link[rel="icon"]').href = '/favicon.ico';
+
     //Auth protection logic
     const isAuthenticated = store.getters["auth/isAuthenticated"];
     if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
