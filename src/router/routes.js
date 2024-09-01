@@ -90,11 +90,30 @@ export default [
                     },
                     {
                         path: 'listings',
-                        name: 'explore.listings',
-                        component: ()=> import('@/views/explore/Listings.vue'),
+                        name: 'explore_hub.listings',
+                        component: ()=> import('@/views/explore/listings/Main.vue'),
                         meta: {
                             title: `Explore Hub: Listings ${pageTitleSuffix}`
-                        }
+                        },
+                        children: [
+                            {
+                                path: "",
+                                name: 'explore_hub.listings.active',
+                                components: {
+                                    explore_listings_active: ()=> import('@/views/explore/listings/active/List.vue')
+                                },
+                            },
+                            {
+                                path: "",
+                                name: 'explore_hub.listings.create',
+                                components: {
+                                    explore_listings_active: ()=> import('@/views/explore/listings/active/Add.vue')
+                                },
+                                meta: {
+                                    title: `Explore Hub: Create Listing ${pageTitleSuffix}`
+                                },
+                            },
+                        ]
                     }
                 ]
             }

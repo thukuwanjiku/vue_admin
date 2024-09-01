@@ -25,8 +25,8 @@ const activeCompany = ref(null);
  * -----------------------------
  * */
 let companies = computed({
-    get: ()=> store.state.explore.companies,
-    set: (data) => store.commit('explore/STORE_EXPLORE_LISTED_COMPANIES', data)
+    get: ()=> store.state.exploreHub.companies,
+    set: (data) => store.commit('exploreHub/STORE_EXPLORE_LISTED_COMPANIES', data)
 });
 
 
@@ -71,7 +71,7 @@ function viewCompany(company){
 
 function editCompany(company){
     //store the company to be edited in vuex store
-    store.commit('explore/SET_EDIT_COMPANY', JSON.parse(JSON.stringify(company)));
+    store.commit('exploreHub/SET_EDIT_COMPANY', JSON.parse(JSON.stringify(company)));
 
     //navigate to edit route
     router.push({name: 'explore_hub.companies.edit'});
@@ -139,36 +139,38 @@ function deleteCompany(payload){
         </div>
         <br>
 
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>Logo</th>
-                <th>Name</th>
-                <th>Tagline</th>
-                <th>Contact Person</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-if="companies.length" v-for="(company, index) in companies"
-                :key="'explore-companies-'+index" style="cursor: pointer;">
-                <td @click="viewCompany(company)">
-                    <img class="table-img" :src="company.logo" :alt="company.name+'\'s logo'">
-                </td>
-                <td @click="viewCompany(company)">{{ company.name }}</td>
-                <td @click="viewCompany(company)">{{ company.description }}</td>
-                <td @click="viewCompany(company)">{{ company.contact_name }}</td>
-                <td>
-                    <div class="btn-group" role="group" aria-label="Basic outlined example">
-                        <button @click="viewCompany(company)" type="button" class="btn btn-outline-primary"><i class="bi bi-eye-fill"></i></button>
-                        <button @click="editCompany(company)" type="button" class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></button>
-                        <button @click="confirmDelete(company)" type="button" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
-                    </div>
-                </td>
-            </tr>
-            <tr v-else><td colspan="5" class="text-center p-3">No data</td></tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Logo</th>
+                    <th>Name</th>
+                    <th>Tagline</th>
+                    <th>Contact Person</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-if="companies.length" v-for="(company, index) in companies"
+                    :key="'explore-companies-'+index" style="cursor: pointer;">
+                    <td @click="viewCompany(company)">
+                        <img class="table-img" :src="company.logo" :alt="company.name+'\'s logo'">
+                    </td>
+                    <td @click="viewCompany(company)">{{ company.name }}</td>
+                    <td @click="viewCompany(company)">{{ company.description }}</td>
+                    <td @click="viewCompany(company)">{{ company.contact_name }}</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic outlined example">
+                            <button @click="viewCompany(company)" type="button" class="btn btn-outline-primary"><i class="bi bi-eye-fill"></i></button>
+                            <button @click="editCompany(company)" type="button" class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></button>
+                            <button @click="confirmDelete(company)" type="button" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr v-else><td colspan="5" class="text-center p-3">No data</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Modal to view company -->

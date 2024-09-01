@@ -32,16 +32,16 @@ export function fetchMaterialIconsNames(){
 }
 export function fetchExploreListingCategories(){
     //show loading overlay
-    store.commit('explore/SET_IS_FETCHING_CATEGORIES', true);
+    store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', true);
 
     api.get(apiRoutes.EXPLORE_HUB_FETCH_LISTING_CATEGORIES)
             .then(response => {
                 //store data in vuex store
-                store.commit('explore/STORE_EXPLORE_LISTING_CATEGORIES', response.data.data);
+                store.commit('exploreHub/STORE_EXPLORE_LISTING_CATEGORIES', response.data.data);
                 //dismiss loading
-                store.commit('explore/SET_IS_FETCHING_CATEGORIES', false);
+                store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', false);
             })
-            .catch(error => store.commit('explore/SET_IS_FETCHING_CATEGORIES', false));
+            .catch(error => store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', false));
 }
 export function randomString (length = 12) {
     let text = "";

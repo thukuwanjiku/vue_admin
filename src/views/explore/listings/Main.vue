@@ -2,7 +2,6 @@
 
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
-import ManageCategories from "@/views/explore/categories/ManageCategories.vue";
 
 /* ------------------------------
 * Variables & Properties
@@ -15,13 +14,13 @@ const router = useRouter();
 * ------------------------------
 * */
 onMounted(()=>{
-    //router.push({name: 'explore.companies.listed'});
+    router.push({name: 'explore_hub.listings.active'});
 });
 
 function tabChanged(tab){
     switch (tab){
-        case 'active':
-            //router.push({name: 'explore.companies.listed'})
+        case 'listed':
+            router.push({name: 'explore_hub.listings.active'})
         case 'reviews':
             //router.push({name: 'explore.companies.listed'})
         case 'deleted':
@@ -34,12 +33,12 @@ function tabChanged(tab){
 <template>
 
     <div class="pagetitle">
-        <h1>Categories</h1>
+        <h1>Listings</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><router-link :to="{name:'dashboard'}">Home</router-link></li>
                 <li class="breadcrumb-item">Explore</li>
-                <li class="breadcrumb-item active">Listing Categories</li>
+                <li class="breadcrumb-item active">Listings</li>
             </ol>
         </nav>
     </div>
@@ -54,22 +53,31 @@ function tabChanged(tab){
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active"
                             @click="tabChanged('active')"
-                            data-bs-toggle="tab" data-bs-target="#explore_categories_active"
-                            type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Categories</button>
+                            data-bs-toggle="tab" data-bs-target="#explore_listings_active"
+                            type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Active</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link"
-                            @click="tabChanged('deleted')"
-                            data-bs-toggle="tab" data-bs-target="#explore_categories_deleted"
+                    <button class="nav-link" id="contact-tab"
+                            @click="tabChanged('closed')"
+                            data-bs-toggle="tab" data-bs-target="#explore_listings_closed"
+                            type="button" role="tab" aria-controls="contact" aria-selected="true">Closed</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contact-tab"
+                            @click="tabChanged('archived')"
+                            data-bs-toggle="tab" data-bs-target="#explore_listings_archived"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
-                <div class="tab-pane fade show active p-1" id="explore_categories_active" role="tabpanel" aria-labelledby="home-tab">
-                    <manage-categories></manage-categories>
+                <div class="tab-pane fade show active p-1" id="explore_listings_active" role="tabpanel" aria-labelledby="home-tab">
+                    <router-view name="explore_listings_active"></router-view>
                 </div>
-                <div class="tab-pane fade" id="explore_categories_deleted" role="tabpanel" aria-labelledby="contact-tab">
-                    Will browse archived categories here
+                <div class="tab-pane fade" id="explore_listings_closed" role="tabpanel" aria-labelledby="profile-tab">
+                    Browse closed listings here
+                </div>
+                <div class="tab-pane fade" id="explore_listings_archived" role="tabpanel" aria-labelledby="contact-tab">
+                    Browse archived listings
                 </div>
             </div>
             <!-- End Default Tabs -->

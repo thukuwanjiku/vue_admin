@@ -123,11 +123,11 @@ function submit(){
                 $.growl.notice({message: response.data.message});
 
                 //get a copy of current companies list
-                let companies = JSON.parse(JSON.stringify(store.state.explore.companies));
+                let companies = JSON.parse(JSON.stringify(store.state.exploreHub.companies));
                 //add the new company to the copy
                 companies.unshift(response.data.data);
                 //overwrite the vuex companies list with the updated copy
-                store.commit('explore/STORE_EXPLORE_LISTED_COMPANIES', companies)
+                store.commit('exploreHub/STORE_EXPLORE_LISTED_COMPANIES', companies)
 
                 //DISMISS LOADER
                 isLoading.value = false;

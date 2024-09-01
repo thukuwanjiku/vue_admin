@@ -57,17 +57,17 @@ function tabChanged(tab){
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Listed</button>
                 </li>
                 <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contact-tab"
+                            @click="tabChanged('deleted')"
+                            data-bs-toggle="tab" data-bs-target="#explore_companies_deleted"
+                            type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
+                </li>
+                <li class="nav-item" role="presentation">
                     <button class="nav-link" id="profile-tab"
                             @click="tabChanged('reviews')"
                             data-bs-toggle="tab" data-bs-target="#explore_companies_reviews"
                             type="button" role="tab"
-                            aria-controls="profile" aria-selected="false" tabindex="-1">Reviews</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="contact-tab"
-                            @click="tabChanged('deleted')"
-                            data-bs-toggle="tab" data-bs-target="#explore_companies_deleted"
-                            type="button" role="tab" aria-controls="contact" aria-selected="true">Deleted</button>
+                            aria-controls="profile" aria-selected="false" tabindex="-1">Company Reviews</button>
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
@@ -78,7 +78,7 @@ function tabChanged(tab){
                     Browse companies reviews here
                 </div>
                 <div class="tab-pane fade" id="explore_companies_deleted" role="tabpanel" aria-labelledby="contact-tab">
-                    Manage deleted companies
+                    Browse archived companies
                 </div>
             </div>
             <!-- End Default Tabs -->

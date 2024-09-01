@@ -23,6 +23,7 @@ import {ElMessageBox} from "element-plus";
 const store = useStore();
 
 const isModalLoading = ref(false);
+const searchString = ref("");
 
 const isAddingCategories = ref(false);
 const isSelectingNewCategoryIcon = ref(false);
@@ -42,15 +43,23 @@ const selectedCategories = ref([]);
  * Computed properties
  * -----------------------------
  * */
-const isLoading = computed(()=> store.state.explore.isFetchingCategories);
+const isLoading = computed(()=> store.state.exploreHub.isFetchingCategories);
 const materialIconsNames = computed(() =>
         store.state.shared.materialIconsNames
                 .filter(icon => !newCategoryIconsSearchString.value.length
                         || icon.includes(newCategoryIconsSearchString.value)));
-const categories = computed(()=> store.state.explore.listingCategories);
-const categoryBeingEdited = computed(()=> categories.value
-        .find(entry => entry.id == editCategory.value?.id));
+
+const categories = computed(()=> store.state.exploreHub.listingCategories
+        .filter(entry => !searchString.value.length
+                || entry.name.toLowerCase().includes(searchString.value.toLowerCase())));
+
+const categoryBeingEdited = computed(()=> {
+    if(!editCategory.value) return null;
+    return categories.value
+            .find(entry => entry.id == editCategory.value.id);
+});
 const hasEditedCategory = computed(() => {
+    if(!categoryBeingEdited.value) return false;
     return Object.keys(categoryBeingEdited.value)
             .some(key => editCategory.value[key] !== categoryBeingEdited.value[key]);
 });
@@ -79,7 +88,7 @@ function goToAddCategories(){
     isAddingCategories.value = true;
     //clear icons search string
     newCategoryIconsSearchString.value = "";
-};
+}
 function acceptNewCategoryIcon(icon){
     //set new category icon
     newCategory.value.icon = icon;
@@ -208,7 +217,7 @@ function saveCategoryChanges(){
                 let index = categoriesCopy.findIndex(entry => entry.id == editCategory.value.id);
                 if(index > -1){
                     categoriesCopy[index] = response.data.data;
-                    store.commit('explore/STORE_EXPLORE_LISTING_CATEGORIES', categoriesCopy);
+                    store.commit('exploreHub/STORE_EXPLORE_LISTING_CATEGORIES', categoriesCopy);
                 }
 
                 //dismiss modal
@@ -219,52 +228,83 @@ function saveCategoryChanges(){
             .catch(error => isModalLoading.value = false);
 }
 
+function toggleMultipleSelection(){
+    //clear previous selections
+    selectedCategories.value = [];
+    //toggle multiple selection
+    isSelectingMultiple.value = !isSelectingMultiple.value;
+}
 
 function confirmDeleteSelections(){
-    return;
-    ElMessageBox.confirm(
-            'Sure you want to delete these selections?',
-            'Warning',
-            {
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'Cancel',
-                type: 'warning',
+    ElMessageBox.prompt('Sure you want to delete these selections?\nPlease give a reason why you want to delete', 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        inputPlaceholder: "Type here why you want to delete",
+        inputValidator: (value)=> {
+            if(!value || !value.length){
+                return "Please give a reason";
             }
-    )
-            .then(() => {
+            return true;
+        },
+    })
+            .then(({ value }) => {
+                //prepare payload for the delete api call
+                let payload = {ids: selectedCategories.value.map(entry => entry.id), reason:value};
                 //call function to call api to save changes
-                deleteCategories();
+                deleteCategories(payload);
             })
             .catch(() => {})
 }
-function deleteCategories(){
-    //prepare payload to send
-    let payload = selectedCategories.value.map(entry => entry.id);
-
+function confirmDeleteCategory(){
+    ElMessageBox.prompt('Sure you want to delete this category?\nPlease give a reason why you want to delete', 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        inputPlaceholder: "Type here why you want to delete",
+        inputValidator: (value)=> {
+            if(!value || !value.length){
+                return "Please give a reason";
+            }
+            return true;
+        },
+    })
+            .then(({ value }) => {
+                //prepare payload for delete api call
+                let payload = {ids: [editCategory.value.id], reason:value};
+                //call function to call api to save changes
+                deleteCategories(payload);
+            })
+            .catch(() => {})
+}
+function deleteCategories(payload){
     //show loader
-    store.commit("explore/SET_IS_FETCHING_CATEGORIES", true);
+    store.commit("exploreHub/SET_IS_FETCHING_CATEGORIES", true);
+    isModalLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.EXPLORE_HUB_EDIT_LISTING_CATEGORY, payload)
+    api.post(apiRoutes.EXPLORE_HUB_DELETE_LISTING_CATEGORIES, payload)
             .then(response => {
                 //show success message
                 $.growl.notice({message: response.data.message});
 
-                //replace updated entry in list
-                let categoriesCopy = JSON.parse(JSON.stringify(categories.value));
-                //find the edited index
-                let index = categoriesCopy.findIndex(entry => entry.id == editCategory.value.id);
-                if(index > -1){
-                    categoriesCopy[index] = response.data.data;
-                    store.commit('explore/STORE_EXPLORE_LISTING_CATEGORIES', categoriesCopy);
-                }
+                //undo selections
+                selectedCategories.value = [];
 
-                //dismiss modal
+                //refresh categories list
+                fetchExploreListingCategories();
+
+                //dismiss modal, incase they're deleting from edit dialog
                 isEditingCategory.value = false;
+
                 //hide loader
                 isModalLoading.value = false;
+
+                //undo multiple selection
+                isSelectingMultiple.value = false;
             })
-            .catch(error => isModalLoading.value = false);
+            .catch(error => {
+                isModalLoading.value = false;
+                store.commit("exploreHub/SET_IS_FETCHING_CATEGORIES", false);
+            });
 }
 
 </script>
@@ -272,21 +312,21 @@ function deleteCategories(){
 <template>
 
     <div class="row p-2" v-loading="isLoading">
-        <div class="col-sm-12 d-flex m-b-10 icons_container">
+        <div class="col-sm-12 d-flex m-b-10">
             <el-button type="primary" :icon="Plus" @click="goToAddCategories" plain>Add Categories</el-button>
             &nbsp;&nbsp;&nbsp;&nbsp;
 
-            <el-input style="width: 240px" placeholder="Type to search" />
+            <el-input v-model="searchString" style="width: 240px" placeholder="Type to search" clearable />
             &nbsp;&nbsp;&nbsp;&nbsp;
 
-            <el-button :icon="Check" :type="isSelectingMultiple ? 'primary' : ''" @click="isSelectingMultiple = !isSelectingMultiple" :plain="!isSelectingMultiple">Select Multiple to Delete</el-button>
+            <el-button :icon="Check" :type="isSelectingMultiple ? 'primary' : ''" @click="toggleMultipleSelection" :plain="!isSelectingMultiple">Select Multiple to Delete</el-button>
         </div>
         <br>
 
         <div class="row" v-if="categories.length">
-            <small class="text-muted text-italic" v-if="!isSelectingMultiple">Click entry to edit</small><br>
+            <small class="text-muted text-italic" v-if="!isSelectingMultiple">Tap entry to edit</small><br>
             <div class="d-flex m-t-10 m-b-10 flex-wrap align-items-center" v-if="isSelectingMultiple">
-                <small class="text-italic" v-if="!selectedCategories.length">None selected</small>
+                <small class="text-italic" v-if="!selectedCategories.length">Tap to select</small>
 
                 <small class="fw-bold" v-if="selectedCategories.length">Selected:</small>&nbsp;
                 <div class="m-1" v-for="category in selectedCategories"
@@ -407,22 +447,29 @@ function deleteCategories(){
 
     <!-- Modal to edit category -->
     <el-dialog
-            width="30%"
+            width="40%"
             v-model="isEditingCategory">
 
         <div class="row" v-loading="isModalLoading" v-if="editCategory">
             <div class="row m-b-20">
-                <h6 class="fw-bold">
-                    <small class="text-muted">Edit Category</small>
-                </h6>
+                <div class="d-flex align-items-center">
+                    <h6 class="fw-bold">
+                        <small class="text-muted">Edit category details below or </small>
+                    </h6>
+                    &nbsp;&nbsp;&nbsp;
+
+                    <el-button type="danger" @click="confirmDeleteCategory" plain>Delete category</el-button>
+                </div>
+                <br>
+                <el-divider />
 
                 <div class="row p-l-20">
                     <div class="col-md-12">
-                        <small>Category Name</small><br>
+                        <small>Edit Category Name</small><br>
                         <el-input v-model="editCategory.name" placeholder="Enter name here" style="max-width: 200px;"></el-input>
                     </div>
                     <div class="col-md-12 m-t-20">
-                        <small>Category Icon</small><br>
+                        <small>Change Associated Icon</small><br>
                         <div class="d-flex">
                             <div>
                                 <span class="material-symbols-outlined fs-35">{{ editCategory.icon }}</span>
@@ -451,14 +498,10 @@ function deleteCategories(){
                     </div>
                 </div>
 
-                <template v-if="hasEditedCategory">
-                    <el-divider />
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <el-button type="primary" @click="promptSaveEdits">Save Edits</el-button>
-                        </div>
-                    </div>
-                </template>
+                <hr class="m-2">
+                <div class="col-sm-12">
+                    <el-button type="primary" @click="promptSaveEdits" :disabled="!hasEditedCategory">Save Edits</el-button>
+                </div>
             </div>
         </div>
 
