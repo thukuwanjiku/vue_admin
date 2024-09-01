@@ -33,9 +33,9 @@
                         </router-link>
                     </li>
                     <li>
-                        <a href="#">
+                        <router-link :to="{name: 'explore_hub.listings'}">
                             <i class="bi bi-circle"></i><span>Listings</span>
-                        </a>
+                        </router-link>
                     </li>
                 </ul>
             </li>

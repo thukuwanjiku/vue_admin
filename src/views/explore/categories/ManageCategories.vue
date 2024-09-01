@@ -43,13 +43,13 @@ const selectedCategories = ref([]);
  * Computed properties
  * -----------------------------
  * */
-const isLoading = computed(()=> store.state.explore.isFetchingCategories);
+const isLoading = computed(()=> store.state.exploreHub.isFetchingCategories);
 const materialIconsNames = computed(() =>
         store.state.shared.materialIconsNames
                 .filter(icon => !newCategoryIconsSearchString.value.length
                         || icon.includes(newCategoryIconsSearchString.value)));
 
-const categories = computed(()=> store.state.explore.listingCategories
+const categories = computed(()=> store.state.exploreHub.listingCategories
         .filter(entry => !searchString.value.length
                 || entry.name.toLowerCase().includes(searchString.value.toLowerCase())));
 
@@ -217,7 +217,7 @@ function saveCategoryChanges(){
                 let index = categoriesCopy.findIndex(entry => entry.id == editCategory.value.id);
                 if(index > -1){
                     categoriesCopy[index] = response.data.data;
-                    store.commit('explore/STORE_EXPLORE_LISTING_CATEGORIES', categoriesCopy);
+                    store.commit('exploreHub/STORE_EXPLORE_LISTING_CATEGORIES', categoriesCopy);
                 }
 
                 //dismiss modal
@@ -277,7 +277,7 @@ function confirmDeleteCategory(){
 }
 function deleteCategories(payload){
     //show loader
-    store.commit("explore/SET_IS_FETCHING_CATEGORIES", true);
+    store.commit("exploreHub/SET_IS_FETCHING_CATEGORIES", true);
     isModalLoading.value = true;
 
     //make api call
@@ -303,7 +303,7 @@ function deleteCategories(payload){
             })
             .catch(error => {
                 isModalLoading.value = false;
-                store.commit("explore/SET_IS_FETCHING_CATEGORIES", false);
+                store.commit("exploreHub/SET_IS_FETCHING_CATEGORIES", false);
             });
 }
 

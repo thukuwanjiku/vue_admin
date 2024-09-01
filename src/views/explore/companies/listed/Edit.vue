@@ -28,7 +28,7 @@ let aboutQuillEditor = ref(null);
 * */
 onMounted(()=>{
     //copy details of company being edited
-    company.value = JSON.parse(JSON.stringify(store.state.explore.editCompany));
+    company.value = JSON.parse(JSON.stringify(store.state.exploreHub.editCompany));
 
     //set the default content for the company's about
     $("#addCompanyAboutEditor").html(company.value["about"]);
@@ -83,7 +83,7 @@ function submit(){
                 $.growl.notice({message: response.data.message});
 
                 //get a copy of current companies list
-                let companies = JSON.parse(JSON.stringify(store.state.explore.companies));
+                let companies = JSON.parse(JSON.stringify(store.state.exploreHub.companies));
 
                 //replace old company with updated company details
                 let editIndex = companies.findIndex(entry => entry.id == company.value["id"]);
@@ -92,7 +92,7 @@ function submit(){
                 }
 
                 //overwrite the vuex companies list with the updated copy
-                store.commit('explore/STORE_EXPLORE_LISTED_COMPANIES', companies)
+                store.commit('exploreHub/STORE_EXPLORE_LISTED_COMPANIES', companies)
 
                 //DISMISS LOADER
                 isLoading.value = false;
