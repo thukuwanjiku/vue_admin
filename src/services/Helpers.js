@@ -15,22 +15,21 @@ const materialIconsNamesUrl = "https://raw.githubusercontent.com/google/material
 * Functions
 * --------------------------
 * */
-export function fetchMaterialIconsNames(){
-    //fetch material icons data
-    axios.get(materialIconsNamesUrl)
-        .then((response) => {
-            const materialIconsData = response.data;
-            const lines = materialIconsData.split('\n');
-            const names = lines.map((line) => {
-                const parts = line.split(' ');
-                return parts[0];
-            });
+export function fetchExploreHubCompanies(){
+    //show loader
+    store.commit("exploreHub/SET_IS_FETCHING_COMPANIES", true);
 
-            //store names in vuex store
-            store.commit('shared/STORE_MATERIAL_ICONS_NAMES', names);
-        });
+    //make api call
+    api.get(apiRoutes.GET_EXPLORE_LISTED_COMPANIES)
+            .then(response => {
+                store.commit("exploreHub/STORE_EXPLORE_LISTED_COMPANIES", response.data.data);
+
+                //dismiss loader
+                store.commit("exploreHub/SET_IS_FETCHING_COMPANIES", false);
+            })
+            .catch(error => store.commit("exploreHub/SET_IS_FETCHING_COMPANIES", false));
 }
-export function fetchExploreListingCategories(){
+export function fetchExploreHubListingCategories(){
     //show loading overlay
     store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', true);
 
@@ -42,6 +41,23 @@ export function fetchExploreListingCategories(){
                 store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', false);
             })
             .catch(error => store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', false));
+}
+
+
+export function fetchMaterialIconsNames(){
+    //fetch material icons data
+    axios.get(materialIconsNamesUrl)
+            .then((response) => {
+                const materialIconsData = response.data;
+                const lines = materialIconsData.split('\n');
+                const names = lines.map((line) => {
+                    const parts = line.split(' ');
+                    return parts[0];
+                });
+
+                //store names in vuex store
+                store.commit('shared/STORE_MATERIAL_ICONS_NAMES', names);
+            });
 }
 export function randomString (length = 12) {
     let text = "";

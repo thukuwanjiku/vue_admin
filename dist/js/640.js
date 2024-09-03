@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkmyzola_admin"]=self["webpackChunkmyzola_admin"]||[]).push([[640],{2640:function(n,e,r){r.r(e),r.d(e,{default:function(){return o}});var s=r(6768);const a={class:"col-md-12"};function t(n,e){return(0,s.uX)(),(0,s.CE)("div",a," Listings show here ")}var u=r(1241);const c={},i=(0,u.A)(c,[["render",t]]);var o=i}}]);
-//# sourceMappingURL=640.js.map

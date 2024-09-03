@@ -7,7 +7,7 @@ import {AwesomeSocialButton} from "awesome-social-button";
 import axios from "axios";
 import {useStore} from "vuex";
 import {
-    fetchExploreListingCategories,
+    fetchExploreHubListingCategories,
     fetchMaterialIconsNames,
     randomString
 } from "@/services/Helpers";
@@ -71,7 +71,7 @@ const hasEditedCategory = computed(() => {
  * */
 onMounted(()=>{
     //fetch listing categories if not already fetched
-    if(!categories.value.length) fetchExploreListingCategories();
+    if(!categories.value.length) fetchExploreHubListingCategories();
 
     //fetch material icons names is not previously fetched
     if(!materialIconsNames.value.length) {

@@ -9,7 +9,7 @@ const router = useRouter();
 
 <template>
 
-    <el-button @click="router.back()" :icon="Close" size="large" type="info" plain circle />
+    <el-button @click="router.back()" :icon="Close" type="info" plain circle />
 
 </template>
 
