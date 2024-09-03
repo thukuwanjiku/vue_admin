@@ -8,6 +8,7 @@ import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
 import {AwesomeSocialButton} from "awesome-social-button";
 import {Plus} from "@element-plus/icons-vue";
+import {fetchExploreHubCompanies} from "@/services/Helpers";
 
 /* -----------------------------
  * Variables
@@ -16,7 +17,6 @@ import {Plus} from "@element-plus/icons-vue";
 const store = useStore();
 const router = useRouter();
 
-const isLoading = ref(false);
 const isViewingCompany = ref(false);
 const activeCompany = ref(null);
 
@@ -28,6 +28,10 @@ let companies = computed({
     get: ()=> store.state.exploreHub.companies,
     set: (data) => store.commit('exploreHub/STORE_EXPLORE_LISTED_COMPANIES', data)
 });
+let isLoading = computed({
+    get: ()=> store.state.exploreHub.isFetchingCompanies,
+    set: (value) => store.commit('exploreHub/SET_IS_FETCHING_COMPANIES', value)
+});
 
 
 
@@ -37,7 +41,7 @@ let companies = computed({
  * */
 onMounted(()=>{
     //fetch companies
-    fetchCompanies();
+    if(!companies.value.length) fetchExploreHubCompanies();
 });
 
 
@@ -45,23 +49,6 @@ onMounted(()=>{
  * Methods
  * -----------------------------
  * */
-function fetchCompanies(){
-    //don't run if companies are already fetched
-    if(companies.value.length) return;
-
-    //show loader
-    isLoading.value = true;
-
-    //make api call
-    api.get(apiRoutes.GET_EXPLORE_LISTED_COMPANIES)
-            .then(response => {
-                companies.value = response.data.data;
-
-                //dismiss loader
-                isLoading.value = false;
-            })
-            .catch(error => isLoading.value = false);
-}
 function viewCompany(company){
     //set the company being viewed
     activeCompany.value = JSON.parse(JSON.stringify(company));
@@ -215,7 +202,7 @@ function deleteCompany(payload){
                 </div>
             </div>
         </div>
-        <div class="row p-4 pb-1">
+        <div class="row p-4 pb-1" v-if="activeCompany.about">
             <h6 class="fw-bold">About</h6>
             <div class="alert alert-secondary  alert-dismissible fade show"
                  role="alert" v-html="activeCompany.about"></div>
