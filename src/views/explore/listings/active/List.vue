@@ -257,11 +257,11 @@ function viewListing(listing){
                     <td @click="viewListing(listing)">{{ listing.category_name }}</td>
                     <td @click="viewListing(listing)">
                         <div v-if="listing.is_paid" class="text-success d-flex align-items-center">
-                            <i class="bi bi-circle big-dot" style="background:green;"></i>
+                            <i class="bi bi-circle big-dot m-r-8" style="background:green;"></i>
                             <small>Confirmed</small>
                         </div>
                         <div v-if="!listing.is_paid" class="text-danger d-flex align-items-center">
-                            <i class="bi bi-circle big-dot" style="background:red;"></i>
+                            <i class="bi bi-circle big-dot m-r-8" style="background:red;"></i>
                             <small>Not Paid</small>
                         </div>
                     </td>

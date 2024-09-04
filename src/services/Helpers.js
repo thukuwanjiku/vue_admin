@@ -66,3 +66,16 @@ export function randomString (length = 12) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
+export function moneyFormatter(amount, currency='' , floating_points = null) {
+    //define decimal places to round off the value to
+    let dp = parseInt(floating_points) || 0;
+    //format the value passed
+    let formattedAmount = (new Intl.NumberFormat()).format(parseFloat(amount).toFixed(dp));
+    //for whole numbers without a decimal, the Intl.NumberFormat method fails to apply decimal places, apply them manuall
+    /*if (dp > 0 && !formattedAmount.includes('.')) {
+        let extraZeroes = "00000000";
+        formattedAmount = formattedAmount + "." + extraZeroes.substr(0, dp);
+    }*/
+    //return formatted value plus the business currency
+    return (currency ? currency + " " : '') + formattedAmount;
+}
