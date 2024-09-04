@@ -104,13 +104,23 @@ export default [
                                 },
                             },
                             {
-                                path: "",
+                                path: "create",
                                 name: 'explore_hub.listings.create',
                                 components: {
                                     explore_listings_active: ()=> import('@/views/explore/listings/active/Add.vue')
                                 },
                                 meta: {
                                     title: `Explore Hub: Create Listing ${pageTitleSuffix}`
+                                },
+                            },
+                            {
+                                path: "edit",
+                                name: 'explore_hub.listings.edit',
+                                components: {
+                                    explore_listings_active: ()=> import('@/views/explore/listings/active/Edit.vue')
+                                },
+                                meta: {
+                                    title: `Explore Hub: Edit Listing ${pageTitleSuffix}`
                                 },
                             },
                         ]

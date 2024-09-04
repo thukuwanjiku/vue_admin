@@ -31,10 +31,10 @@ onMounted(()=>{
     company.value = JSON.parse(JSON.stringify(store.state.exploreHub.editCompany));
 
     //set the default content for the company's about
-    $("#addCompanyAboutEditor").html(company.value["about"]);
+    $("#editCompanyAboutEditor").html(company.value["about"]);
 
     //initialize quill editor
-    aboutQuillEditor = new Quill('#addCompanyAboutEditor', {
+    aboutQuillEditor = new Quill('#editCompanyAboutEditor', {
         theme: 'snow',
         placeholder: 'Enter company about here'
     });
@@ -154,7 +154,7 @@ function submit(){
                 <h6>Company's Bio (About)</h6>
 
                 <!-- Quill Editor Default -->
-                <div id="addCompanyAboutEditor" class="quill-editor-default"></div>
+                <div id="editCompanyAboutEditor" class="quill-editor-default"></div>
                 <!-- End Quill Editor Default -->
             </div>
         </div>

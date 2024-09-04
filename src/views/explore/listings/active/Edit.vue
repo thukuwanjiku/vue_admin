@@ -24,15 +24,7 @@ const store = useStore();
 const router = useRouter();
 
 const isLoading = ref(false);
-const listing = ref({
-    title: null,
-    placement: null,
-    category_id: null,
-    company_id: null,
-    start_at: null,
-    end_at: null,
-    description: null,
-});
+const listing = ref({});
 
 const placements = ref(['for_you', 'featured', 'exclusive']);
 let descriptionQuillEditor = ref(null);
@@ -62,11 +54,16 @@ let categories = computed(()=> store.state.exploreHub.listingCategories);
  * -----------------------------
  * */
 onMounted(()=> {
+    //copy details of listing being edited
+    listing.value = JSON.parse(JSON.stringify(store.state.exploreHub.editListing));
+
     //fetch required resource which aren't loaded yet
     if(!companies.value.length) fetchExploreHubCompanies();
     if(!categories.value.length) fetchExploreHubListingCategories();
     fetchPaymentModes();
 
+    //set the default content for the company's about
+    $("#descriptionEditor").html(listing.value.description);
     descriptionQuillEditor = new Quill('#descriptionEditor', {
         theme: 'snow',
         placeholder: 'Enter listing body here'
@@ -139,7 +136,7 @@ function acceptNewPayment(){
     isAddingPayments.value = false;
 }
 
-function handleCreateListing(){
+function handleSaveEdits(){
     //validate title
     if(!listing.value.title || !listing.value.title.length){
         return ElMessage.warning("Please enter title");
@@ -155,10 +152,6 @@ function handleCreateListing(){
     //validate category selection
     if(!listing.value.category_id || !listing.value.category_id.toString().length){
         return ElMessage.warning("Please select the category");
-    }
-    //validate media
-    if(!mediaFiles.value.length){
-        return ElMessage.warning("Please upload some images for this listing");
     }
     //validate description
     let description = descriptionQuillEditor.getSemanticHTML();
@@ -181,15 +174,15 @@ function handleCreateListing(){
 
     //prepare request payload
     let payload = new FormData();
-    //add all listing details to the form data
-    Object.keys(listing.value)
-            .forEach(key => {
-                let value = listing.value[key];
-                payload.append(key, value)
-            });
+    //add select listing details to the form data
+    let properties = ['id', 'title', 'placement', 'company_id', 'category_id', 'description', 'start_at', 'end_at'];
+    properties.forEach(key => payload.append(key, listing.value[key]));
+
     //append media to payload
-    for(let count=0; count < mediaFiles.value.length; count++){
-        payload.append(`media[${count}]`, mediaFiles.value[count]);
+    if(mediaFiles.value.length) {
+        for (let count = 0; count < mediaFiles.value.length; count++) {
+            payload.append(`media[${count}]`, mediaFiles.value[count]);
+        }
     }
     //append payments to payload
     if(payments.value.length){
@@ -204,20 +197,23 @@ function handleCreateListing(){
     isLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.EXPLORE_HUB_ADD_LISTING, payload)
+    api.post(apiRoutes.EXPLORE_HUB_EDIT_LISTING, payload)
             .then(response => {
                 //show success message
                 $.growl.notice({message: response.data.message});
 
-                //reset listings array & filters in vuex so that listings can be refreshed when we go back to list
-                store.commit('exploreHub/STORE_ACTIVE_LISTINGS', []);
-                store.commit('exploreHub/STORE_ACTIVE_LISTINGS_FILTERS', {});
+               //replace the entry for this listing in the listings list
+                let listingsCopy = JSON.parse(JSON.stringify(store.state.exploreHub.activeListings));
+                let index = listingsCopy.findIndex(entry => entry.id == listing.value.id);
+                if(index > -1){
+                    listingsCopy[index] = response.data.data;
+                    store.commit('exploreHub/STORE_ACTIVE_LISTINGS', listingsCopy);
+                }
 
                 //hide loading
                 isLoading.value = false;
 
                 //TODO NAVIGATE TO VIEW NEWLY ADDED LISTING
-                //navigate back
                 router.back();
 
             })
@@ -229,7 +225,7 @@ function handleCreateListing(){
 
     <div class="row" v-loading="isLoading">
         <div class="col-sm-12 mb-3 d-inline-flex align-items-center justify-content-between">
-            <h5 class="fw-bold mb-0" style="margin-left: 20px;">Create a new Listing</h5>
+            <h5 class="fw-bold mb-0" style="margin-left: 20px;">Edit Listing</h5>
             <close-button></close-button>
         </div>
 
@@ -418,8 +414,8 @@ function handleCreateListing(){
 
         <hr class="m-0">
         <div class="modal-footer m-t-10">
-            <el-button size="large" type="primary" @click="handleCreateListing">Create Listing</el-button>
-            <el-button size="large" type="info" @click="router.back()">Cancel</el-button>
+            <el-button size="large" type="primary" @click="handleSaveEdits">Save Edits</el-button>
+            <el-button size="large" type="info">Cancel</el-button>
         </div>
 
     </div>
