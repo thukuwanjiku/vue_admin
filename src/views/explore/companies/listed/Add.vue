@@ -10,6 +10,7 @@ import { VueTelInput } from 'vue-tel-input';
 import 'vue-tel-input/vue-tel-input.css';
 import {AwesomeSocialButton} from "awesome-social-button";
 import {startCase} from "lodash-es";
+import {socialPlatforms} from "@/services/Helpers";
 
 /* ------------------------------
 * Variables & Properties
@@ -30,14 +31,10 @@ const addedSocials = ref([]);
 const newSocialHandle = ref({platform:"", link:""});
 
 let logoUpload = ref(null);
+let logoFile = ref(null);
 const isLoading = ref(false);
 const isAddingSocialHandles = ref(false);
 let aboutQuillEditor = ref(null);
-
-//define all possible social handles for a company
-const socialPlatforms = ref([
-    "instagram","facebook","whatsapp","linkedin","youtube","twitter",
-]);
 
 
 /* ------------------------------
@@ -47,7 +44,7 @@ const socialPlatforms = ref([
 const availableSocials = computed(()=>{
     //get socials already added to the company
     let alreadyAddedSocials = addedSocials.value.map(entry => entry.platform);
-    return socialPlatforms.value.filter(entry => !alreadyAddedSocials.includes(entry));
+    return socialPlatforms.filter(entry => !alreadyAddedSocials.includes(entry));
 });
 
 
@@ -69,6 +66,19 @@ onMounted(()=>{
 * */
 function processUpload(event){
     logoUpload.value = event.target.files[0];
+
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+        logoFile.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+function removeUpload(){
+    logoUpload.value = null;
+    logoFile.value = null;
+    $("#companyLogo").val("");
 }
 function addSocial(){
     //add new social to company list of socials
@@ -149,95 +159,104 @@ function submit(){
 
     <form @submit.prevent="submit" v-loading="isLoading">
         <div class="row">
-            <div class="col-md-5">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="companyName"
-                           placeholder="Company Name" v-model="company.name" required>
-                    <label for="companyName">Company Name</label>
+            <div class="col-md-6">
+                <!-- Logo -->
+                <div class="col-md-10 m-b-20">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="companyName"
+                               placeholder="Company Name" v-model="company.name" required>
+                        <label for="companyName">Company Name</label>
+                    </div>
+                </div>
+
+                <!-- Tagline -->
+                <div class="col-md-10 m-b-20">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="companyTagline"
+                               placeholder="Tagline" v-model="company.description" required>
+                        <label for="companyTagline">Tagline</label>
+                    </div>
+                </div>
+
+                <!-- Contact Person -->
+                <div class="col-md-10 m-b-20">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="companyContactPerson"
+                               placeholder="Company Person" v-model="company.contact_name" required>
+                        <label for="companyContactPerson">Contact Person</label>
+                    </div>
+                </div>
+
+                <!-- Contact Phone -->
+                <div class="col-md-10 m-b-20">
+                    <small class="text-muted">Contact Phone</small>
+                    <vue-tel-input
+                            v-model="company.contact_phone"
+                            mode="international"></vue-tel-input>
+                </div>
+
+                <!-- Contact Email -->
+                <div class="col-md-10 m-b-20">
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="companyContactEmail"
+                               placeholder="Email" v-model="company.email" required>
+                        <label for="companyContactEmail">Email</label>
+                    </div>
+                </div>
+
+                <!-- About -->
+                <div class="col-md-10 m-b-20">
+                    <h6>Company's Bio (About)</h6>
+
+                    <!-- Quill Editor Default -->
+                    <div id="addCompanyAboutEditor" class="quill-editor-default">
+                    </div>
+                    <!-- End Quill Editor Default -->
                 </div>
             </div>
-            <div class="col-md-1">&nbsp;</div>
-            <div class="col-md-5">
-                <div class="form-floating">
-                    <input type="file" class="form-control" id="companyLogo" @change="processUpload" required>
-                    <label for="companyLogo">Logo</label>
-                </div>
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-md-5">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="companyTagline"
-                           placeholder="Tagline" v-model="company.description" required>
-                    <label for="companyTagline">Tagline</label>
-                </div>
-            </div>
-            <div class="col-md-1">&nbsp;</div>
-            <div class="col-md-5">
-                <h6>Social Media Handles</h6>
-                <div class="d-inline-flex align-items-center">
-                    <div v-if="addedSocials.length" class="d-inline-flex">
-                        <div class="p-1"
-                             v-for="(social, index) in addedSocials" :key="'form-current-socials-'+index">
-                            <AwesomeSocialButton
-                                    :type="social.platform"
-                                    :link="{src: social.link}"
-                            />
+            <div class="col-md-6">
+                <!-- Logo -->
+                <div class="col-md-10 m-b-20">
+                    <div class="form-floating">
+                        <input type="file" class="form-control" id="companyLogo" @change="processUpload" accept=".png,.jpg,.jpeg,.gif">
+                        <label for="companyLogo">Company Logo</label>
+                    </div>
+
+                    <div class="d-flex flex-wrap m-t-10" v-if="logoFile">
+                        <div class="p-1 uploaded-image">
+                            <img :src="logoFile"  style="max-width:80px;max-height:60px;">
+                            <div class="remover" @click="removeUpload">
+                                <i class="ri ri-close-line"></i>
+                            </div>
                         </div>
                     </div>
-                    <el-button @click="isAddingSocialHandles = !isAddingSocialHandles" size="small" round>
-                        <i class="ri ri-add-line" v-if="!addedSocials.length"></i>{{ addedSocials.length ? "Click to edit" : "Click to add" }}
-                    </el-button>
                 </div>
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-md-5">
-                <h6>Company's Bio (About)</h6>
 
-                <!-- Quill Editor Default -->
-                <div id="addCompanyAboutEditor" class="quill-editor-default">
+                <!-- Socials -->
+                <div class="col-md-10 m-b-20">
+                    <h6>Social Media Handles</h6>
+                    <div class="d-inline-flex align-items-center flex-wrap">
+                        <div v-if="addedSocials.length" class="d-inline-flex">
+                            <div class="p-1"
+                                 v-for="(social, index) in addedSocials" :key="'form-current-socials-'+index">
+                                <AwesomeSocialButton
+                                        :type="social.platform"
+                                        :link="{src: social.link}"
+                                />
+                            </div>
+                        </div>
+                        <el-button @click="isAddingSocialHandles = !isAddingSocialHandles" size="small" round>
+                            <i class="ri ri-add-line" v-if="!addedSocials.length"></i>{{ addedSocials.length ? "Click to edit" : "Click to add" }}
+                        </el-button>
+                    </div>
                 </div>
-                <!-- End Quill Editor Default -->
-            </div>
-        </div>
 
-        <br><br><br><br><br><br>
-
-        <h6 class="text-muted fw-bold">Contact Details</h6>
-        <div class="row">
-            <div class="col-md-5">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="companyContactPerson"
-                           placeholder="Company Person" v-model="company.contact_name" required>
-                    <label for="companyContactPerson">Contact Person</label>
-                </div>
             </div>
-            <div class="col-md-1">&nbsp;</div>
-            <div class="col-md-5">
-                <small class="text-muted">Contact Phone</small>
-                <vue-tel-input
-                        v-model="company.contact_phone"
-                        mode="international"></vue-tel-input>
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-md-5">
-                <div class="form-floating">
-                    <input type="email" class="form-control" id="companyContactEmail"
-                           placeholder="Email" v-model="company.email" required>
-                    <label for="companyContactEmail">Email</label>
-                </div>
-            </div>
-            <div class="col-md-1">&nbsp;</div>
         </div>
 
         <hr>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="submit">Submit</button>
+            <button class="btn btn-primary" type="submit">Add Company</button>
             &nbsp;
             <button @click="router.back()" class="btn btn-secondary" type="button">Cancel</button>
         </div>
@@ -303,6 +322,9 @@ function submit(){
                         </div>
                     </div>
                 </form>
+            </div>
+            <div class="col-sm-12 d-flex justify-content-end">
+                <el-button type="info" @click="isAddingSocialHandles = !isAddingSocialHandles" plain>Done</el-button>
             </div>
         </div>
     </el-dialog>

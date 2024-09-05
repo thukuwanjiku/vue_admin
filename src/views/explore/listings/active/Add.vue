@@ -473,26 +473,6 @@ function handleCreateListing(){
 </template>
 
 <style scoped>
-.uploaded-image{
-    position: relative;
-    margin: 3px;
-    border: 1px solid #e5e4e4;
-    border-radius: 5px;
-}
-.uploaded-image > .remover {
-    position: absolute;
-    right: -5px;
-    top: -6px;
-    background: #b7b4b4;
-    border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    cursor: pointer;
-}
 .payment-mode{
     position: relative;
     margin: 3px;
