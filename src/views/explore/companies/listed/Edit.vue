@@ -56,8 +56,8 @@ const availableSocials = computed(()=>{
 * */
 onMounted(()=>{
     //if there's no company to edit, go back to list of companies
-    if(!store.state.exploreHub.editCompany) {
-        return router.back();
+    if(store.state.exploreHub.editCompany == null) {
+        return router.push({name: 'explore_hub.companies.listed'});
     }
 
     //copy details of company being edited

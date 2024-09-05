@@ -196,7 +196,7 @@ function handleCreateListing(){
         for (let count = 0; count < payments.value.length; count++) {
             payload.append(`payments[${count}][amount]`, payments.value[count].amount);
             payload.append(`payments[${count}][mode]`, payments.value[count].mode);
-            payload.append(`payments[${count}][reference]`, payments.value[count].reference);
+            payload.append(`payments[${count}][reference]`, payments.value[count].reference || startCase(payments.value[count].mode));
         }
     }
 

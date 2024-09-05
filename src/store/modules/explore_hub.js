@@ -9,7 +9,7 @@ const state = {
 
     activeListings: [],
     activeListingsFilters: {},
-    editListing: {}
+    editListing: null
 
 };
 
