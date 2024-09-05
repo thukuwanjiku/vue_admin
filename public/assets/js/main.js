@@ -6,7 +6,8 @@
 * License: https://bootstrapmade.com/license/
 */
 
-$(document).ready(function() {
+$(window).on('load', function() {
+
   "use strict";
 
   /**

@@ -8,7 +8,8 @@ const state = {
     isFetchingCategories: false,
 
     activeListings: [],
-    activeListingsFilters: {}
+    activeListingsFilters: {},
+    editListing: null
 
 };
 
@@ -22,6 +23,7 @@ const mutations = {
 
     STORE_ACTIVE_LISTINGS: (state, data)=> state.activeListings = data,
     STORE_ACTIVE_LISTINGS_FILTERS: (state, data)=> state.activeListingsFilters = data,
+    STORE_EDIT_LISTING: (state, data)=> state.editListing = data,
 };
 
 export default {

@@ -24,29 +24,25 @@ const store = useStore();
 const router = useRouter();
 
 const isLoading = ref(false);
-const listing = ref({
-    title: null,
-    placement: null,
-    category_id: null,
-    company_id: null,
-    start_at: null,
-    end_at: null,
-    description: null,
-});
+const listing = ref({});
 
 const placements = ref(['for_you', 'featured', 'exclusive']);
 let descriptionQuillEditor = ref(null);
 const media = ref([]);
 const mediaFiles = ref([]);
 
+const listingPayments = ref([]);
+const editedPayments = ref([]);
+const editPayment = ref(null);
 const isAddingPayments = ref(false);
+const isEditingPayment = ref(false);
 const paymentModes = ref([]);
 const newPayment = ref({
     mode:null,
     amount:null,
     reference:null
 });
-const payments = ref([]);
+const newPayments = ref([]);
 
 
 
@@ -56,17 +52,48 @@ const payments = ref([]);
  * */
 let companies = computed(()=> store.state.exploreHub.companies);
 let categories = computed(()=> store.state.exploreHub.listingCategories);
+const savedPayments = computed(()=> listingPayments.value.filter(entry => !entry.deleted && !entry.edited))
+const deletedPayments = computed(()=> listingPayments.value.filter(entry => entry.deleted));
+const paymentBeingEdited = computed(()=> {
+    if(!editPayment.value) return null;
+    return listingPayments.value
+            .find(entry => entry.id == editPayment.value.id);
+});
+const hasEditedPayment = computed(() => {
+    if(!paymentBeingEdited.value) return false;
+    return Object.keys(paymentBeingEdited.value)
+            .some(key => editPayment.value[key] !== paymentBeingEdited.value[key]);
+});
 
 /* -----------------------------
  * Hooks
  * -----------------------------
  * */
 onMounted(()=> {
+    if(store.state.exploreHub.editListing == null) {
+        return router.push({name: 'explore_hub.listings.active'});
+    }
+
+    //copy details of listing being edited
+    listing.value = JSON.parse(JSON.stringify(store.state.exploreHub.editListing));
+
+
+    //copy listing payments to manage them
+    listingPayments.value = JSON.parse(JSON.stringify(store.state.exploreHub.editListing.payments));
+    listingPayments.value = listingPayments.value
+            .map(entry => {
+                entry.deleted = false;
+                entry.edited = false;
+                return entry;
+            });
+
     //fetch required resource which aren't loaded yet
     if(!companies.value.length) fetchExploreHubCompanies();
     if(!categories.value.length) fetchExploreHubListingCategories();
     fetchPaymentModes();
 
+    //set the default content for the company's about
+    $("#descriptionEditor").html(listing.value.description);
     descriptionQuillEditor = new Quill('#descriptionEditor', {
         theme: 'snow',
         placeholder: 'Enter listing body here'
@@ -123,14 +150,18 @@ function acceptNewPayment(){
         return ElMessage.warning("Please enter a valid amount");
     //check that reference code is not repeated
     if(newPayment.value.reference != null && newPayment.value.reference.length){
-        if(payments.value.find(entry =>
+        if(newPayments.value.find(entry =>
+                entry.reference.toString().toLowerCase()
+                == newPayment.value.reference.toString().toLowerCase()))
+            return ElMessage.warning("Reference code has already been used");
+        if(savedPayments.value.find(entry =>
                 entry.reference.toString().toLowerCase()
                 == newPayment.value.reference.toString().toLowerCase()))
             return ElMessage.warning("Reference code has already been used");
     }
 
     //everything's ok, add the new payment to list of payments
-    payments.value.push(JSON.parse(JSON.stringify(newPayment.value)));
+    newPayments.value.push(JSON.parse(JSON.stringify(newPayment.value)));
 
     //clear the fields
     newPayment.value = {mode:null,amount:null,reference:null};
@@ -138,8 +169,48 @@ function acceptNewPayment(){
     //dismiss the add payment dialog
     isAddingPayments.value = false;
 }
+function goEditPayment(payment){
+    editPayment.value = JSON.parse(JSON.stringify(payment));
+    isEditingPayment.value = true;
+}
+function acceptPaymentEdits(){
+    //validate that all required fields have been entered: mode & amount
+    if(!editPayment.value.mode || !editPayment.value.mode.length)
+        return ElMessage.warning("Please select a payment mode");
+    if(!editPayment.value.amount || !editPayment.value.amount.toString().length)
+        return ElMessage.warning("Please enter the payment amount");
+    //validate that a valid payment amount has been entered
+    if(isNaN(editPayment.value.amount))
+        return ElMessage.warning("Please enter a valid amount");
+    //check that reference code is not repeated
+    if(editPayment.value.reference != null && editPayment.value.reference.length){
+        if(newPayments.value.find(entry =>
+                entry.reference.toString().toLowerCase()
+                == editPayment.value.reference.toString().toLowerCase()))
+            return ElMessage.warning("Reference code has already been used");
+        if(editedPayments.value.find(entry =>
+                entry.reference.toString().toLowerCase()
+                == editPayment.value.reference.toString().toLowerCase()))
+            return ElMessage.warning("Reference code has already been used");
+    }
 
-function handleCreateListing(){
+    //add payment being edited to edited payments
+    editedPayments.value.push(JSON.parse(JSON.stringify(editPayment.value)));
+    //unmark payment as edited in the original list
+    let payment = listingPayments.value.find(entry => entry.id == editPayment.value.id);
+    if(payment) payment.edited = true;
+    //dismiss modal
+    isEditingPayment.value = false;
+}
+function removeFromEdited(index, payment){
+    //remove payment from edited list
+    editedPayments.value.splice(index, 1);
+    //make payment not edited
+    let _payment = listingPayments.value.find(entry => entry.id == payment.id);
+    _payment.edited = false;
+}
+
+function handleSaveEdits(){
     //validate title
     if(!listing.value.title || !listing.value.title.length){
         return ElMessage.warning("Please enter title");
@@ -155,10 +226,6 @@ function handleCreateListing(){
     //validate category selection
     if(!listing.value.category_id || !listing.value.category_id.toString().length){
         return ElMessage.warning("Please select the category");
-    }
-    //validate media
-    if(!mediaFiles.value.length){
-        return ElMessage.warning("Please upload some images for this listing");
     }
     //validate description
     let description = descriptionQuillEditor.getSemanticHTML();
@@ -181,43 +248,63 @@ function handleCreateListing(){
 
     //prepare request payload
     let payload = new FormData();
-    //add all listing details to the form data
-    Object.keys(listing.value)
-            .forEach(key => {
-                let value = listing.value[key];
-                payload.append(key, value)
-            });
+    //add select listing details to the form data
+    let properties = ['id', 'title', 'placement', 'company_id', 'category_id', 'description', 'start_at', 'end_at'];
+    properties.forEach(key => payload.append(key, listing.value[key]));
+
     //append media to payload
-    for(let count=0; count < mediaFiles.value.length; count++){
-        payload.append(`media[${count}]`, mediaFiles.value[count]);
-    }
-    //append payments to payload
-    if(payments.value.length){
-        for (let count = 0; count < payments.value.length; count++) {
-            payload.append(`payments[${count}][amount]`, payments.value[count].amount);
-            payload.append(`payments[${count}][mode]`, payments.value[count].mode);
-            payload.append(`payments[${count}][reference]`, payments.value[count].reference || startCase(payments.value[count].mode));
+    if(mediaFiles.value.length) {
+        for (let count = 0; count < mediaFiles.value.length; count++) {
+            payload.append(`media[${count}]`, mediaFiles.value[count]);
         }
+    }
+    //append new payments to payload
+    if(newPayments.value.length){
+        for (let count = 0; count < newPayments.value.length; count++) {
+            let _payment = newPayments.value[count];
+            payload.append(`payments[${count}][amount]`, _payment.amount);
+            payload.append(`payments[${count}][mode]`, _payment.mode);
+            payload.append(`payments[${count}][reference]`, _payment.reference || startCase(_payment.mode));
+        }
+    }
+    //append edited payments to payload
+    if(editedPayments.value.length){
+        for (let count = 0; count < editedPayments.value.length; count++) {
+            let _payment = editedPayments.value[count];
+            payload.append(`edited_payments[${count}][id]`, _payment.id);
+            payload.append(`edited_payments[${count}][amount]`, _payment.amount);
+            payload.append(`edited_payments[${count}][mode]`, _payment.mode);
+            payload.append(`edited_payments[${count}][reference]`, _payment.reference || startCase(_payment.mode));
+        }
+    }
+    //add any deleted payments
+    if(deletedPayments.value.length){
+        deletedPayments.value.forEach((social, index) => {
+            payload.append(`deleted_payments[${index}]`, social.id);
+        });
     }
 
     //show loading
     isLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.EXPLORE_HUB_ADD_LISTING, payload)
+    api.post(apiRoutes.EXPLORE_HUB_EDIT_LISTING, payload)
             .then(response => {
                 //show success message
                 $.growl.notice({message: response.data.message});
 
-                //reset listings array & filters in vuex so that listings can be refreshed when we go back to list
-                store.commit('exploreHub/STORE_ACTIVE_LISTINGS', []);
-                store.commit('exploreHub/STORE_ACTIVE_LISTINGS_FILTERS', {});
+               //replace the entry for this listing in the listings list
+                let listingsCopy = JSON.parse(JSON.stringify(store.state.exploreHub.activeListings));
+                let index = listingsCopy.findIndex(entry => entry.id == listing.value.id);
+                if(index > -1){
+                    listingsCopy[index] = response.data.data;
+                    store.commit('exploreHub/STORE_ACTIVE_LISTINGS', listingsCopy);
+                }
 
                 //hide loading
                 isLoading.value = false;
 
                 //TODO NAVIGATE TO VIEW NEWLY ADDED LISTING
-                //navigate back
                 router.back();
 
             })
@@ -229,7 +316,7 @@ function handleCreateListing(){
 
     <div class="row" v-loading="isLoading">
         <div class="col-sm-12 mb-3 d-inline-flex align-items-center justify-content-between">
-            <h5 class="fw-bold mb-0" style="margin-left: 20px;">Create a new Listing</h5>
+            <h5 class="fw-bold mb-0" style="margin-left: 20px;">Edit Listing</h5>
             <close-button></close-button>
         </div>
 
@@ -384,32 +471,77 @@ function handleCreateListing(){
                     </div>
                 </div>
                 <!-- Payments -->
-                <div class="col-md-10 m-b-20">
+                <div class="col-md-12 m-b-20">
                     <div class="form-floating">
                         <input-label>Payments</input-label>
 
-                        <div class="col-sm-12 d-flex flex-wrap align-items-center">
-                            <div class="payment d-flex align-items-center"
-                                 v-for="(payment, index) in payments"
-                                 :key="'all-payment-modes-'+index"
-                                 style="padding: 0 10px;">
-                                <small>{{ startCase(payment.mode) }}</small>
-                                &nbsp;
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-circle big-dot m-l-3 m-r-3" style="background:grey;font-size:4px;"></i>
-                                </div>
-                                &nbsp;
-                                <small>KES {{ moneyFormatter(payment.amount) }}</small>
-
-                                <div class="m-l-20 d-flex align-items-center hov-pointer" @click="payments.splice(index, 1)">
-                                    <i class="ri ri-close-line fs-18"></i>
+                        <div v-if="savedPayments.length" class="p-l-10 m-t-10">
+                            <h6><small>Saved Payments</small></h6>
+                            <div class="d-flex flex-wrap align-items-center">
+                                <div class="p-1 saved-payment"
+                                     v-for="(payment, index) in savedPayments" :key="'saved-payments-'+index">
+                                    <small>
+                                        {{ startCase(payment.mode) }}
+                                         -
+                                        {{ moneyFormatter(payment.amount) }}
+                                    </small>
+                                    <br>
+                                    <el-tag size="small" style="cursor: pointer;" @click="goEditPayment(payment)" round>Edit</el-tag>
+                                    &nbsp;
+                                    <el-tag size="small" style="cursor:pointer;" round type="danger" @click="payment.deleted = !payment.deleted">Delete</el-tag>
                                 </div>
                             </div>
+                        </div>
 
-                            &nbsp;&nbsp;
-                            <el-button @click="isAddingPayments = !isAddingPayments" :icon="Plus" round>
-                                Add payment
-                            </el-button>
+                        <div class="p-l-10 m-t-10" v-if="editedPayments.length">
+                            <h6><small>Edited Payments</small></h6>
+                            <div class="d-inline-flex align-items-center flex-wrap">
+                                <div v-for="(payment, index) in editedPayments"
+                                     :key="'edited-payments-'+index" class="m-r-5">
+                                    <el-tag closable type="info" @close="removeFromEdited(index, payment)">
+                                        {{ startCase(payment.mode) }} - {{ moneyFormatter(payment.amount) }}
+                                    </el-tag>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-l-10 m-t-10" v-if="deletedPayments.length">
+                            <h6 class="text-danger"><small>Marked for deletion</small></h6>
+                            <div class="d-inline-flex align-items-center flex-wrap">
+                                <div v-for="(payment, index) in deletedPayments"
+                                     :key="'to-delete-payments-'+index" class="m-r-5">
+                                    <el-tag closable type="danger" @close="payment.deleted = !payment.deleted">
+                                        {{ startCase(payment.mode) }} - {{ moneyFormatter(payment.amount) }}
+                                    </el-tag>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-l-10 m-t-10">
+                            <h6 v-if="listingPayments.length"><small>{{ newPayments.length ? "New payments to save" : "Add payment" }}</small></h6>
+                            <div class="col-sm-12 d-flex flex-wrap align-items-center p-l-15">
+                                <div class="payment d-flex align-items-center"
+                                     v-for="(payment, index) in newPayments"
+                                     :key="'all-payment-modes-'+index"
+                                     style="padding: 0 10px;">
+                                    <small>{{ startCase(payment.mode) }}</small>
+                                    &nbsp;
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-circle big-dot m-l-3 m-r-3" style="background:grey;font-size:4px;"></i>
+                                    </div>
+                                    &nbsp;
+                                    <small>KES {{ moneyFormatter(payment.amount) }}</small>
+
+                                    <div class="m-l-20 d-flex align-items-center hov-pointer" @click="newPayments.splice(index, 1)">
+                                        <i class="ri ri-close-line fs-18"></i>
+                                    </div>
+                                </div>
+
+                                &nbsp;&nbsp;
+                                <el-button @click="isAddingPayments = !isAddingPayments" :icon="Plus" round>
+                                    Add payment
+                                </el-button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -418,8 +550,8 @@ function handleCreateListing(){
 
         <hr class="m-0">
         <div class="modal-footer m-t-10">
-            <el-button size="large" type="primary" @click="handleCreateListing">Create Listing</el-button>
-            <el-button size="large" type="info" @click="router.back()">Cancel</el-button>
+            <el-button size="large" type="primary" @click="handleSaveEdits">Save Edits</el-button>
+            <el-button size="large" type="info">Cancel</el-button>
         </div>
 
     </div>
@@ -470,9 +602,60 @@ function handleCreateListing(){
 
     </el-dialog>
 
+    <!-- Modal to edit payment -->
+    <el-dialog
+            width="45%"
+            v-model="isEditingPayment">
+
+        <div class="col-md-12 m-b-20">
+            <input-label>Payment Mode</input-label>
+            <div class="col-md-12 m-t-10 d-flex flex-wrap">
+
+                <div class="p-1 payment-mode hov-pointer" :class="{'selected': mode.name == editPayment.mode}"
+                     v-for="mode in paymentModes"
+                     :key="'edit-payment-modes-'+mode.name"
+                     @click="editPayment.mode = mode.name">
+
+                    <div class="col-md-12 d-flex align-items-center">
+                        <img :src="mode.image"  style="max-width:40px;max-height:20px;">
+                        &nbsp;&nbsp;
+                        <h6 class="m-0">{{ startCase(mode.name) }}</h6>
+                    </div>
+
+                    <div class="selected_indicator" v-show="editPayment.mode == mode.name">
+                        <i class="ri ri-check-line"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <input-label>Payment Amount</input-label>
+                <el-input placeholder="Enter payment amount" v-model="editPayment.amount"></el-input>
+
+            </div>
+            <div class="col-md-6">
+                <input-label>Transaction Reference</input-label>
+                <el-input placeholder="Enter reference code" v-model="editPayment.reference"></el-input>
+            </div>
+        </div>
+        <br>
+        <div class="col-md-12">
+            <el-button type="primary" :disabled="!hasEditedPayment" plain @click="acceptPaymentEdits">Done</el-button>
+        </div>
+
+    </el-dialog>
+
 </template>
 
 <style scoped>
+.saved-payment{
+    margin: 3px;
+    border: 1px solid #e5e4e4;
+    border-radius: 5px;
+}
 .payment-mode{
     position: relative;
     margin: 3px;

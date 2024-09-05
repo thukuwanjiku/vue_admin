@@ -132,8 +132,33 @@ function handleFilters(){
     }
     return fetchListings(true)
 }
+
+function handleEntryAction(payload){
+    switch (payload.action){
+        case 'view':
+            return viewListing(payload.listing);
+
+        case 'edit':
+            return goEditListing(payload.listing);
+
+        case 'archive':
+            break;
+
+        case 'delete':
+            break;
+    }
+}
+
 function viewListing(listing){
     return console.log("Go to view", listing);
+}
+
+function goEditListing(listing){
+    //store the entry to be edited in vuex
+    store.commit("exploreHub/STORE_EDIT_LISTING", JSON.parse(JSON.stringify(listing)));
+
+    //navigate to the edit route
+    return router.push({name: 'explore_hub.listings.edit'})
 }
 
 </script>
@@ -257,24 +282,25 @@ function viewListing(listing){
                     <td @click="viewListing(listing)">{{ listing.category_name }}</td>
                     <td @click="viewListing(listing)">
                         <div v-if="listing.is_paid" class="text-success d-flex align-items-center">
-                            <i class="bi bi-circle big-dot" style="background:green;"></i>
+                            <i class="bi bi-circle big-dot m-r-8" style="background:green;"></i>
                             <small>Confirmed</small>
                         </div>
                         <div v-if="!listing.is_paid" class="text-danger d-flex align-items-center">
-                            <i class="bi bi-circle big-dot" style="background:red;"></i>
+                            <i class="bi bi-circle big-dot m-r-8" style="background:red;"></i>
                             <small>Not Paid</small>
                         </div>
                     </td>
                     <td>
-                        <el-dropdown trigger="click">
+                        <el-dropdown trigger="click" @command="handleEntryAction">
                             <span class="el-dropdown-link">
                               Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
                             </span>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item >View</el-dropdown-item>
-                                    <el-dropdown-item >Edit</el-dropdown-item>
-                                    <el-dropdown-item >Delete</el-dropdown-item>
+                                    <el-dropdown-item :command="{action:'view',listing}">View</el-dropdown-item>
+                                    <el-dropdown-item :command="{action:'edit',listing}">Edit</el-dropdown-item>
+                                    <el-dropdown-item :command="{action:'archive',listing}">Archive</el-dropdown-item>
+                                    <el-dropdown-item :command="{action:'delete',listing}">Delete</el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>

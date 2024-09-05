@@ -133,7 +133,7 @@ function saveNewCategories(){
                 $.growl.notice({message: response.data.message});
 
                 //refresh categories list
-                fetchExploreListingCategories();
+                fetchExploreHubListingCategories();
 
                 //dismiss add modal
                 isAddingCategories.value = false;
