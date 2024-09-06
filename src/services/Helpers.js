@@ -11,9 +11,13 @@ const materialIconsNamesUrl = "https://raw.githubusercontent.com/google/material
 const socialPlatforms = [
     "instagram","facebook","whatsapp","linkedin","youtube","twitter",
 ];
+const isSmallScreen = window.innerWidth <= 768;
 
+/*
+* Export Variables
+* */
 export {
-    socialPlatforms
+    socialPlatforms, isSmallScreen
 };
 
 

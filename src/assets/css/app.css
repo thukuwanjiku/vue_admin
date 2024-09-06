@@ -14,32 +14,10 @@
     border-radius: 5px;
 }
 
-fieldset
-{
-    margin: 0;
-    min-width: 0;
-    padding: 10px;
-    position: relative;
-    background: #fff;
-    border:none !important;
-    border-radius: 12px;
-    -webkit-box-shadow: 0 3px 10px rgba(77,101,117,0.35);
-    -moz-box-shadow: 0 3px 10px rgba(77,101,117,0.35);
-    box-shadow: 0 3px 10px rgba(77,101,117,0.35);
+.ql-editor{
+    max-height: 200px !important;
 }
-legend
-{
-    font-size:14px;
-    font-weight:bold;
-    margin-bottom: 0px;
-    width: auto;
-    border-radius: 4px;
-    padding: 5px 20px;
-    border: none !important;
-    background: #e1e2e2;
-    position: relative;
-    top: -20px;
-}
+
 .text-italic{
     font-style: italic;
 }
@@ -49,13 +27,16 @@ legend
     border-radius: 50%;
 }
 
-.uploaded-image{
+.uploaded-image, .added-payment{
     position: relative;
     margin: 3px;
     border: 1px solid #e5e4e4;
     border-radius: 5px;
 }
-.uploaded-image > .remover {
+.uploaded-image.deleted{
+    border-color: red;
+}
+.uploaded-image > .remover, .added-payment > .remover {
     position: absolute;
     right: -5px;
     top: -6px;
@@ -68,4 +49,55 @@ legend
     justify-content: center;
     color: #fff;
     cursor: pointer;
+}
+.uploaded-image.deleted > .remover{
+    background: red;
+}
+.saved-payment{
+    margin: 3px;
+    border: 1px solid #e5e4e4;
+    border-radius: 5px;
+}
+.payment-mode{
+    position: relative;
+    margin: 3px;
+    border: 1px solid #e5e4e4;
+    border-radius: 5px;
+}
+.payment-mode.selected{
+    border-color: #409EFF;
+    border-width: 2px;
+}
+.payment-mode > .selected_indicator {
+    position: absolute;
+    right: -5px;
+    top: -6px;
+    background: #409EFF;
+    border-radius: 50%;
+    height: 12px;
+    width: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+}
+
+.el-dialog-width {
+    width: 50%; /* Default width */
+
+    /* Small screens */
+    @media (max-width: 600px) {
+        width: 90%;
+    }
+
+    /* Medium screens */
+    @media (min-width: 601px) and (max-width: 1024px) {
+        width: 70%;
+    }
+
+    /* Large screens */
+    @media (min-width: 1025px) {
+        width: 50%;
+    }
 }

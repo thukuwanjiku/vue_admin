@@ -8,7 +8,7 @@ import axios from "axios";
 import {useStore} from "vuex";
 import {
     fetchExploreHubListingCategories,
-    fetchMaterialIconsNames,
+    fetchMaterialIconsNames, isSmallScreen,
     randomString
 } from "@/services/Helpers";
 import api from "@/services/api";
@@ -363,6 +363,7 @@ function deleteCategories(payload){
 
     <!-- Modal to add categories -->
     <el-dialog
+            :fullscreen="isSmallScreen"
             v-model="isAddingCategories">
 
         <div class="row" v-loading="isModalLoading">
@@ -447,6 +448,7 @@ function deleteCategories(payload){
 
     <!-- Modal to edit category -->
     <el-dialog
+            :fullscreen="isSmallScreen"
             width="40%"
             v-model="isEditingCategory">
 

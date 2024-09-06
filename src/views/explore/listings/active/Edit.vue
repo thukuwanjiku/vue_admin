@@ -5,7 +5,7 @@ import {computed, onMounted, ref} from "vue";
 import {useStore} from "vuex";
 import {
     fetchExploreHubCompanies,
-    fetchExploreHubListingCategories, moneyFormatter
+    fetchExploreHubListingCategories, isSmallScreen, moneyFormatter
 } from "@/services/Helpers";
 import InputLabel from "@/components/InputLabel.vue";
 import {startCase} from "lodash-es";
@@ -44,6 +44,7 @@ const newPayment = ref({
 });
 const newPayments = ref([]);
 
+const listingMedia = ref([]);
 
 
 /* -----------------------------
@@ -65,6 +66,9 @@ const hasEditedPayment = computed(() => {
             .some(key => editPayment.value[key] !== paymentBeingEdited.value[key]);
 });
 
+const savedMedia = computed(()=> listingMedia.value.filter(entry => !entry.deleted));
+const deletedMedia = computed(()=> listingMedia.value.filter(entry => entry.deleted));
+
 /* -----------------------------
  * Hooks
  * -----------------------------
@@ -84,6 +88,14 @@ onMounted(()=> {
             .map(entry => {
                 entry.deleted = false;
                 entry.edited = false;
+                return entry;
+            });
+
+    //copy listing media
+    listingMedia.value = JSON.parse(JSON.stringify(store.state.exploreHub.editListing.media));
+    listingMedia.value = listingMedia.value
+            .map(entry => {
+                entry.deleted = false;
                 return entry;
             });
 
@@ -283,6 +295,12 @@ function handleSaveEdits(){
             payload.append(`deleted_payments[${index}]`, social.id);
         });
     }
+    //add any deleted media
+    if(deletedMedia.value.length){
+        deletedMedia.value.forEach((file, index) => {
+            payload.append(`deleted_media[${index}]`, file.id);
+        });
+    }
 
     //show loading
     isLoading.value = true;
@@ -326,6 +344,13 @@ function handleSaveEdits(){
                 <div class="col-md-10 m-b-20">
                     <input-label>Title</input-label>
                     <el-input placeholder="Enter listing title here" size="large" v-model="listing.title"></el-input>
+                </div>
+
+                <!-- Description -->
+                <div class="col-md-10 m-b-20">
+                    <input-label>Description</input-label>
+                    <div id="descriptionEditor" class="quill-editor-default">
+                    </div>
                 </div>
 
                 <!-- Placement -->
@@ -411,37 +436,16 @@ function handleSaveEdits(){
                                     :label="category.name"
                                     :value="category.id"
                             >
-                                <span class="material-symbols-outlined">{{ category.icon }}</span> &nbsp;
-                                {{ category.name }}
+                                <div class="d-flex align-items-center">
+                                    <span class="material-symbols-outlined">{{ category.icon }}</span> &nbsp;
+                                    <span>{{ category.name }}</span>
+                                </div>
                             </el-option>
                         </el-select>
                     </div>
                 </div>
-
-                <!-- Media -->
-                <div class="col-md-10 m-b-20">
-                    <div class="form-floating">
-                        <input-label>Media</input-label>
-                        <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
-                        <br>
-                        <div class="d-flex flex-wrap">
-                            <div class="p-1 uploaded-image" v-for="(file, index) in media" :key="'uploaded-media-'+index">
-                                <img :src="file.url"  style="max-width:80px;max-height:60px;">
-                                <div class="remover" @click="removeUpload(index)">
-                                    <i class="ri ri-close-line"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="col-md-6">
-                <!-- Description -->
-                <div class="col-md-10 m-b-20">
-                    <input-label>Description</input-label>
-                    <div id="descriptionEditor" class="quill-editor-default">
-                    </div>
-                </div>
                 <!-- Start Date -->
                 <div class="col-md-10 m-b-20">
                     <div class="form-floating">
@@ -456,6 +460,7 @@ function handleSaveEdits(){
                         />
                     </div>
                 </div>
+
                 <!-- End date -->
                 <div class="col-md-10 m-b-20">
                     <div class="form-floating">
@@ -470,6 +475,52 @@ function handleSaveEdits(){
                         />
                     </div>
                 </div>
+
+                <!-- Media -->
+                <div class="col-md-10 m-b-20">
+                    <div class="form-floating">
+                        <input-label>Media</input-label>
+
+                        <div class="col-md-12 p-l-10 m-t-10" v-if="savedMedia.length">
+                            <h6><small>Saved</small></h6>
+                            <div class="d-flex flex-wrap">
+                                <div class="p-1 uploaded-image" v-for="(file, index) in savedMedia" :key="'uploaded-media-'+index">
+                                    <img :src="file.path"  style="max-width:80px;max-height:60px;">
+                                    <div class="remover" @click="file.deleted = !file.deleted">
+                                        <i class="ri ri-close-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 p-l-10 m-t-10" v-if="deletedMedia.length">
+                            <h6 class="text-danger"><small>Deleted</small></h6>
+                            <div class="d-flex flex-wrap">
+                                <div class="p-1 uploaded-image deleted"
+                                     v-for="(file, index) in deletedMedia" :key="'uploaded-media-'+index">
+                                    <img :src="file.path"  style="max-width:80px;max-height:60px;">
+                                    <div class="remover" @click="file.deleted = !file.deleted">
+                                        <i class="ri ri-close-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-10 m-t-10 p-l-10">
+                            <h6><small>Upload new media</small></h6>
+                            <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
+                            <div class="d-flex flex-wrap m-t-10">
+                                <div class="p-1 uploaded-image" v-for="(file, index) in media" :key="'uploaded-media-'+index">
+                                    <img :src="file.url"  style="max-width:80px;max-height:60px;">
+                                    <div class="remover" @click="removeUpload(index)">
+                                        <i class="ri ri-close-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Payments -->
                 <div class="col-md-12 m-b-20">
                     <div class="form-floating">
@@ -520,20 +571,23 @@ function handleSaveEdits(){
                         <div class="p-l-10 m-t-10">
                             <h6 v-if="listingPayments.length"><small>{{ newPayments.length ? "New payments to save" : "Add payment" }}</small></h6>
                             <div class="col-sm-12 d-flex flex-wrap align-items-center p-l-15">
-                                <div class="payment d-flex align-items-center"
+                                <div class="added-payment d-flex align-items-center"
                                      v-for="(payment, index) in newPayments"
                                      :key="'all-payment-modes-'+index"
                                      style="padding: 0 10px;">
-                                    <small>{{ startCase(payment.mode) }}</small>
-                                    &nbsp;
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-circle big-dot m-l-3 m-r-3" style="background:grey;font-size:4px;"></i>
+                                    <div class="p-1">
+                                        <small>
+                                            <strong>Amount</strong>: {{ moneyFormatter(payment.amount) }}
+                                            <br>
+                                            <strong>Mode</strong>: {{ startCase(payment.mode) }}
+                                            <template v-if="payment.reference">
+                                                <br>
+                                                <strong>Reference</strong>: {{ payment.reference }}
+                                            </template>
+                                        </small>
                                     </div>
-                                    &nbsp;
-                                    <small>KES {{ moneyFormatter(payment.amount) }}</small>
-
-                                    <div class="m-l-20 d-flex align-items-center hov-pointer" @click="newPayments.splice(index, 1)">
-                                        <i class="ri ri-close-line fs-18"></i>
+                                    <div class="remover" @click="newPayments.splice(index, 1)">
+                                        <i class="ri ri-close-line"></i>
                                     </div>
                                 </div>
 
@@ -551,7 +605,7 @@ function handleSaveEdits(){
         <hr class="m-0">
         <div class="modal-footer m-t-10">
             <el-button size="large" type="primary" @click="handleSaveEdits">Save Edits</el-button>
-            <el-button size="large" type="info">Cancel</el-button>
+            <el-button size="large" type="info" @click="router.back()">Cancel</el-button>
         </div>
 
     </div>
@@ -559,6 +613,7 @@ function handleSaveEdits(){
     <!-- Modal to add payments -->
     <el-dialog
             width="45%"
+            :fullscreen="isSmallScreen"
             v-model="isAddingPayments">
 
         <div class="col-md-12 m-b-20">
@@ -605,6 +660,7 @@ function handleSaveEdits(){
     <!-- Modal to edit payment -->
     <el-dialog
             width="45%"
+            :fullscreen="isSmallScreen"
             v-model="isEditingPayment">
 
         <div class="col-md-12 m-b-20">
@@ -655,35 +711,5 @@ function handleSaveEdits(){
     margin: 3px;
     border: 1px solid #e5e4e4;
     border-radius: 5px;
-}
-.payment-mode{
-    position: relative;
-    margin: 3px;
-    border: 1px solid #e5e4e4;
-    border-radius: 5px;
-}
-.payment-mode.selected{
-    border-color: #409EFF;
-    border-width: 2px;
-}
-.payment-mode > .selected_indicator {
-    position: absolute;
-    right: -5px;
-    top: -6px;
-    background: #409EFF;
-    border-radius: 50%;
-    height: 12px;
-    width: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    cursor: pointer;
-}
-.payment{
-    position: relative;
-    margin: 3px;
-    border-radius: 20px;
-    border: 2px solid #dbdbdb;
 }
 </style>

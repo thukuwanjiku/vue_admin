@@ -123,6 +123,16 @@ export default [
                                     title: `Explore Hub: Edit Listing ${pageTitleSuffix}`
                                 },
                             },
+                            {
+                                path: ":listingTitleSlug",
+                                name: 'explore_hub.listings.view',
+                                components: {
+                                    explore_listings_active: ()=> import('@/views/explore/listings/active/View.vue')
+                                },
+                                meta: {
+                                    title: `Explore Hub: View Listing ${pageTitleSuffix}`
+                                },
+                            },
                         ]
                     }
                 ]

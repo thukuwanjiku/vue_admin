@@ -11,7 +11,7 @@ import 'vue-tel-input/vue-tel-input.css';
 import CloseButton from "@/components/CloseButton.vue";
 import {AwesomeSocialButton} from "awesome-social-button";
 import {startCase} from "lodash-es";
-import {socialPlatforms} from "@/services/Helpers";
+import {isSmallScreen, socialPlatforms} from "@/services/Helpers";
 import {ElMessage} from "element-plus";
 import InputLabel from "@/components/InputLabel.vue";
 
@@ -347,6 +347,7 @@ function submit(){
 
     <!-- Modal to add company socials -->
     <el-dialog
+            :fullscreen="isSmallScreen"
             v-model="isAddingSocialHandles">
         <div class="row" v-if="newSocials.length">
             <h6 class="fw-bold">

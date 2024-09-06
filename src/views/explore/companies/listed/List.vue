@@ -8,7 +8,7 @@ import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
 import {AwesomeSocialButton} from "awesome-social-button";
 import {Plus} from "@element-plus/icons-vue";
-import {fetchExploreHubCompanies} from "@/services/Helpers";
+import {fetchExploreHubCompanies, isSmallScreen} from "@/services/Helpers";
 
 /* -----------------------------
  * Variables
@@ -166,7 +166,7 @@ function deleteCompany(payload){
             v-model="isViewingCompany"
             width="60%"
             align-center
-    >
+            :fullscreen="isSmallScreen">
         <div class="row">
             <!--     Logo, name & tagline       -->
             <div class="col-sm-3">

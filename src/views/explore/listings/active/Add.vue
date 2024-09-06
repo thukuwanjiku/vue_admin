@@ -5,7 +5,7 @@ import {computed, onMounted, ref} from "vue";
 import {useStore} from "vuex";
 import {
     fetchExploreHubCompanies,
-    fetchExploreHubListingCategories, moneyFormatter
+    fetchExploreHubListingCategories, isSmallScreen, moneyFormatter
 } from "@/services/Helpers";
 import InputLabel from "@/components/InputLabel.vue";
 import {startCase} from "lodash-es";
@@ -121,10 +121,12 @@ function acceptNewPayment(){
     //validate that a valid payment amount has been entered
     if(isNaN(newPayment.value.amount))
         return ElMessage.warning("Please enter a valid amount");
+
     //check that reference code is not repeated
     if(newPayment.value.reference != null && newPayment.value.reference.length){
         if(payments.value.find(entry =>
-                entry.reference.toString().toLowerCase()
+                entry.reference != null
+                && entry.reference.toString().toLowerCase()
                 == newPayment.value.reference.toString().toLowerCase()))
             return ElMessage.warning("Reference code has already been used");
     }
@@ -241,6 +243,13 @@ function handleCreateListing(){
                     <el-input placeholder="Enter listing title here" size="large" v-model="listing.title"></el-input>
                 </div>
 
+                <!-- Description -->
+                <div class="col-md-10 m-b-20">
+                    <input-label>Description</input-label>
+                    <div id="descriptionEditor" class="quill-editor-default">
+                    </div>
+                </div>
+
                 <!-- Placement -->
                 <div class="col-md-10 m-b-20">
                     <div class="form-floating">
@@ -324,37 +333,17 @@ function handleCreateListing(){
                                     :label="category.name"
                                     :value="category.id"
                             >
-                                <span class="material-symbols-outlined">{{ category.icon }}</span> &nbsp;
-                                {{ category.name }}
+                                <div class="d-flex align-items-center">
+                                    <span class="material-symbols-outlined">{{ category.icon }}</span> &nbsp;
+                                    <span>{{ category.name }}</span>
+                                </div>
                             </el-option>
                         </el-select>
                     </div>
                 </div>
 
-                <!-- Media -->
-                <div class="col-md-10 m-b-20">
-                    <div class="form-floating">
-                        <input-label>Media</input-label>
-                        <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
-                        <br>
-                        <div class="d-flex flex-wrap">
-                            <div class="p-1 uploaded-image" v-for="(file, index) in media" :key="'uploaded-media-'+index">
-                                <img :src="file.url"  style="max-width:80px;max-height:60px;">
-                                <div class="remover" @click="removeUpload(index)">
-                                    <i class="ri ri-close-line"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="col-md-6">
-                <!-- Description -->
-                <div class="col-md-10 m-b-20">
-                    <input-label>Description</input-label>
-                    <div id="descriptionEditor" class="quill-editor-default">
-                    </div>
-                </div>
                 <!-- Start Date -->
                 <div class="col-md-10 m-b-20">
                     <div class="form-floating">
@@ -383,26 +372,45 @@ function handleCreateListing(){
                         />
                     </div>
                 </div>
+
+                <!-- Media -->
+                <div class="col-md-10 m-b-20">
+                    <div class="form-floating">
+                        <input-label>Media</input-label>
+                        <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
+                        <br>
+                        <div class="d-flex flex-wrap">
+                            <div class="p-1 uploaded-image" v-for="(file, index) in media" :key="'uploaded-media-'+index">
+                                <img :src="file.url"  style="max-width:80px;max-height:60px;">
+                                <div class="remover" @click="removeUpload(index)">
+                                    <i class="ri ri-close-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Payments -->
                 <div class="col-md-10 m-b-20">
                     <div class="form-floating">
                         <input-label>Payments</input-label>
 
                         <div class="col-sm-12 d-flex flex-wrap align-items-center">
-                            <div class="payment d-flex align-items-center"
-                                 v-for="(payment, index) in payments"
-                                 :key="'all-payment-modes-'+index"
-                                 style="padding: 0 10px;">
-                                <small>{{ startCase(payment.mode) }}</small>
-                                &nbsp;
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-circle big-dot m-l-3 m-r-3" style="background:grey;font-size:4px;"></i>
+                            <div class="p-1 added-payment"
+                                 v-for="(payment, index) in payments" :key="'added-payment-'+index">
+                                <div class="p-1">
+                                    <small>
+                                        <strong>Amount</strong>: {{ moneyFormatter(payment.amount) }}
+                                        <br>
+                                        <strong>Mode</strong>: {{ startCase(payment.mode) }}
+                                        <template v-if="payment.reference">
+                                            <br>
+                                            <strong>Reference</strong>: {{ payment.reference }}
+                                        </template>
+                                    </small>
                                 </div>
-                                &nbsp;
-                                <small>KES {{ moneyFormatter(payment.amount) }}</small>
-
-                                <div class="m-l-20 d-flex align-items-center hov-pointer" @click="payments.splice(index, 1)">
-                                    <i class="ri ri-close-line fs-18"></i>
+                                <div class="remover" @click="payments.splice(index, 1)">
+                                    <i class="ri ri-close-line"></i>
                                 </div>
                             </div>
 
@@ -426,7 +434,9 @@ function handleCreateListing(){
 
     <!-- Modal to add payments -->
     <el-dialog
+            custom-class="el-dialog-width"
             width="45%"
+            :fullscreen="isSmallScreen"
             v-model="isAddingPayments">
 
         <div class="col-md-12 m-b-20">
@@ -473,34 +483,5 @@ function handleCreateListing(){
 </template>
 
 <style scoped>
-.payment-mode{
-    position: relative;
-    margin: 3px;
-    border: 1px solid #e5e4e4;
-    border-radius: 5px;
-}
-.payment-mode.selected{
-    border-color: #409EFF;
-    border-width: 2px;
-}
-.payment-mode > .selected_indicator {
-    position: absolute;
-    right: -5px;
-    top: -6px;
-    background: #409EFF;
-    border-radius: 50%;
-    height: 12px;
-    width: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    cursor: pointer;
-}
-.payment{
-    position: relative;
-    margin: 3px;
-    border-radius: 20px;
-    border: 2px solid #dbdbdb;
-}
+
 </style>
