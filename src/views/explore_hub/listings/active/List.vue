@@ -257,7 +257,7 @@ function goEditListing(listing){
                         {{ listing.listing_id }}
                     </td>
                     <td @click="viewListing(listing)">{{ listing.title }}</td>
-                    <td @click="viewListing(listing)">{{ listing.company_name }}</td>
+                    <td @click="viewListing(listing)">{{ listing.company.name }}</td>
                     <td @click="viewListing(listing)">
                         <el-tag
                                 v-if="listing.placement == 'for_you'"
@@ -300,9 +300,6 @@ function goEditListing(listing){
                     </td>
                     <td>
                         <el-dropdown trigger="click" @command="handleEntryAction">
-<!--                            <span class="el-dropdown-link">
-                              Actions
-                            </span>-->
                             <el-button plain type="primary" size="small">
                                 Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
                             </el-button>

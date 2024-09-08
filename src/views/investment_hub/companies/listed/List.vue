@@ -7,7 +7,7 @@ import {useStore} from "vuex";
 import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
 import {AwesomeSocialButton} from "awesome-social-button";
-import {Plus} from "@element-plus/icons-vue";
+import {ArrowDown, Plus} from "@element-plus/icons-vue";
 import {fetchInvestmentHubCompanies, isSmallScreen} from "@/services/Helpers";
 
 /* -----------------------------
@@ -49,6 +49,22 @@ onMounted(()=>{
  * Methods
  * -----------------------------
  * */
+function handleEntryAction(payload){
+    switch (payload.action){
+        case 'view':
+            return viewCompany(payload.company);
+
+        case 'edit':
+            return editCompany(payload.company);
+
+        case 'archive':
+            break;
+
+        case 'delete':
+            break;
+    }
+}
+
 function viewCompany(company){
     //set the company being viewed
     activeCompany.value = JSON.parse(JSON.stringify(company));
@@ -147,11 +163,19 @@ function deleteCompany(payload){
                     <td @click="viewCompany(company)">{{ company.description }}</td>
                     <td @click="viewCompany(company)">{{ company.contact_name }}</td>
                     <td>
-                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                            <button @click="viewCompany(company)" type="button" class="btn btn-outline-primary"><i class="bi bi-eye-fill"></i></button>
-                            <button @click="editCompany(company)" type="button" class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></button>
-                            <button @click="confirmDelete(company)" type="button" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
-                        </div>
+                        <el-dropdown trigger="click" @command="handleEntryAction">
+                            <el-button plain type="primary" size="small">
+                                Actions<el-icon class="el-icon--right"><ArrowDown /></el-icon>
+                            </el-button>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item :command="{action:'view',company}">View</el-dropdown-item>
+                                    <el-dropdown-item :command="{action:'edit',company}">Edit</el-dropdown-item>
+                                    <el-dropdown-item :command="{action:'archive',company}">Archive</el-dropdown-item>
+                                    <!--                                    <el-dropdown-item :command="{action:'delete',company}">Delete</el-dropdown-item>-->
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
                     </td>
                 </tr>
                 <tr v-else><td colspan="5" class="text-center p-3">No data</td></tr>

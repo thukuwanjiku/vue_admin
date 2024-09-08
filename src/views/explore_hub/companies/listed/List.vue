@@ -7,7 +7,7 @@ import {useStore} from "vuex";
 import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
 import {AwesomeSocialButton} from "awesome-social-button";
-import {Plus} from "@element-plus/icons-vue";
+import {ArrowDown, Plus} from "@element-plus/icons-vue";
 import {fetchExploreHubCompanies, isSmallScreen} from "@/services/Helpers";
 
 /* -----------------------------
@@ -49,6 +49,22 @@ onMounted(()=>{
  * Methods
  * -----------------------------
  * */
+function handleEntryAction(payload){
+    switch (payload.action){
+        case 'view':
+            return viewCompany(payload.company);
+
+        case 'edit':
+            return editCompany(payload.company);
+
+        case 'archive':
+            break;
+
+        case 'delete':
+            break;
+    }
+}
+
 function viewCompany(company){
     //set the company being viewed
     activeCompany.value = JSON.parse(JSON.stringify(company));
@@ -64,11 +80,11 @@ function editCompany(company){
     router.push({name: 'explore_hub.companies.edit'});
 }
 
-function confirmDelete(company){
-    ElMessageBox.prompt('Sure you want to delete this company?\nPlease give a reason why you want to delete', 'Confirm Delete', {
-        confirmButtonText: 'Delete',
+function confirmArchive(company){
+    ElMessageBox.prompt('Sure you want to archive this company?\nPlease give a reason why you want to archive', 'Confirm Archive', {
+        confirmButtonText: 'Archive',
         cancelButtonText: 'Cancel',
-        inputPlaceholder: "Type here why you want to delete",
+        inputPlaceholder: "Type here why you want to archive",
         inputValidator: (value)=> {
             if(!value || !value.length){
                 return "Please give a reason";
@@ -84,18 +100,18 @@ function confirmDelete(company){
                 };
 
                 //send payload to method handling the
-                deleteCompany(payload);
+                archiveCompany(payload);
             })
             .catch(() => {})
 }
-function deleteCompany(payload){
+function archiveCompany(payload){
     //show loader
     isLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.DELETE_EXPLORE_LISTED_COMPANY, payload)
+    api.post(apiRoutes.ARCHIVE_EXPLORE_LISTED_COMPANY, payload)
             .then(response => {
-                //delete the company entry from list of companies
+                //remove the company entry from list of companies
                 //create copy of companies list
                 let companiesCopy = JSON.parse(JSON.stringify(companies.value));
                 //find the index of the entry that's been deleted
@@ -106,6 +122,8 @@ function deleteCompany(payload){
                     //write the updated copy to vuex companies list
                     companies.value = companiesCopy;
                 }
+
+                //TODO Referesh archived listings
 
                 //show success message
                 $.growl.notice({message: response.data.message});
@@ -147,11 +165,19 @@ function deleteCompany(payload){
                     <td @click="viewCompany(company)">{{ company.description }}</td>
                     <td @click="viewCompany(company)">{{ company.contact_name }}</td>
                     <td>
-                        <div class="btn-group" role="group" aria-label="Basic outlined example">
-                            <button @click="viewCompany(company)" type="button" class="btn btn-outline-primary"><i class="bi bi-eye-fill"></i></button>
-                            <button @click="editCompany(company)" type="button" class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></button>
-                            <button @click="confirmDelete(company)" type="button" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
-                        </div>
+                        <el-dropdown trigger="click" @command="handleEntryAction">
+                            <el-button plain type="primary" size="small">
+                                Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                            </el-button>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item :command="{action:'view',company}">View</el-dropdown-item>
+                                    <el-dropdown-item :command="{action:'edit',company}">Edit</el-dropdown-item>
+                                    <el-dropdown-item :command="{action:'archive',company}">Archive</el-dropdown-item>
+<!--                                    <el-dropdown-item :command="{action:'delete',company}">Delete</el-dropdown-item>-->
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
                     </td>
                 </tr>
                 <tr v-else><td colspan="5" class="text-center p-3">No data</td></tr>

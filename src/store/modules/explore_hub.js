@@ -11,7 +11,6 @@ const state = {
     activeListingsFilters: {},
     editListing: null,
     viewedListing: null,
-
 };
 
 const mutations = {
