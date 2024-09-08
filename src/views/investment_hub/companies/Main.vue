@@ -14,17 +14,17 @@ const router = useRouter();
 * ------------------------------
 * */
 onMounted(()=>{
-    router.push({name: 'explore_hub.companies.listed'});
+    router.push({name: 'investment_hub.companies.listed'});
 });
 
 function tabChanged(tab){
     switch (tab){
         case 'listed':
-            router.push({name: 'explore_hub.companies.listed'})
+            router.push({name: 'investment_hub.companies.listed'})
         case 'reviews':
-            //router.push({name: 'explore.companies.listed'})
+            //router.push({name: 'explore_hub.companies.listed'})
         case 'deleted':
-            //router.push({name: 'explore.companies.listed'})
+            //router.push({name: 'explore_hub.companies.listed'})
     }
 }
 
@@ -37,7 +37,7 @@ function tabChanged(tab){
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><router-link :to="{name:'dashboard'}">Home</router-link></li>
-                <li class="breadcrumb-item">Explore</li>
+                <li class="breadcrumb-item">Investment Hub</li>
                 <li class="breadcrumb-item active">Companies</li>
             </ol>
         </nav>
@@ -53,31 +53,31 @@ function tabChanged(tab){
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active"
                             @click="tabChanged('listed')"
-                            data-bs-toggle="tab" data-bs-target="#explore_companies_listed"
+                            data-bs-toggle="tab" data-bs-target="#investment_hub_companies_listed"
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Listed</button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="contact-tab"
                             @click="tabChanged('deleted')"
-                            data-bs-toggle="tab" data-bs-target="#explore_companies_deleted"
+                            data-bs-toggle="tab" data-bs-target="#investment_hub_companies_deleted"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="profile-tab"
                             @click="tabChanged('reviews')"
-                            data-bs-toggle="tab" data-bs-target="#explore_companies_reviews"
+                            data-bs-toggle="tab" data-bs-target="#investment_hub_companies_reviews"
                             type="button" role="tab"
                             aria-controls="profile" aria-selected="false" tabindex="-1">Company Reviews</button>
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
-                <div class="tab-pane fade show active p-1" id="explore_companies_listed" role="tabpanel" aria-labelledby="home-tab">
-                    <router-view name="explore_companies_listed"></router-view>
+                <div class="tab-pane fade show active p-1" id="investment_hub_companies_listed" role="tabpanel" aria-labelledby="home-tab">
+                    <router-view name="investment_hub_companies_listed"></router-view>
                 </div>
-                <div class="tab-pane fade" id="explore_companies_reviews" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade" id="investment_hub_companies_reviews" role="tabpanel" aria-labelledby="profile-tab">
                     Browse companies reviews here
                 </div>
-                <div class="tab-pane fade" id="explore_companies_deleted" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="tab-pane fade" id="investment_hub_companies_deleted" role="tabpanel" aria-labelledby="contact-tab">
                     Browse archived companies
                 </div>
             </div>

@@ -239,7 +239,7 @@ function goEditListing(listing){
                 </thead>
                 <tbody>
                 <tr v-if="listings.length" v-for="(listing, index) in listings"
-                    :key="'explore-active-listings-'+index"
+                    :key="'explore_hub-active-listings-'+index"
                     :class="{'table-info': listing.selected}"
                     style="cursor: pointer;">
                     <td class="text-center">

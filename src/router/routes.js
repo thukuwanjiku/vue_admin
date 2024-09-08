@@ -36,7 +36,7 @@ export default [
                             {
                                 path: "",
                                 name: 'explore_hub.companies',
-                                component: ()=> import('@/views/explore/companies/Main.vue'),
+                                component: ()=> import('@/views/explore_hub/companies/Main.vue'),
                                 meta: {
                                     title: `Explore Hub Companies ${pageTitleSuffix}`
                                 },
@@ -45,7 +45,7 @@ export default [
                                         path: "",
                                         name: 'explore_hub.companies.listed',
                                         components: {
-                                            explore_companies_listed: ()=> import('@/views/explore/companies/listed/List.vue')
+                                            explore_companies_listed: ()=> import('@/views/explore_hub/companies/listed/List.vue')
                                         },
                                         meta: {
                                             title: `Explore Hub: Listed Companies ${pageTitleSuffix}`
@@ -55,7 +55,7 @@ export default [
                                         path: "add",
                                         name: 'explore_hub.companies.add',
                                         components: {
-                                            explore_companies_listed: ()=> import('@/views/explore/companies/listed/Add.vue')
+                                            explore_companies_listed: ()=> import('@/views/explore_hub/companies/listed/Add.vue')
                                         },
                                         meta: {
                                             title: `Explore Hub: Add Company ${pageTitleSuffix}`
@@ -65,7 +65,7 @@ export default [
                                         path: "edit",
                                         name: 'explore_hub.companies.edit',
                                         components: {
-                                            explore_companies_listed: ()=> import('@/views/explore/companies/listed/Edit.vue')
+                                            explore_companies_listed: ()=> import('@/views/explore_hub/companies/listed/Edit.vue')
                                         },
                                         meta: {
                                             title: `Explore Hub: Edit Company ${pageTitleSuffix}`
@@ -81,7 +81,7 @@ export default [
                             {
                                 path: "",
                                 name: 'explore_hub.categories',
-                                component: ()=> import('@/views/explore/categories/Main.vue'),
+                                component: ()=> import('@/views/explore_hub/categories/Main.vue'),
                                 meta: {
                                     title: `Explore Hub Listing Categories ${pageTitleSuffix}`
                                 },
@@ -91,7 +91,7 @@ export default [
                     {
                         path: 'listings',
                         name: 'explore_hub.listings',
-                        component: ()=> import('@/views/explore/listings/Main.vue'),
+                        component: ()=> import('@/views/explore_hub/listings/Main.vue'),
                         meta: {
                             title: `Explore Hub: Listings ${pageTitleSuffix}`
                         },
@@ -100,14 +100,14 @@ export default [
                                 path: "",
                                 name: 'explore_hub.listings.active',
                                 components: {
-                                    explore_listings_active: ()=> import('@/views/explore/listings/active/List.vue')
+                                    explore_listings_active: ()=> import('@/views/explore_hub/listings/active/List.vue')
                                 },
                             },
                             {
                                 path: "create",
                                 name: 'explore_hub.listings.create',
                                 components: {
-                                    explore_listings_active: ()=> import('@/views/explore/listings/active/Add.vue')
+                                    explore_listings_active: ()=> import('@/views/explore_hub/listings/active/Add.vue')
                                 },
                                 meta: {
                                     title: `Explore Hub: Create Listing ${pageTitleSuffix}`
@@ -117,7 +117,7 @@ export default [
                                 path: "edit",
                                 name: 'explore_hub.listings.edit',
                                 components: {
-                                    explore_listings_active: ()=> import('@/views/explore/listings/active/Edit.vue')
+                                    explore_listings_active: ()=> import('@/views/explore_hub/listings/active/Edit.vue')
                                 },
                                 meta: {
                                     title: `Explore Hub: Edit Listing ${pageTitleSuffix}`
@@ -127,7 +127,7 @@ export default [
                                 path: ":listingTitleSlug",
                                 name: 'explore_hub.listings.view',
                                 components: {
-                                    explore_listings_active: ()=> import('@/views/explore/listings/active/View.vue')
+                                    explore_listings_active: ()=> import('@/views/explore_hub/listings/active/View.vue')
                                 },
                                 meta: {
                                     title: `Explore Hub: View Listing ${pageTitleSuffix}`
@@ -135,6 +135,58 @@ export default [
                             },
                         ]
                     }
+                ]
+            },
+
+            //Investment Hub Routes
+            {
+                path: 'investment-hub',
+                children: [
+                    {
+                        path: 'companies',
+                        children: [
+                            {
+                                path: "",
+                                name: 'investment_hub.companies',
+                                component: ()=> import('@/views/investment_hub/companies/Main.vue'),
+                                meta: {
+                                    title: `Investment Hub Companies ${pageTitleSuffix}`
+                                },
+                                children: [
+                                    {
+                                        path: "",
+                                        name: 'investment_hub.companies.listed',
+                                        components: {
+                                            investment_hub_companies_listed: ()=> import('@/views/investment_hub/companies/listed/List.vue')
+                                        },
+                                        meta: {
+                                            title: `Investment Hub: Listed Companies ${pageTitleSuffix}`
+                                        }
+                                    },
+                                    {
+                                        path: "add",
+                                        name: 'investment_hub.companies.add',
+                                        components: {
+                                            investment_hub_companies_listed: ()=> import('@/views/investment_hub/companies/listed/Add.vue')
+                                        },
+                                        meta: {
+                                            title: `Investment Hub: Add Company ${pageTitleSuffix}`
+                                        }
+                                    },
+                                    {
+                                        path: "edit",
+                                        name: 'investment_hub.companies.edit',
+                                        components: {
+                                            investment_hub_companies_listed: ()=> import('@/views/investment_hub/companies/listed/Edit.vue')
+                                        },
+                                        meta: {
+                                            title: `Investment Hub: Edit Company ${pageTitleSuffix}`
+                                        }
+                                    },
+                                ]
+                            },
+                        ]
+                    },
                 ]
             }
         ]

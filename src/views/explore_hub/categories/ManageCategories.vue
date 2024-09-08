@@ -342,7 +342,7 @@ function deleteCategories(payload){
                 <el-button class="m-l-10" v-if="selectedCategories.length" @click="confirmDeleteSelections" type="danger" plain>Delete selections</el-button>
             </div>
 
-            <div v-for="category in categories" :key="'explore-categories-list-'+category.id"
+            <div v-for="category in categories" :key="'explore_hub-categories-list-'+category.id"
                  class="col-md-2 col-sm-4 col-xs-6 p-1 hov-pointer" @click="handleCategoryClick(category)">
                 <el-card shadow="hover">
                     <div class="text-center">

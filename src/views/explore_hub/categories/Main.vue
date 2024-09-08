@@ -2,7 +2,7 @@
 
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
-import ManageCategories from "@/views/explore/categories/ManageCategories.vue";
+import ManageCategories from "@/views/explore_hub/categories/ManageCategories.vue";
 
 /* ------------------------------
 * Variables & Properties
@@ -15,17 +15,17 @@ const router = useRouter();
 * ------------------------------
 * */
 onMounted(()=>{
-    //router.push({name: 'explore.companies.listed'});
+    //router.push({name: 'explore_hub.companies.listed'});
 });
 
 function tabChanged(tab){
     switch (tab){
         case 'active':
-            //router.push({name: 'explore.companies.listed'})
+            //router.push({name: 'explore_hub.companies.listed'})
         case 'reviews':
-            //router.push({name: 'explore.companies.listed'})
+            //router.push({name: 'explore_hub.companies.listed'})
         case 'deleted':
-            //router.push({name: 'explore.companies.listed'})
+            //router.push({name: 'explore_hub.companies.listed'})
     }
 }
 
@@ -38,7 +38,7 @@ function tabChanged(tab){
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><router-link :to="{name:'dashboard'}">Home</router-link></li>
-                <li class="breadcrumb-item">Explore</li>
+                <li class="breadcrumb-item">Explore Hub</li>
                 <li class="breadcrumb-item active">Listing Categories</li>
             </ol>
         </nav>

@@ -8,7 +8,7 @@ import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
 import {AwesomeSocialButton} from "awesome-social-button";
 import {Plus} from "@element-plus/icons-vue";
-import {fetchExploreHubCompanies, isSmallScreen} from "@/services/Helpers";
+import {fetchInvestmentHubCompanies, isSmallScreen} from "@/services/Helpers";
 
 /* -----------------------------
  * Variables
@@ -25,12 +25,12 @@ const activeCompany = ref(null);
  * -----------------------------
  * */
 let companies = computed({
-    get: ()=> store.state.exploreHub.companies,
-    set: (data) => store.commit('exploreHub/STORE_EXPLORE_LISTED_COMPANIES', data)
+    get: ()=> store.state.investmentHub.companies,
+    set: (data) => store.commit('investmentHub/STORE_LISTED_COMPANIES', data)
 });
 let isLoading = computed({
-    get: ()=> store.state.exploreHub.isFetchingCompanies,
-    set: (value) => store.commit('exploreHub/SET_IS_FETCHING_COMPANIES', value)
+    get: ()=> store.state.investmentHub.isFetchingCompanies,
+    set: (value) => store.commit('investmentHub/SET_IS_FETCHING_COMPANIES', value)
 });
 
 
@@ -41,7 +41,7 @@ let isLoading = computed({
  * */
 onMounted(()=>{
     //fetch companies
-    if(!companies.value.length) fetchExploreHubCompanies();
+    if(!companies.value.length) fetchInvestmentHubCompanies();
 });
 
 
@@ -58,10 +58,10 @@ function viewCompany(company){
 
 function editCompany(company){
     //store the company to be edited in vuex store
-    store.commit('exploreHub/SET_EDIT_COMPANY', JSON.parse(JSON.stringify(company)));
+    store.commit('investmentHub/SET_EDIT_COMPANY', JSON.parse(JSON.stringify(company)));
 
     //navigate to edit route
-    router.push({name: 'explore_hub.companies.edit'});
+    router.push({name: 'investment_hub.companies.edit'});
 }
 
 function confirmDelete(company){
@@ -93,7 +93,7 @@ function deleteCompany(payload){
     isLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.DELETE_EXPLORE_LISTED_COMPANY, payload)
+    api.post(apiRoutes.DELETE_INVESTMENT_HUB_LISTED_COMPANY, payload)
             .then(response => {
                 //delete the company entry from list of companies
                 //create copy of companies list
@@ -122,7 +122,7 @@ function deleteCompany(payload){
 
     <div class="row p-2" v-loading="isLoading">
         <div class="col-sm-12 d-flex m-b-10">
-            <el-button @click="router.push({name: 'explore_hub.companies.add'})" type="primary" :icon="Plus" plain>Add Company</el-button>
+            <el-button @click="router.push({name: 'investment_hub.companies.add'})" type="primary" :icon="Plus" plain>Add Company</el-button>
         </div>
         <br>
 
@@ -139,7 +139,7 @@ function deleteCompany(payload){
                 </thead>
                 <tbody>
                 <tr v-if="companies.length" v-for="(company, index) in companies"
-                    :key="'explore-companies-'+index" style="cursor: pointer;">
+                    :key="'investment_hub-companies-'+index" style="cursor: pointer;">
                     <td @click="viewCompany(company)">
                         <img class="table-img" :src="company.logo" :alt="company.name+'\'s logo'">
                     </td>
@@ -224,7 +224,6 @@ function deleteCompany(payload){
 <style scoped>
 .table-img{
     max-height:30px;
-    border-radius: 50%;
 }
 .view_company_logo{
     max-height: 130px;

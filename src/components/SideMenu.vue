@@ -47,12 +47,9 @@
                 </a>
                 <ul id="investment-hub-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                     <li>
-                        <!--<router-link :to="{name:'explore.companies'}">
+                        <router-link :to="{name:'investment_hub.companies'}">
                             <i class="bi bi-circle"></i><span>Companies</span>
-                        </router-link>-->
-                        <a href="#">
-                            <i class="bi bi-circle"></i><span>Companies</span>
-                        </a>
+                        </router-link>
                     </li>
                     <li>
                         <a href="#">

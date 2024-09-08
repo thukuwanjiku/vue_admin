@@ -32,6 +32,13 @@ const apiRoutes = {
     EXPLORE_HUB_FETCH_LISTINGS: `${apiBaseUrl}/explore-hub/get-listings`,
     EXPLORE_HUB_ADD_LISTING: `${apiBaseUrl}/explore-hub/add-listing`,
     EXPLORE_HUB_EDIT_LISTING: `${apiBaseUrl}/explore-hub/edit-listing`,
+
+
+    //Investment hub
+    GET_INVESTMENT_HUB_LISTED_COMPANIES: `${apiBaseUrl}/investment-hub/get-listed-companies`,
+    ADD_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/add-listed-company`,
+    EDIT_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/edit-listed-company`,
+    DELETE_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/delete-listed-company`,
 };
 
 export { baseUrl, apiBaseUrl, apiRoutes };

@@ -52,6 +52,20 @@ export function fetchExploreHubListingCategories(){
             })
             .catch(error => store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', false));
 }
+export function fetchInvestmentHubCompanies(){
+    //show loader
+    store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", true);
+
+    //make api call
+    api.get(apiRoutes.GET_INVESTMENT_HUB_LISTED_COMPANIES)
+            .then(response => {
+                store.commit("investmentHub/STORE_LISTED_COMPANIES", response.data.data);
+
+                //dismiss loader
+                store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", false);
+            })
+            .catch(error => store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", false));
+}
 
 
 export function fetchMaterialIconsNames(){

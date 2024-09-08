@@ -56,12 +56,12 @@ const availableSocials = computed(()=>{
 * */
 onMounted(()=>{
     //if there's no company to edit, go back to list of companies
-    if(store.state.exploreHub.editCompany == null) {
-        return router.push({name: 'explore_hub.companies.listed'});
+    if(store.state.investmentHub.editCompany == null) {
+        return router.push({name: 'investment_hub.companies.listed'});
     }
 
     //copy details of company being edited
-    company.value = JSON.parse(JSON.stringify(store.state.exploreHub.editCompany));
+    company.value = JSON.parse(JSON.stringify(store.state.investmentHub.editCompany));
     //copy the list of saved socials to variable which will be used to manage them
     companySocials.value = JSON.parse(JSON.stringify(company.value.socials));
     //add deleted property to saved socials to track deletions
@@ -138,9 +138,9 @@ function submit(){
 
     //prepare request payload
     let payload = new FormData();
-    //add all company details to the form data
+    //add to the form data company details which have changed
     Object.keys(company.value)
-            .filter(value => !['socials'].includes(value))
+            .filter(value => !['socials', 'logo'].includes(value))
             .forEach(key => {
                 let value = company.value[key];
                 if(key == 'contact_phone') value = value.toString().replaceAll(" ", "");
@@ -168,13 +168,13 @@ function submit(){
     isLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.EDIT_EXPLORE_LISTED_COMPANY, payload)
+    api.post(apiRoutes.EDIT_INVESTMENT_HUB_LISTED_COMPANY, payload)
             .then(response => {
                 //show success response
                 $.growl.notice({message: response.data.message});
 
                 //get a copy of current companies list
-                let companies = JSON.parse(JSON.stringify(store.state.exploreHub.companies));
+                let companies = JSON.parse(JSON.stringify(store.state.investmentHub.companies));
 
                 //replace old company with updated company details
                 let editIndex = companies.findIndex(entry => entry.id == company.value["id"]);
@@ -183,7 +183,7 @@ function submit(){
                 }
 
                 //overwrite the vuex companies list with the updated copy
-                store.commit('exploreHub/STORE_EXPLORE_LISTED_COMPANIES', companies)
+                store.commit('investmentHub/STORE_LISTED_COMPANIES', companies)
 
                 //DISMISS LOADER
                 isLoading.value = false;
