@@ -150,7 +150,15 @@ function handleEntryAction(payload){
 }
 
 function viewListing(listing){
-    return console.log("Go to view", listing);
+    //store viewed listing in vuex store
+    store.commit("exploreHub/STORE_VIEWED_LISTING", JSON.parse(JSON.stringify(listing)));
+    //go to view page
+    return router.push({
+        name: 'explore_hub.listings.view',
+        params:{
+            listingTitleSlug: listing.title.toString().replaceAll(" ", "-")
+        }
+    })
 }
 
 function goEditListing(listing){
@@ -292,9 +300,12 @@ function goEditListing(listing){
                     </td>
                     <td>
                         <el-dropdown trigger="click" @command="handleEntryAction">
-                            <span class="el-dropdown-link">
-                              Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
-                            </span>
+<!--                            <span class="el-dropdown-link">
+                              Actions
+                            </span>-->
+                            <el-button plain type="primary" size="small">
+                                Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                            </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item :command="{action:'view',listing}">View</el-dropdown-item>
