@@ -57,9 +57,9 @@
                         </router-link>
                     </li>
                     <li>
-                        <a href="#">
+                        <router-link :to="{name: 'investment_hub.listings'}">
                             <i class="bi bi-circle"></i><span>Listings</span>
-                        </a>
+                        </router-link>
                     </li>
                 </ul>
             </li>

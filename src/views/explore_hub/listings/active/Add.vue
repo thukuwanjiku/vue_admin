@@ -36,6 +36,8 @@ const listing = ref({
 
 const placements = ref(['for_you', 'featured', 'exclusive']);
 let descriptionQuillEditor = ref(null);
+const primaryMedia = ref(null);
+const primaryMediaFile = ref(null);
 const media = ref([]);
 const mediaFiles = ref([]);
 
@@ -87,6 +89,19 @@ function fetchPaymentModes(){
                                 return entry;
                             }));
 }
+function processPrimaryMediaUpload(event){
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        primaryMedia.value = e.target.result;
+        primaryMediaFile.value = file;
+    };
+    reader.readAsDataURL(file);
+
+
+    //reset selection
+    $("#primaryListingMedia").val("");
+}
 function processUpload(event){
     const files = event.target.files;
     for (let i = 0; i < files.length; i++) {
@@ -107,6 +122,10 @@ function processUpload(event){
 
     //reset selection
     $("#listingMedia").val("");
+}
+function removePrimaryUpload(){
+    primaryMedia.value = null;
+    primaryMediaFile.value = null;
 }
 function removeUpload(index){
     media.value.splice(index, 1);
@@ -159,6 +178,9 @@ function handleCreateListing(){
         return ElMessage.warning("Please select the category");
     }
     //validate media
+    if(!primaryMediaFile.value){
+        return ElMessage.warning("Please upload the primary media");
+    }
     if(!mediaFiles.value.length){
         return ElMessage.warning("Please upload some images for this listing");
     }
@@ -193,6 +215,8 @@ function handleCreateListing(){
     for(let count=0; count < mediaFiles.value.length; count++){
         payload.append(`media[${count}]`, mediaFiles.value[count]);
     }
+    //add primary media to payload
+    payload.append(`primary_media`, primaryMediaFile.value);
     //append payments to payload
     if(payments.value.length){
         for (let count = 0; count < payments.value.length; count++) {
@@ -377,13 +401,30 @@ function handleCreateListing(){
                 <div class="col-md-10 m-b-20">
                     <div class="form-floating">
                         <input-label>Media</input-label>
-                        <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
-                        <br>
-                        <div class="d-flex flex-wrap">
-                            <div class="p-1 uploaded-image" v-for="(file, index) in media" :key="'uploaded-media-'+index">
-                                <img :src="file.url"  style="max-width:80px;max-height:60px;">
-                                <div class="remover" @click="removeUpload(index)">
-                                    <i class="ri ri-close-line"></i>
+
+                        <div class="p-l-10">
+                            <small>Primary Media</small><br>
+
+                            <input type="file" class="form-control" id="primaryListingMedia" @change="processPrimaryMediaUpload">
+                            <div class="d-flex flex-wrap m-t-5" v-if="primaryMedia != null">
+                                <div class="p-1 uploaded-image">
+                                    <img :src="primaryMedia"  style="max-width:80px;max-height:60px;">
+                                    <div class="remover" @click="removePrimaryUpload">
+                                        <i class="ri ri-close-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-l-10 m-t-10">
+                            <small>Other Media</small><br>
+
+                            <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
+                            <div class="d-flex flex-wrap m-t-5">
+                                <div class="p-1 uploaded-image" v-for="(file, index) in media" :key="'uploaded-media-'+index">
+                                    <img :src="file.url"  style="max-width:80px;max-height:60px;">
+                                    <div class="remover" @click="removeUpload(index)">
+                                        <i class="ri ri-close-line"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>

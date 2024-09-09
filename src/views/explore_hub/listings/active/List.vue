@@ -314,7 +314,7 @@ function goEditListing(listing){
                         </el-dropdown>
                     </td>
                 </tr>
-                <tr v-else><td colspan="8" class="text-center p-3">No data</td></tr>
+                <tr v-else><td colspan="8" class="text-center p-3">No data, change filters and try again</td></tr>
                 </tbody>
             </table>
         </div>

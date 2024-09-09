@@ -200,6 +200,53 @@ export default [
                             },
                         ]
                     },
+                    {
+                        path: 'listings',
+                        name: 'investment_hub.listings',
+                        component: ()=> import('@/views/investment_hub/listings/Main.vue'),
+                        meta: {
+                            title: `Investment Hub: Listings ${pageTitleSuffix}`
+                        },
+                        children: [
+                            {
+                                path: "",
+                                name: 'investment_hub.listings.active',
+                                components: {
+                                    investment_listings_active: ()=> import('@/views/investment_hub/listings/active/List.vue')
+                                },
+                            },
+                            {
+                                path: "create",
+                                name: 'investment_hub.listings.create',
+                                components: {
+                                    investment_listings_active: ()=> import('@/views/investment_hub/listings/active/Add.vue')
+                                },
+                                meta: {
+                                    title: `Investment Hub: Create Listing ${pageTitleSuffix}`
+                                },
+                            },
+                            {
+                                path: "edit",
+                                name: 'investment_hub.listings.edit',
+                                components: {
+                                    investment_listings_active: ()=> import('@/views/investment_hub/listings/active/Edit.vue')
+                                },
+                                meta: {
+                                    title: `Investment Hub: Edit Listing ${pageTitleSuffix}`
+                                },
+                            },
+                            {
+                                path: ":listingTitleSlug",
+                                name: 'investment_hub.listings.view',
+                                components: {
+                                    investment_listings_active: ()=> import('@/views/investment_hub/listings/active/View.vue')
+                                },
+                                meta: {
+                                    title: `Investment Hub: View Listing ${pageTitleSuffix}`
+                                },
+                            },
+                        ]
+                    }
                 ]
             }
         ]

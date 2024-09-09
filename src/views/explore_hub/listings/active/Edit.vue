@@ -28,6 +28,11 @@ const listing = ref({});
 
 const placements = ref(['for_you', 'featured', 'exclusive']);
 let descriptionQuillEditor = ref(null);
+
+const listingMedia = ref([]);
+const currentPrimaryMedia = ref(null);
+const primaryMedia = ref(null);
+const primaryMediaFile = ref(null);
 const media = ref([]);
 const mediaFiles = ref([]);
 
@@ -43,8 +48,6 @@ const newPayment = ref({
     reference:null
 });
 const newPayments = ref([]);
-
-const listingMedia = ref([]);
 
 
 /* -----------------------------
@@ -80,6 +83,7 @@ onMounted(()=> {
 
     //copy details of listing being edited
     listing.value = JSON.parse(JSON.stringify(store.state.exploreHub.editListing));
+    listing.value.company_id = listing.value.company.id;
 
 
     //copy listing payments to manage them
@@ -94,10 +98,14 @@ onMounted(()=> {
     //copy listing media
     listingMedia.value = JSON.parse(JSON.stringify(store.state.exploreHub.editListing.media));
     listingMedia.value = listingMedia.value
+            .filter(entry => !entry.is_primary)
             .map(entry => {
                 entry.deleted = false;
                 return entry;
             });
+    let currentPrimaryMediaEntry = JSON.parse(JSON.stringify(store.state.exploreHub.editListing.media))
+            .find(entry => entry.is_primary);
+    if(currentPrimaryMediaEntry) currentPrimaryMedia.value = currentPrimaryMediaEntry.path;
 
     //fetch required resource which aren't loaded yet
     if(!companies.value.length) fetchExploreHubCompanies();
@@ -126,6 +134,20 @@ function fetchPaymentModes(){
                                 return entry;
                             }));
 }
+
+function processPrimaryMediaUpload(event){
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        primaryMedia.value = e.target.result;
+        primaryMediaFile.value = file;
+    };
+    reader.readAsDataURL(file);
+
+
+    //reset selection
+    $("#primaryListingMedia").val("");
+}
 function processUpload(event){
     const files = event.target.files;
     for (let i = 0; i < files.length; i++) {
@@ -147,10 +169,15 @@ function processUpload(event){
     //reset selection
     $("#listingMedia").val("");
 }
+function removePrimaryUpload(){
+    primaryMedia.value = null;
+    primaryMediaFile.value = null;
+}
 function removeUpload(index){
     media.value.splice(index, 1);
     mediaFiles.value.splice(index, 1);
 }
+
 function acceptNewPayment(){
     //validate that all required fields have been entered: mode & amount
     if(!newPayment.value.mode || !newPayment.value.mode.length)
@@ -265,6 +292,8 @@ function handleSaveEdits(){
     properties.forEach(key => payload.append(key, listing.value[key]));
 
     //append media to payload
+    //add primary media to payload
+    if(primaryMediaFile.value) payload.append(`primary_media`, primaryMediaFile.value);
     if(mediaFiles.value.length) {
         for (let count = 0; count < mediaFiles.value.length; count++) {
             payload.append(`media[${count}]`, mediaFiles.value[count]);
@@ -481,6 +510,33 @@ function handleSaveEdits(){
                     <div class="form-floating">
                         <input-label>Media</input-label>
 
+                        <small>Primary Media</small><br>
+                        <div class="col-md-12 p-l-10 m-b-10" v-if="currentPrimaryMedia">
+                            <h6><small>Saved</small></h6>
+                            <div class="d-flex flex-wrap">
+                                <div class="p-1 uploaded-image">
+                                    <img :src="currentPrimaryMedia"  style="max-width:80px;max-height:60px;">
+                                </div>
+                            </div>
+
+                            <div class="col-md-10 m-t-10 p-l-10">
+                                <h6><small>Upload new primary media</small></h6>
+                                <input type="file" class="form-control" id="primaryListingMedia" @change="processPrimaryMediaUpload">
+                                <div class="d-flex flex-wrap m-t-10" v-if="primaryMedia">
+                                    <div class="p-1 uploaded-image">
+                                        <img :src="primaryMedia"  style="max-width:80px;max-height:60px;">
+                                        <div class="remover" @click="removePrimaryUpload">
+                                            <i class="ri ri-close-line"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="m-t-20">
+                            <small>Other Media</small>
+                        </div>
                         <div class="col-md-12 p-l-10 m-t-10" v-if="savedMedia.length">
                             <h6><small>Saved</small></h6>
                             <div class="d-flex flex-wrap">
