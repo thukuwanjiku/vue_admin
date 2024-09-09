@@ -7,7 +7,7 @@ import {AwesomeSocialButton} from "awesome-social-button";
 import axios from "axios";
 import {useStore} from "vuex";
 import {
-    fetchExploreHubListingCategories,
+    fetchInvestmentHubListingCategories,
     fetchMaterialIconsNames, isSmallScreen,
     randomString
 } from "@/services/Helpers";
@@ -43,13 +43,13 @@ const selectedCategories = ref([]);
  * Computed properties
  * -----------------------------
  * */
-const isLoading = computed(()=> store.state.exploreHub.isFetchingCategories);
+const isLoading = computed(()=> store.state.investmentHub.isFetchingCategories);
 const materialIconsNames = computed(() =>
         store.state.shared.materialIconsNames
                 .filter(icon => !newCategoryIconsSearchString.value.length
                         || icon.includes(newCategoryIconsSearchString.value)));
 
-const categories = computed(()=> store.state.exploreHub.listingCategories
+const categories = computed(()=> store.state.investmentHub.listingCategories
         .filter(entry => !searchString.value.length
                 || entry.name.toLowerCase().includes(searchString.value.toLowerCase())));
 
@@ -71,7 +71,7 @@ const hasEditedCategory = computed(() => {
  * */
 onMounted(()=>{
     //fetch listing categories if not already fetched
-    if(!categories.value.length) fetchExploreHubListingCategories();
+    if(!categories.value.length) fetchInvestmentHubListingCategories();
 
     //fetch material icons names is not previously fetched
     if(!materialIconsNames.value.length) {
@@ -127,13 +127,13 @@ function saveNewCategories(){
     isModalLoading.value = true;
 
     //make api call to save categories
-    api.post(apiRoutes.EXPLORE_HUB_ADD_LISTING_CATEGORIES, {categories: newCategories.value})
+    api.post(apiRoutes.INVESTMENT_HUB_ADD_LISTING_CATEGORIES, {categories: newCategories.value})
             .then(response => {
                 //show success message
                 $.growl.notice({message: response.data.message});
 
                 //refresh categories list
-                fetchExploreHubListingCategories();
+                fetchInvestmentHubListingCategories();
 
                 //dismiss add modal
                 isAddingCategories.value = false;
@@ -206,7 +206,7 @@ function saveCategoryChanges(){
     isModalLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.EXPLORE_HUB_EDIT_LISTING_CATEGORY, payload)
+    api.post(apiRoutes.INVESTMENT_HUB_EDIT_LISTING_CATEGORY, payload)
             .then(response => {
                 //show success message
                 $.growl.notice({message: response.data.message});
@@ -217,7 +217,7 @@ function saveCategoryChanges(){
                 let index = categoriesCopy.findIndex(entry => entry.id == editCategory.value.id);
                 if(index > -1){
                     categoriesCopy[index] = response.data.data;
-                    store.commit('exploreHub/STORE_EXPLORE_LISTING_CATEGORIES', categoriesCopy);
+                    store.commit('investmentHub/STORE_LISTING_CATEGORIES', categoriesCopy);
                 }
 
                 //dismiss modal
@@ -277,11 +277,11 @@ function confirmDeleteCategory(){
 }
 function deleteCategories(payload){
     //show loader
-    store.commit("exploreHub/SET_IS_FETCHING_CATEGORIES", true);
+    store.commit("investmentHub/SET_IS_FETCHING_CATEGORIES", true);
     isModalLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.EXPLORE_HUB_DELETE_LISTING_CATEGORIES, payload)
+    api.post(apiRoutes.INVESTMENT_HUB_DELETE_LISTING_CATEGORIES, payload)
             .then(response => {
                 //show success message
                 $.growl.notice({message: response.data.message});
@@ -290,7 +290,7 @@ function deleteCategories(payload){
                 selectedCategories.value = [];
 
                 //refresh categories list
-                fetchExploreListingCategories();
+                fetchInvestmentHubListingCategories();
 
                 //dismiss modal, incase they're deleting from edit dialog
                 isEditingCategory.value = false;
@@ -303,7 +303,7 @@ function deleteCategories(payload){
             })
             .catch(error => {
                 isModalLoading.value = false;
-                store.commit("exploreHub/SET_IS_FETCHING_CATEGORIES", false);
+                store.commit("investmentHub/SET_IS_FETCHING_CATEGORIES", false);
             });
 }
 
@@ -342,7 +342,7 @@ function deleteCategories(payload){
                 <el-button class="m-l-10" v-if="selectedCategories.length" @click="confirmDeleteSelections" type="danger" plain>Delete selections</el-button>
             </div>
 
-            <div v-for="category in categories" :key="'explore_hub-categories-list-'+category.id"
+            <div v-for="category in categories" :key="'investment_hub-categories-list-'+category.id"
                  class="col-md-2 col-sm-4 col-xs-6 p-1 hov-pointer" @click="handleCategoryClick(category)">
                 <el-card shadow="hover">
                     <div class="text-center">

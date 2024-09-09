@@ -52,6 +52,7 @@ export function fetchExploreHubListingCategories(){
             })
             .catch(error => store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', false));
 }
+
 export function fetchInvestmentHubCompanies(){
     //show loader
     store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", true);
@@ -65,6 +66,19 @@ export function fetchInvestmentHubCompanies(){
                 store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", false);
             })
             .catch(error => store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", false));
+}
+export function fetchInvestmentHubListingCategories(){
+    //show loading overlay
+    store.commit('investmentHub/SET_IS_FETCHING_CATEGORIES', true);
+
+    api.get(apiRoutes.INVESTMENT_HUB_FETCH_LISTING_CATEGORIES)
+            .then(response => {
+                //store data in vuex store
+                store.commit('investmentHub/STORE_LISTING_CATEGORIES', response.data.data);
+                //dismiss loading
+                store.commit('investmentHub/SET_IS_FETCHING_CATEGORIES', false);
+            })
+            .catch(error => store.commit('investmentHub/SET_IS_FETCHING_CATEGORIES', false));
 }
 
 

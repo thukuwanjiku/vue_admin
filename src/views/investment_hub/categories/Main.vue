@@ -2,7 +2,7 @@
 
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
-import ManageCategories from "@/views/explore_hub/categories/ManageCategories.vue";
+import ManageCategories from "@/views/investment_hub/categories/ManageCategories.vue";
 
 /* ------------------------------
 * Variables & Properties
@@ -15,8 +15,19 @@ const router = useRouter();
 * ------------------------------
 * */
 onMounted(()=>{
-    //
+    //router.push({name: 'explore_hub.companies.listed'});
 });
+
+function tabChanged(tab){
+    switch (tab){
+        case 'active':
+            //router.push({name: 'explore_hub.companies.listed'})
+        case 'reviews':
+            //router.push({name: 'explore_hub.companies.listed'})
+        case 'deleted':
+            //router.push({name: 'explore_hub.companies.listed'})
+    }
+}
 
 </script>
 
@@ -27,7 +38,7 @@ onMounted(()=>{
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><router-link :to="{name:'dashboard'}">Home</router-link></li>
-                <li class="breadcrumb-item">Explore Hub</li>
+                <li class="breadcrumb-item">Investment Hub</li>
                 <li class="breadcrumb-item active">Listing Categories</li>
             </ol>
         </nav>
@@ -42,20 +53,22 @@ onMounted(()=>{
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active"
-                            data-bs-toggle="tab" data-bs-target="#explore_categories_active"
+                            @click="tabChanged('active')"
+                            data-bs-toggle="tab" data-bs-target="#investment_categories_active"
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Categories</button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link"
-                            data-bs-toggle="tab" data-bs-target="#explore_categories_deleted"
+                            @click="tabChanged('deleted')"
+                            data-bs-toggle="tab" data-bs-target="#investment_categories_deleted"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
-                <div class="tab-pane fade show active p-1" id="explore_categories_active" role="tabpanel" aria-labelledby="home-tab">
+                <div class="tab-pane fade show active p-1" id="investment_categories_active" role="tabpanel" aria-labelledby="home-tab">
                     <manage-categories></manage-categories>
                 </div>
-                <div class="tab-pane fade" id="explore_categories_deleted" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="tab-pane fade" id="investment_categories_deleted" role="tabpanel" aria-labelledby="contact-tab">
                     Will browse archived categories here
                 </div>
             </div>

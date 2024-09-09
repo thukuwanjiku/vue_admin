@@ -187,6 +187,19 @@ export default [
                             },
                         ]
                     },
+                    {
+                        path: 'categories',
+                        children: [
+                            {
+                                path: "",
+                                name: 'investment_hub.categories',
+                                component: ()=> import('@/views/investment_hub/categories/Main.vue'),
+                                meta: {
+                                    title: `Investment Hub Listing Categories ${pageTitleSuffix}`
+                                },
+                            },
+                        ]
+                    },
                 ]
             }
         ]

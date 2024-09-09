@@ -52,9 +52,9 @@
                         </router-link>
                     </li>
                     <li>
-                        <a href="#">
+                        <router-link :to="{name: 'investment_hub.categories'}">
                             <i class="bi bi-circle"></i><span>Categories</span>
-                        </a>
+                        </router-link>
                     </li>
                     <li>
                         <a href="#">
