@@ -2,6 +2,7 @@
 
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
+import Reviews from "@/views/investment_hub/companies/Reviews.vue";
 
 /* ------------------------------
 * Variables & Properties
@@ -57,17 +58,17 @@ function tabChanged(tab){
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Listed</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="contact-tab"
-                            @click="tabChanged('deleted')"
-                            data-bs-toggle="tab" data-bs-target="#investment_hub_companies_deleted"
-                            type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
-                </li>
-                <li class="nav-item" role="presentation">
                     <button class="nav-link" id="profile-tab"
                             @click="tabChanged('reviews')"
                             data-bs-toggle="tab" data-bs-target="#investment_hub_companies_reviews"
                             type="button" role="tab"
-                            aria-controls="profile" aria-selected="false" tabindex="-1">Company Reviews</button>
+                            aria-controls="profile" aria-selected="false" tabindex="-1">Reviews</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contact-tab"
+                            @click="tabChanged('deleted')"
+                            data-bs-toggle="tab" data-bs-target="#investment_hub_companies_deleted"
+                            type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
@@ -75,7 +76,7 @@ function tabChanged(tab){
                     <router-view name="investment_hub_companies_listed"></router-view>
                 </div>
                 <div class="tab-pane fade" id="investment_hub_companies_reviews" role="tabpanel" aria-labelledby="profile-tab">
-                    Browse companies reviews here
+                    <reviews></reviews>
                 </div>
                 <div class="tab-pane fade" id="investment_hub_companies_deleted" role="tabpanel" aria-labelledby="contact-tab">
                     Browse archived companies
