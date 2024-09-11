@@ -8,7 +8,7 @@ import {startCase} from "lodash-es";
 import {isSmallScreen, moneyFormatter} from "../../../../services/Helpers";
 import {Carousel, Slide, Navigation, Pagination} from "vue3-carousel";
 import 'vue3-carousel/dist/carousel.css'
-import {ArrowDown, Edit, Money, PictureFilled} from "@element-plus/icons-vue";
+import {ArrowDown, Comment, Edit, Money, PictureFilled, TopRight} from "@element-plus/icons-vue";
 import InputLabel from "@/components/InputLabel.vue";
 import axios from "axios";
 import {ElMessage} from "element-plus";
@@ -83,6 +83,10 @@ function handleActionsClick(action){
 
         case 'edit':
             goEditListing();
+            break;
+
+        case 'browse_reviews':
+            goToReviews();
             break;
     }
 }
@@ -237,22 +241,48 @@ function saveNewMedia(){
             .catch(error => isModalLoading.value = false);
 }
 
+function goToReviews(){
+    return router.push({
+        name: 'explore_hub.listings.reviews',
+        params:{
+            listingTitleSlug: listing.value.title.toString().replaceAll(" ", "-")
+        }
+    })
+}
+
 </script>
 
 <template>
 
     <div class="row" v-if="Object.keys(listing).length">
-        <div class="col-sm-12 mb-3 d-inline-flex justify-content-end align-items-center">
-            <div class="p-1">
-                <el-dropdown trigger="click" @command="handleActionsClick">
-                    <el-button plain size="small">
-                        Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
+        <div class="col-sm-12 mb-3 d-inline-flex align-items-center"
+             :class="{
+                'justify-content-end': !isSmallScreen,
+                'justify-content-between': isSmallScreen
+             }">
+            <div class="p-1 m-r-10 d-flex align-items-center flex-wrap">
+                <template v-if="!isSmallScreen">
+                    <el-button @click="goEditListing" type="primary" :icon="Edit" text bg>Edit Listing</el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button @click="isAddingPayments = true" type="primary" :icon="Money" text bg>Add Payment</el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button @click="isAddingMedia = true" type="primary" :icon="PictureFilled" text bg>Add Media</el-button>
+                    <template v-if="listing.has_reviews">
+                        <el-divider direction="vertical"></el-divider>
+                        <el-button @click="goToReviews" type="primary" :icon="Comment" text bg>Browse Listing Reviews</el-button>
+                    </template>
+                </template>
+
+                <el-dropdown trigger="click" @command="handleActionsClick" v-if="isSmallScreen">
+                    <el-button plain size="large">
+                        Listing Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
                     </el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item command="edit" :icon="Edit">Edit Listing</el-dropdown-item>
                             <el-dropdown-item command="add_payments" :icon="Money">Add Payment</el-dropdown-item>
                             <el-dropdown-item command="add_media" :icon="PictureFilled">Add Media</el-dropdown-item>
+                            <el-dropdown-item command="browse_reviews" :icon="Comment" v-if="listing.has_reviews">Browse Reviews</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>

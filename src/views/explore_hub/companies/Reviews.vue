@@ -91,11 +91,7 @@ function fetchReviews(url=null){
                 totalPages.value = response.data.pagination.last_page;
 
                 //store reviews fetched
-                reviews.value[response.data.pagination.current_page] = response.data.data
-                        .map(entry => {
-                            entry.reviewer.avatar = `https://randomuser.me/api/portraits/men/${entry.rating}.jpg`;
-                            return entry;
-                        });
+                reviews.value[response.data.pagination.current_page] = response.data.data;
 
                 //set is not changing company
                 isChangingCompany.value = false;
@@ -130,10 +126,10 @@ function handlePaginationClick(link){
             })
             .map(entry => {
                 if(entry.label.toLowerCase().includes('previous')){
-                    entry.url = pageNo == 1 ? null : `${apiRoutes.EXPLORE_HUB_COMPANY_REVIEWS}?page=${currentPage - 1}`
+                    entry.url = pageNo == 1 ? null : `${apiRoutes.EXPLORE_HUB_COMPANY_REVIEWS}?page=${currentPage.value - 1}`
                 }
                 if(entry.label.toLowerCase().includes('next')){
-                    entry.url = pageNo == totalPages.value ? null : `${apiRoutes.EXPLORE_HUB_COMPANY_REVIEWS}?page=${currentPage + 1}`
+                    entry.url = pageNo == totalPages.value ? null : `${apiRoutes.EXPLORE_HUB_COMPANY_REVIEWS}?page=${currentPage.value + 1}`
                 }
                 return entry;
             });
@@ -198,8 +194,10 @@ function handlePaginationClick(link){
                     </el-select>
                     &nbsp;&nbsp;
                     <div class="change_actions">
-                        <el-button :disabled="!companyID" type="primary" @click="acceptSelectedCompany">Go</el-button>
-                        <el-button @click="isChangingCompany = false">Cancel</el-button>
+                        <el-button-group>
+                            <el-button @click="acceptSelectedCompany" type="primary">Go</el-button>
+                            <el-button @click="isChangingCompany = false">Cancel</el-button>
+                        </el-button-group>
                     </div>
                 </div>
             </div>
@@ -319,7 +317,7 @@ function handlePaginationClick(link){
         </template>
 
         <template v-else>
-            <div class="text-center text-muted p-5">
+            <div class="text-center text-muted p-5" v-if="!isLoading">
                 No reviews found
             </div>
         </template>

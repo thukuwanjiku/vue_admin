@@ -133,6 +133,16 @@ export default [
                                     title: `Explore Hub: View Listing ${pageTitleSuffix}`
                                 },
                             },
+                            {
+                                path: ":listingTitleSlug/reviews",
+                                name: 'explore_hub.listings.reviews',
+                                components: {
+                                    explore_listings_active: ()=> import('@/views/explore_hub/listings/active/Reviews.vue')
+                                },
+                                meta: {
+                                    title: `Explore Hub:Listing Reviews ${pageTitleSuffix}`
+                                },
+                            },
                         ]
                     }
                 ]
@@ -243,6 +253,16 @@ export default [
                                 },
                                 meta: {
                                     title: `Investment Hub: View Listing ${pageTitleSuffix}`
+                                },
+                            },
+                            {
+                                path: ":listingTitleSlug/reviews",
+                                name: 'investment_hub.listings.reviews',
+                                components: {
+                                    investment_listings_active: ()=> import('@/views/investment_hub/listings/active/Reviews.vue')
+                                },
+                                meta: {
+                                    title: `Investment Hub:Listing Reviews ${pageTitleSuffix}`
                                 },
                             },
                         ]

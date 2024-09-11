@@ -1,12 +1,13 @@
 <script setup>
 
 import {useStore} from "vuex";
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import InputLabel from "@/components/InputLabel.vue";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {ElMessage} from "element-plus";
 import {isSmallScreen} from "@/services/Helpers";
+import CloseButton from "@/components/CloseButton.vue";
 
 
 /* -----------------------------
@@ -16,10 +17,6 @@ import {isSmallScreen} from "@/services/Helpers";
 const store = useStore();
 
 const isLoading = ref(false);
-const isChangingCompany = ref(false);
-
-const companyID = ref(null);
-const company = ref({});
 
 const reviewsSummary = ref({});
 const reviews = ref({});
@@ -32,7 +29,7 @@ const totalPages = ref(null);
  * Computed Properties
  * -----------------------------
  * */
-const companies = computed(()=> store.state.investmentHub.companies);
+const listing = computed(()=> store.state.investmentHub.viewedListing);
 const pageReviews = computed(()=> {
     if(!currentPage.value || !reviews.value[currentPage.value])
         return [];
@@ -42,27 +39,27 @@ const pageReviews = computed(()=> {
 
 
 /* -----------------------------
+ * Lifecycle Hooks
+ * -----------------------------
+ * */
+onMounted(()=> {
+    fetchReviewsSummary();
+});
+
+
+/* -----------------------------
  * Methods
  * -----------------------------
  * */
-function acceptSelectedCompany(){
-    //set company
-    let selectedCompany = companies.value.find(entry => entry.id == companyID.value);
-    if(!selectedCompany) return ElMessage.warning("An error occurred, please reload the page and try again");
-    company.value = JSON.parse(JSON.stringify(selectedCompany));
-
-    //call method to fetch reviews summary
-    fetchReviewsSummary();
-}
 function fetchReviewsSummary(){
     //prepare payload
-    let payload = {company_id: companyID.value};
+    let payload = {listing_id: listing.value.id};
 
     //show loader
     isLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.INVESTMENT_HUB_COMPANY_REVIEWS_SUMMARY, payload)
+    api.post(apiRoutes.INVESTMENT_HUB_LISTING_REVIEWS_SUMMARY, payload)
             .then(response => {
                 //set reviews summary
                 reviewsSummary.value = response.data;
@@ -74,10 +71,10 @@ function fetchReviewsSummary(){
 }
 function fetchReviews(url=null){
     //set api endpoint
-    if(!url) url = apiRoutes.INVESTMENT_HUB_COMPANY_REVIEWS;
+    if(!url) url = apiRoutes.INVESTMENT_HUB_LISTING_REVIEWS;
 
     //prepare payload
-    let payload = {company_id: company.value.id};
+    let payload = {listing_id: listing.value.id};
 
     //show loader
     isLoading.value = true;
@@ -91,16 +88,14 @@ function fetchReviews(url=null){
                 totalPages.value = response.data.pagination.last_page;
 
                 //store reviews fetched
-                reviews.value[response.data.pagination.current_page] = response.data.data;
-
-                //set is not changing company
-                isChangingCompany.value = false;
+                reviews.value[response.data.pagination.current_page] = response.data.data
+                        .map(entry => {
+                            entry.reviewer.avatar = `https://randomuser.me/api/portraits/men/${entry.rating}.jpg`;
+                            return entry;
+                        });
 
                 //hide loader
                 isLoading.value = false;
-
-                //reset company picker
-                companyID.value = null;
             })
             .catch(error => isLoading.value = false)
 }
@@ -126,13 +121,14 @@ function handlePaginationClick(link){
             })
             .map(entry => {
                 if(entry.label.toLowerCase().includes('previous')){
-                    entry.url = pageNo == 1 ? null : `${apiRoutes.INVESTMENT_HUB_COMPANY_REVIEWS}?page=${currentPage.value - 1}`
+                    entry.url = pageNo == 1 ? null : `${apiRoutes.INVESTMENT_HUB_LISTING_REVIEWS}?page=${currentPage.value - 1}`
                 }
                 if(entry.label.toLowerCase().includes('next')){
-                    entry.url = pageNo == totalPages.value ? null : `${apiRoutes.INVESTMENT_HUB_COMPANY_REVIEWS}?page=${currentPage.value + 1}`
+                    entry.url = pageNo == totalPages.value ? null : `${apiRoutes.INVESTMENT_HUB_LISTING_REVIEWS}?page=${currentPage.value + 1}`
                 }
                 return entry;
             });
+    console.log(link.url, pageNo, newLinks);
 
     //update pagination links
     paginationLinks.value = newLinks;
@@ -143,63 +139,13 @@ function handlePaginationClick(link){
 
 <template>
 
-    <!-- When no company is selected -->
-    <div class="row d-flex align-items-center justify-content-center p-t-20 p-b-20" v-if="!Object.keys(company).length">
-        <div class="col-md-4 col-sm-12">
-            <input-label>Select company to browse reviews</input-label>
-            <el-select
-                    v-model="companyID"
-                    placeholder="Click to select"
-                    size="large"
-                    filterable>
-                <el-option
-                        v-for="company in companies"
-                        :key="'reviews-company-picker-'+company.id"
-                        :label="company.name"
-                        :value="company.id">
-                    <img :src="company.logo" style="max-width:30px;max-height: 20px;border-radius:10px;">
-                    &nbsp;{{ company.name }}
-                </el-option>
-            </el-select>
+    <div class="row" v-loading="isLoading">
 
-            <div class="col-sm-12 m-t-10">
-                <el-button :disabled="!companyID" type="primary" @click="acceptSelectedCompany">Browse Reviews</el-button>
-            </div>
-        </div>
-    </div>
-
-    <!-- When there's a company selected -->
-    <div class="row" v-loading="isLoading" v-else>
-
-        <!-- Company Indicator -->
+        <!-- Listing Indicator -->
         <div class="row p-t-15 p-b-10">
-            <div class="col-md-12 d-flex align-items-center justify-content-center flex-wrap p-2">
-                <h3 class="m-0">{{ company.name }}</h3>
-                &nbsp;&nbsp;<el-button size="small" v-if="!isChangingCompany" @click="isChangingCompany = true" plain round>Change</el-button>
-
-                <div class="d-flex align-items-center flex-wrap company_changer m-l-10" v-if="isChangingCompany">
-                    <el-select
-                            v-model="companyID"
-                            placeholder="Click to select another company"
-                            style="width: 255px;"
-                            filterable>
-                        <el-option
-                                v-for="company in companies.filter(entry => entry.id != company.id)"
-                                :key="'reviews-company-picker-'+company.id"
-                                :label="company.name"
-                                :value="company.id">
-                            <img :src="company.logo" style="max-width:30px;max-height: 20px;border-radius:10px;">
-                            &nbsp;{{ company.name }}
-                        </el-option>
-                    </el-select>
-                    &nbsp;&nbsp;
-                    <div class="change_actions">
-                        <el-button-group>
-                            <el-button @click="acceptSelectedCompany" type="primary">Go</el-button>
-                            <el-button @click="isChangingCompany = false">Cancel</el-button>
-                        </el-button-group>
-                    </div>
-                </div>
+            <div class="col-md-12 d-flex justify-content-between p-2">
+                <h3 class="m-0 text-center" style="width:90%">{{ listing.title }}</h3>
+                <close-button></close-button>
             </div>
         </div>
 
@@ -288,13 +234,6 @@ function handlePaginationClick(link){
 
                     <!-- Reviews Message -->
                     <div class="col-sm-12 m-t-5 fs-12">{{ review.review }}</div>
-
-                    <!-- Review Listing -->
-                    <div class="col-sm-12 review_listing">
-                        <small class="text-muted fs-11">Posted for</small>
-                        <br>
-                        <p class="m-0 fw-bold fs-12">{{ review.listing_title }}</p>
-                    </div>
                 </div>
 
             </div>

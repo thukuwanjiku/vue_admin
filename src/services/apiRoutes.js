@@ -37,6 +37,8 @@ const apiRoutes = {
     EXPLORE_HUB_EDIT_LISTING: `${apiBaseUrl}/explore-hub/edit-listing`,
     EXPLORE_HUB_ADD_LISTING_PAYMENTS: `${apiBaseUrl}/explore-hub/add-listing-payments`,
     EXPLORE_HUB_ADD_LISTING_MEDIA: `${apiBaseUrl}/explore-hub/add-listing-media`,
+    EXPLORE_HUB_LISTING_REVIEWS: `${apiBaseUrl}/explore-hub/listing-reviews`,
+    EXPLORE_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/explore-hub/listing-reviews-summary`,
 
 
     //Investment hub
@@ -57,6 +59,8 @@ const apiRoutes = {
     INVESTMENT_HUB_EDIT_LISTING: `${apiBaseUrl}/investment-hub/edit-listing`,
     INVESTMENT_HUB_ADD_LISTING_PAYMENTS: `${apiBaseUrl}/investment-hub/add-listing-payments`,
     INVESTMENT_HUB_ADD_LISTING_MEDIA: `${apiBaseUrl}/investment-hub/add-listing-media`,
+    INVESTMENT_HUB_LISTING_REVIEWS: `${apiBaseUrl}/investment-hub/listing-reviews`,
+    INVESTMENT_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/investment-hub/listing-reviews-summary`,
 };
 
 export { baseUrl, apiBaseUrl, apiRoutes };
