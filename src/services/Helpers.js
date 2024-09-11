@@ -11,9 +11,13 @@ const materialIconsNamesUrl = "https://raw.githubusercontent.com/google/material
 const socialPlatforms = [
     "instagram","facebook","whatsapp","linkedin","youtube","twitter",
 ];
+const isSmallScreen = window.innerWidth <= 768;
 
+/*
+* Export Variables
+* */
 export {
-    socialPlatforms
+    socialPlatforms, isSmallScreen
 };
 
 
@@ -47,6 +51,34 @@ export function fetchExploreHubListingCategories(){
                 store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', false);
             })
             .catch(error => store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', false));
+}
+
+export function fetchInvestmentHubCompanies(){
+    //show loader
+    store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", true);
+
+    //make api call
+    api.get(apiRoutes.GET_INVESTMENT_HUB_LISTED_COMPANIES)
+            .then(response => {
+                store.commit("investmentHub/STORE_LISTED_COMPANIES", response.data.data);
+
+                //dismiss loader
+                store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", false);
+            })
+            .catch(error => store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", false));
+}
+export function fetchInvestmentHubListingCategories(){
+    //show loading overlay
+    store.commit('investmentHub/SET_IS_FETCHING_CATEGORIES', true);
+
+    api.get(apiRoutes.INVESTMENT_HUB_FETCH_LISTING_CATEGORIES)
+            .then(response => {
+                //store data in vuex store
+                store.commit('investmentHub/STORE_LISTING_CATEGORIES', response.data.data);
+                //dismiss loading
+                store.commit('investmentHub/SET_IS_FETCHING_CATEGORIES', false);
+            })
+            .catch(error => store.commit('investmentHub/SET_IS_FETCHING_CATEGORIES', false));
 }
 
 
