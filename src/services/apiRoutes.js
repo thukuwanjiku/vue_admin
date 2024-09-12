@@ -35,10 +35,13 @@ const apiRoutes = {
     EXPLORE_HUB_FETCH_LISTINGS: `${apiBaseUrl}/explore-hub/get-listings`,
     EXPLORE_HUB_ADD_LISTING: `${apiBaseUrl}/explore-hub/add-listing`,
     EXPLORE_HUB_EDIT_LISTING: `${apiBaseUrl}/explore-hub/edit-listing`,
+    EXPLORE_HUB_ARCHIVE_LISTING: `${apiBaseUrl}/explore-hub/archive-listing`,
     EXPLORE_HUB_ADD_LISTING_PAYMENTS: `${apiBaseUrl}/explore-hub/add-listing-payments`,
     EXPLORE_HUB_ADD_LISTING_MEDIA: `${apiBaseUrl}/explore-hub/add-listing-media`,
     EXPLORE_HUB_LISTING_REVIEWS: `${apiBaseUrl}/explore-hub/listing-reviews`,
     EXPLORE_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/explore-hub/listing-reviews-summary`,
+    EXPLORE_HUB_REPORTED_LISTINGS: `${apiBaseUrl}/explore-hub/reported-listings`,
+    EXPLORE_HUB_LISTING_REPORTS: `${apiBaseUrl}/explore-hub/listing-reports`,
 
 
     //Investment hub
@@ -57,10 +60,13 @@ const apiRoutes = {
     INVESTMENT_HUB_FETCH_LISTINGS: `${apiBaseUrl}/investment-hub/get-listings`,
     INVESTMENT_HUB_ADD_LISTING: `${apiBaseUrl}/investment-hub/add-listing`,
     INVESTMENT_HUB_EDIT_LISTING: `${apiBaseUrl}/investment-hub/edit-listing`,
+    INVESTMENT_HUB_ARCHIVE_LISTING: `${apiBaseUrl}/investment-hub/archive-listing`,
     INVESTMENT_HUB_ADD_LISTING_PAYMENTS: `${apiBaseUrl}/investment-hub/add-listing-payments`,
     INVESTMENT_HUB_ADD_LISTING_MEDIA: `${apiBaseUrl}/investment-hub/add-listing-media`,
     INVESTMENT_HUB_LISTING_REVIEWS: `${apiBaseUrl}/investment-hub/listing-reviews`,
     INVESTMENT_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/investment-hub/listing-reviews-summary`,
+    INVESTMENT_HUB_REPORTED_LISTINGS: `${apiBaseUrl}/investment-hub/reported-listings`,
+    INVESTMENT_HUB_LISTING_REPORTS: `${apiBaseUrl}/investment-hub/listing-reports`,
 };
 
 export { baseUrl, apiBaseUrl, apiRoutes };
