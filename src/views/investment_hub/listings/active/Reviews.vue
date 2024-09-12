@@ -88,11 +88,7 @@ function fetchReviews(url=null){
                 totalPages.value = response.data.pagination.last_page;
 
                 //store reviews fetched
-                reviews.value[response.data.pagination.current_page] = response.data.data
-                        .map(entry => {
-                            entry.reviewer.avatar = `https://randomuser.me/api/portraits/men/${entry.rating}.jpg`;
-                            return entry;
-                        });
+                reviews.value[response.data.pagination.current_page] = response.data.data;
 
                 //hide loader
                 isLoading.value = false;

@@ -2,6 +2,7 @@
 
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
+import ReportedListings from "@/views/investment_hub/listings/ReportedListings.vue";
 
 /* ------------------------------
 * Variables & Properties
@@ -57,11 +58,17 @@ function tabChanged(tab){
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Active</button>
                 </li>
                 <li class="nav-item" role="presentation">
+                    <button class="nav-link"
+                            @click="tabChanged('reported')"
+                            data-bs-toggle="tab" data-bs-target="#investment_listings_reported"
+                            type="button" role="tab" aria-controls="contact" aria-selected="true">Reported</button>
+                </li>
+                <!--<li class="nav-item" role="presentation">
                     <button class="nav-link" id="contact-tab"
                             @click="tabChanged('closed')"
                             data-bs-toggle="tab" data-bs-target="#investment_listings_closed"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Closed</button>
-                </li>
+                </li>-->
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="contact-tab"
                             @click="tabChanged('archived')"
@@ -74,7 +81,10 @@ function tabChanged(tab){
                     <router-view name="investment_listings_active"></router-view>
                 </div>
                 <div class="tab-pane fade" id="investment_listings_closed" role="tabpanel" aria-labelledby="profile-tab">
-                    Browse closed listings here
+                    Closed Listings
+                </div>
+                <div class="tab-pane fade" id="investment_listings_reported" role="tabpanel" aria-labelledby="profile-tab">
+                    <reported-listings></reported-listings>
                 </div>
                 <div class="tab-pane fade" id="investment_listings_archived" role="tabpanel" aria-labelledby="contact-tab">
                     Browse archived listings

@@ -2,6 +2,7 @@
 
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
+import ReportedListings from "@/views/explore_hub/listings/ReportedListings.vue";
 
 /* ------------------------------
 * Variables & Properties
@@ -57,13 +58,19 @@ function tabChanged(tab){
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Active</button>
                 </li>
                 <li class="nav-item" role="presentation">
+                    <button class="nav-link"
+                            @click="tabChanged('reported')"
+                            data-bs-toggle="tab" data-bs-target="#explore_listings_reported"
+                            type="button" role="tab" aria-controls="contact" aria-selected="true">Reported</button>
+                </li>
+                <!--<li class="nav-item" role="presentation">
                     <button class="nav-link" id="contact-tab"
                             @click="tabChanged('closed')"
                             data-bs-toggle="tab" data-bs-target="#explore_listings_closed"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Closed</button>
-                </li>
+                </li>-->
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="contact-tab"
+                    <button class="nav-link"
                             @click="tabChanged('archived')"
                             data-bs-toggle="tab" data-bs-target="#explore_listings_archived"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
@@ -72,6 +79,9 @@ function tabChanged(tab){
             <div class="tab-content pt-2" id="myTabContent">
                 <div class="tab-pane fade show active p-1" id="explore_listings_active" role="tabpanel" aria-labelledby="home-tab">
                     <router-view name="explore_listings_active"></router-view>
+                </div>
+                <div class="tab-pane fade" id="explore_listings_reported" role="tabpanel" aria-labelledby="profile-tab">
+                    <reported-listings></reported-listings>
                 </div>
                 <div class="tab-pane fade" id="explore_listings_closed" role="tabpanel" aria-labelledby="profile-tab">
                     Browse closed listings here
