@@ -3,6 +3,7 @@
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import {computed, onMounted} from 'vue';
+import {stopIdleTracking} from "@/services/idleAppLockTimer";
 
 /* -----------------------------
  * Variables & Properties
@@ -23,13 +24,6 @@ const userFirstName = computed(()=> {
 })
 
 
-/* -----------------------------
- * Lifecycle hooks
- * -----------------------------
- * */
-onMounted(()=>{
-    //
-});
 
 /* -----------------------------
  * Methods
@@ -40,6 +34,8 @@ function logout(){
     store.commit('auth/LOGOUT');
     //redirect user to login page
     router.replace({name: 'login'});
+    //stop idle time tracker
+    stopIdleTracking();
 }
 
 </script>

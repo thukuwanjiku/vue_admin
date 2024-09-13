@@ -80,6 +80,11 @@ function removeUpload(){
     logoFile.value = null;
     $("#companyLogo").val("");
 }
+function selectSocialPlatform(social){
+    newSocialHandle.value.platform = social;
+    //if social platform is whatsapp, prefill the link field with whatsapp api link
+    //newSocialHandle.value.link = social == 'whatsapp' ? "https://wa.me/" : "";
+}
 function addSocial(){
     //add new social to company list of socials
     addedSocials.value.push({
@@ -291,7 +296,7 @@ function submit(){
                     <small>Select Platform</small>
                     <br>
                     <div class="d-inline-flex flex-wrap">
-                        <div class="p-1" @click="newSocialHandle.platform = social"
+                        <div class="p-1" @click="selectSocialPlatform(social)"
                              v-for="(social, index) in availableSocials" :key="'to-add-social'+index">
                             <template v-if="newSocialHandle.platform == social">
                                 <el-badge value="✓" class="item" type="primary">
@@ -315,7 +320,14 @@ function submit(){
                             <div class="form-floating">
                                 <input type="url" class="form-control" id="newSocialLink"
                                        placeholder="Tagline" v-model="newSocialHandle.link" required>
-                                <label for="newSocialLink">Enter {{ startCase(newSocialHandle.platform) }} Link here</label>
+                                <label for="newSocialLink">
+                                    <template v-if="newSocialHandle.platform == 'whatsapp'">
+                                        Enter Whatsapp number (intl format)
+                                    </template>
+                                    <template v-else>
+                                        Enter {{ startCase(newSocialHandle.platform) }} Link here
+                                    </template>
+                                </label>
                             </div>
                             <span class="input-group-text" id="basic-addon2">
                                 <el-button native-type="submit" link>Add</el-button>

@@ -12,6 +12,12 @@ export default [
         }
     },
     {
+        path: '/locked',
+        name: 'app_locked',
+        component: ()=> import("../views/auth/AppLocked.vue"),
+        meta: { requiresAuth: true },
+    },
+    {
         path: '/',
         name: 'home',
         component: Main,
