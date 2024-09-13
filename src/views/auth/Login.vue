@@ -62,7 +62,7 @@ function login(){
                 //dismiss loader
                 isLoading.value = false;
 
-                //set that the app lock is off
+                //set that the app is not locked
                 store.commit('auth/UNLOCK_APP');
 
                 //redirect user to dashboard
