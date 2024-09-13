@@ -17,6 +17,8 @@ const email = ref("");
 const password = ref("");
 const rememberMe = ref(false);
 const isLoading = ref(false)
+const isPasswordFocused = ref(false)
+const showPassword = ref(false)
 
 
 /**
@@ -105,9 +107,19 @@ function login(){
 
                                         <div class="col-12">
                                             <div class="form-floating">
-                                                <input type="password" class="form-control" id="password"
-                                                       placeholder="Password" v-model="password" required>
+                                                <input :type="showPassword ? 'text' : 'password'"
+                                                       class="form-control" id="password"
+                                                       placeholder="Password" v-model="password"
+                                                       @focus="isPasswordFocused = true"
+                                                       @blur="isPasswordFocused = false"
+                                                       required>
                                                 <label for="password">Password</label>
+
+                                                <i
+                                                        :class="showPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"
+                                                        @click="showPassword = !showPassword"
+                                                        class="toggle-password" v-if="password.length"
+                                                ></i>
                                             </div>
                                         </div>
 
@@ -141,5 +153,18 @@ function login(){
 </template>
 
 <style scoped>
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 2;
+    color: #b7b7b7;
+    font-size: 20px;
+}
 
+.form-floating input {
+    padding-right: 2.5rem; /* Adjust to make space for the icon */
+}
 </style>
