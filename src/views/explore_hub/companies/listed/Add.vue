@@ -83,7 +83,7 @@ function removeUpload(){
 function selectSocialPlatform(social){
     newSocialHandle.value.platform = social;
     //if social platform is whatsapp, prefill the link field with whatsapp api link
-    //newSocialHandle.value.link = social == 'whatsapp' ? "https://wa.me/" : "";
+    newSocialHandle.value.link = social == 'whatsapp' ? "https://wa.me/" : "";
 }
 function addSocial(){
     //add new social to company list of socials
@@ -322,12 +322,13 @@ function submit(){
                                        placeholder="Tagline" v-model="newSocialHandle.link" required>
                                 <label for="newSocialLink">
                                     <template v-if="newSocialHandle.platform == 'whatsapp'">
-                                        Enter Whatsapp number (intl format)
+                                        Enter Whatsapp number
                                     </template>
                                     <template v-else>
                                         Enter {{ startCase(newSocialHandle.platform) }} Link here
                                     </template>
                                 </label>
+                                <input-label v-if="newSocialHandle.platform == 'whatsapp'">Please enter the whatsapp number in international format (+254712345678)</input-label>
                             </div>
                             <span class="input-group-text" id="basic-addon2">
                                 <el-button native-type="submit" link>Add</el-button>

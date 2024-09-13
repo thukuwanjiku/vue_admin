@@ -60,6 +60,20 @@
 <script src="/assets/js/jquery.growl.js"></script>
 <script src="/assets/js/main.js"></script>
 
+<!-- In your index.html -->
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            for (let registration of registrations) {
+                registration.unregister();
+            }
+        }).catch(function (error) {
+            console.log('Service Worker unregister failed: ', error);
+        });
+    }
+</script>
+
+
 </body>
 
 </html>

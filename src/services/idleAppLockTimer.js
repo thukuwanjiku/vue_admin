@@ -24,8 +24,6 @@ function setupIdleListeners() {
 
     // Initialize the idle timeout
     resetIdleTimeout();
-
-    console.log("App idle timeout is counting");
 }
 
 function startIdleTracking() {

@@ -74,14 +74,14 @@ function login(){
                 //dismiss loader
                 isLoading.value = false;
 
-                //start time for tracking idle time
-                startIdleTracking();
-
                 //set that the app is not locked
                 store.commit("auth/UNLOCK_APP");
 
                 //redirect user back to the page they were on before app lock
                 router.back();
+
+                //start time for tracking idle time
+                startIdleTracking();
             })
             .catch(error => isLoading.value = false)
 }

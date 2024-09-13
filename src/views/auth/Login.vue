@@ -62,6 +62,9 @@ function login(){
                 //dismiss loader
                 isLoading.value = false;
 
+                //set that the app is not locked
+                store.commit('auth/UNLOCK_APP');
+
                 //redirect user to dashboard
                 router.replace({ name: 'dashboard'}); //TODO Implement intended route logic
 
