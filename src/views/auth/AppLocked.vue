@@ -1,25 +1,42 @@
 <script setup>
 
 //imports
-import { ref } from 'vue';
+import {computed, ref} from 'vue';
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import {startIdleTracking} from "@/services/idleAppLockTimer";
+import {getNameInitials} from "@/services/Helpers";
 
-/**
+/* ---------------------------------
  * All variables definitions
+ * --------------------------------
  * */
 const router = useRouter();
 const store = useStore();
 
-const email = ref("");
 const password = ref("");
-const rememberMe = ref(false);
 const isLoading = ref(false)
 const isPasswordFocused = ref(false)
 const showPassword = ref(false)
+
+
+/* ---------------------------------
+ * Computed properties
+ * --------------------------------
+ * */
+const authUser = computed(()=> store.state.auth.user);
+const userFirstName = computed(()=> {
+    if(authUser){
+        return store.state.auth.user.name.toString().split(" ")[0];
+    }
+    return "";
+})
+const userNameInitials = computed(()=> {
+    if(!authUser) return "";
+    return getNameInitials(authUser.value.name);
+})
 
 
 /**
@@ -40,8 +57,9 @@ function login(){
 
     //prepare request payload
     let payload = {
-        email: email.value.trim(),
-        password: password.value.trim()
+        email: authUser.value.email.trim(),
+        password: password.value.trim(),
+        app_lock: true
     }
 
     //make api call
@@ -53,20 +71,17 @@ function login(){
                 //store user details
                 store.commit('auth/STORE_AUTH_USER', response.data.user)
 
-                //if "Remember Me" is checked, save the details in localStorage
-                if(rememberMe){
-                    localStorage.setItem('mz.admin', JSON.stringify(response.data.user));
-                    localStorage.setItem('bearer_token', response.data.token);
-                }
-
                 //dismiss loader
                 isLoading.value = false;
 
-                //redirect user to dashboard
-                router.replace({ name: 'dashboard'}); //TODO Implement intended route logic
-
                 //start time for tracking idle time
                 startIdleTracking();
+
+                //set that the app is not locked
+                store.commit("auth/UNLOCK_APP");
+
+                //redirect user back to the page they were on before app lock
+                router.back();
             })
             .catch(error => isLoading.value = false)
 }
@@ -95,20 +110,15 @@ function login(){
                                 <div class="card-body" v-loading="isLoading">
 
                                     <div class="pt-4 pb-2">
-                                        <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
-                                        <p class="text-center small">Enter your username & password to login</p>
+                                        <div class="col-sm-12 d-flex justify-content-center">
+                                            <div class="user_initials">{{ userNameInitials }}</div>
+                                        </div>
+
+                                        <h5 class="card-title text-center pb-0">Hello, {{ userFirstName }}</h5>
+                                        <p class="text-center small">{{ authUser.email }}</p>
                                     </div>
 
                                     <form @submit.prevent="getSanctumCSRFToken" class="row g-3 needs-validation">
-
-                                        <div class="col-12">
-                                            <div class="form-floating">
-                                                <input type="email" class="form-control" id="email"
-                                                       placeholder="Email" v-model="email" required>
-                                                <label for="email">Email</label>
-                                            </div>
-                                        </div>
-
                                         <div class="col-12">
                                             <div class="form-floating">
                                                 <input :type="showPassword ? 'text' : 'password'"
@@ -128,13 +138,10 @@ function login(){
                                         </div>
 
                                         <div class="col-12">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe" v-model="rememberMe">
-                                                <label class="form-check-label" for="rememberMe">Remember me</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <button class="btn btn-primary w-100" type="submit">Login</button>
+                                            <button class="btn btn-primary w-100" type="submit">
+                                                <i class="ri ri-lock-unlock-line"></i>
+                                                Unlock
+                                            </button>
                                         </div>
                                         <!--<div class="col-12">
                                             <p class="small mb-0">Don't have account? <a href="pages-register.html">Create an account</a></p>
@@ -170,5 +177,13 @@ function login(){
 
 .form-floating input {
     padding-right: 2.5rem; /* Adjust to make space for the icon */
+}
+
+.user_initials{
+    padding: 20px;
+    background: #c9bcef;
+    border-radius: 50%;
+    font-size: 25px;
+    font-weight: 600 !important;
 }
 </style>

@@ -32,6 +32,9 @@ api.interceptors
             config.headers.Accept = "application/json";
             //config.headers["Content-Type"] = "application/json";
 
+            //since they user is constantly using the app, extend the expiry time
+            store.commit('auth/EXTEND_TOKEN_EXPIRY');
+
             return config;
         },
         (error) => Promise.reject(error)

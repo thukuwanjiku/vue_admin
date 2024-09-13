@@ -117,3 +117,13 @@ export function moneyFormatter(amount, currency='' , floating_points = null) {
     //return formatted value plus the business currency
     return (currency ? currency + " " : '') + formattedAmount;
 }
+export function getNameInitials(fullName, numOfInitials = 2) {
+    // Split the full name into an array of words
+    const nameParts = fullName.trim().split(/\s+/);
+
+    // Get the initials of the name parts
+    const initials = nameParts.map(part => part[0].toUpperCase());
+
+    // Join the available initials up to the requested number and return it
+    return initials.slice(0, numOfInitials).join('');
+}
