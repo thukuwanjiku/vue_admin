@@ -315,7 +315,7 @@ function goToReviews(){
                 <Slide v-for="(file, index) in listing.media" :key="'view-listing-media-'+file.id">
 
                     <div class="w-100 listing_carousel_primary_media">
-                        <img :src="file.path" class="d-block w-100 carousel__item">
+                        <img :src="file.path" class="d-block w-100 carousel__item" style="max-height:300px;">
 
                         <div class="primary_indicator" v-show="file.is_primary">primary</div>
                     </div>

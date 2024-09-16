@@ -11,6 +11,8 @@ import 'vue-tel-input/vue-tel-input.css';
 import {AwesomeSocialButton} from "awesome-social-button";
 import {startCase} from "lodash-es";
 import {isSmallScreen, socialPlatforms} from "@/services/Helpers";
+import {validateSocialHandle} from "@/services/SocialHandlesLinksValidator";
+import {ElMessage} from "element-plus";
 
 /* ------------------------------
 * Variables & Properties
@@ -86,6 +88,13 @@ function selectSocialPlatform(social){
     newSocialHandle.value.link = social == 'whatsapp' ? "https://wa.me/" : "";
 }
 function addSocial(){
+    if(newSocialHandle.value.platform != 'whatsapp')
+        newSocialHandle.value.link = newSocialHandle.value.link.replace(/\/+$/, '');
+
+    //validate link entered
+    if(!validateSocialHandle(newSocialHandle.value))
+        return ElMessage.warning(`Please enter a valid ${startCase(newSocialHandle.value.platform)} url`);
+
     //add new social to company list of socials
     addedSocials.value.push({
         platform: newSocialHandle.value.platform,
@@ -318,7 +327,7 @@ function submit(){
                     <div class="col-md-6" v-if="newSocialHandle.platform.length">
                         <div class="input-group mb-3">
                             <div class="form-floating">
-                                <input type="url" class="form-control" id="newSocialLink"
+                                <input type="text" class="form-control" id="newSocialLink"
                                        placeholder="Tagline" v-model="newSocialHandle.link" required>
                                 <label for="newSocialLink">
                                     <template v-if="newSocialHandle.platform == 'whatsapp'">
@@ -328,17 +337,17 @@ function submit(){
                                         Enter {{ startCase(newSocialHandle.platform) }} Link here
                                     </template>
                                 </label>
-                                <input-label v-if="newSocialHandle.platform == 'whatsapp'">Please enter the whatsapp number in international format (+254712345678)</input-label>
                             </div>
                             <span class="input-group-text" id="basic-addon2">
                                 <el-button native-type="submit" link>Add</el-button>
                             </span>
                         </div>
+                        <small v-if="newSocialHandle.platform == 'whatsapp'">Please enter the whatsapp number in international format (+254712345678)</small>
                     </div>
                 </form>
             </div>
             <div class="col-sm-12 d-flex justify-content-end">
-                <el-button type="info" @click="isAddingSocialHandles = !isAddingSocialHandles" plain>Done</el-button>
+                <el-button type="primary" @click="isAddingSocialHandles = !isAddingSocialHandles">Close</el-button>
             </div>
         </div>
     </el-dialog>
