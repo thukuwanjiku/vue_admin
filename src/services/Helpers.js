@@ -52,7 +52,6 @@ export function fetchExploreHubListingCategories(){
             })
             .catch(error => store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', false));
 }
-
 export function fetchInvestmentHubCompanies(){
     //show loader
     store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", true);
@@ -80,8 +79,41 @@ export function fetchInvestmentHubListingCategories(){
             })
             .catch(error => store.commit('investmentHub/SET_IS_FETCHING_CATEGORIES', false));
 }
+export function fetchRoles(){
+    store.commit('auth/SET_IS_FETCHING_ROLES', true);
 
+    //show loading overlay
+    api.get(apiRoutes.LIST_ROLES)
+            .then(response => {
+                //store data in vuex store
+                store.commit('auth/STORE_ROLES', response.data);
+                //dismiss loading
+                store.commit('auth/SET_IS_FETCHING_ROLES', false);
+            })
+            .catch(error => store.commit('auth/SET_IS_FETCHING_ROLES', false));
+}
+export function fetchUsers(){
+    store.commit('auth/SET_IS_FETCHING_USERS', true);
 
+    //show loading overlay
+    api.get(apiRoutes.LIST_USERS)
+            .then(response => {
+                //store data in vuex store
+                store.commit('auth/STORE_USERS', response.data);
+                //dismiss loading
+                store.commit('auth/SET_IS_FETCHING_USERS', false);
+            })
+            .catch(error => store.commit('auth/SET_IS_FETCHING_USERS', false));
+}
+
+export function checkHasPermission(permission){
+    return store.getters["auth/isSuperAdmin"]
+            || store.state.auth.permissions.includes(permission);
+}
+export function checkHasSidemenuPermission(permissions){
+    return store.getters["auth/isSuperAdmin"]
+            || store.state.auth.permissions.some(perm => permissions.includes(perm));
+}
 export function fetchMaterialIconsNames(){
     //fetch material icons data
     axios.get(materialIconsNamesUrl)

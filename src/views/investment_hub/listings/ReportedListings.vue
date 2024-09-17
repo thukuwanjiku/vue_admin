@@ -215,7 +215,7 @@ function archiveListing(payload){
                     <td @click="viewListing(listing)">{{ listing.title }}</td>
                     <td @click="viewListing(listing)">{{ listing.company }}</td>
                     <td @click="viewListing(listing)">{{ listing.times_reported }}</td>
-                    <td><el-button @click="viewListing(listing)" type="primary" size="small" plain>Details</el-button></td>
+                    <td><el-button @click="viewListing(listing)" type="primary" size="small" plain>View</el-button></td>
                 </tr>
                 <tr v-else><td colspan="5" class="text-center p-3">No data</td></tr>
                 </tbody>

@@ -6,7 +6,7 @@ import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
-import {startIdleTracking} from "@/services/idleAppLockTimer";
+import {startIdleTracking, stopIdleTracking} from "@/services/idleAppLockTimer";
 import {getNameInitials} from "@/services/Helpers";
 
 /* ---------------------------------
@@ -86,6 +86,15 @@ function login(){
             .catch(error => isLoading.value = false)
 }
 
+function goToLogin(){
+    //clear token & user details from store & local storage
+    store.commit('auth/LOGOUT');
+    //redirect user to login page
+    router.replace({name: 'login'});
+    //stop idle time tracker
+    stopIdleTracking();
+}
+
 </script>
 
 <template>
@@ -143,9 +152,9 @@ function login(){
                                                 Unlock
                                             </button>
                                         </div>
-                                        <!--<div class="col-12">
-                                            <p class="small mb-0">Don't have account? <a href="pages-register.html">Create an account</a></p>
-                                        </div>-->
+                                        <div class="col-12">
+                                            <p class="small mb-0">Having problems? <a href="#" @click="goToLogin">Switch Account</a></p>
+                                        </div>
                                     </form>
 
                                 </div>

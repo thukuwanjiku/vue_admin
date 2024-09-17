@@ -274,7 +274,34 @@ export default [
                         ]
                     }
                 ]
-            }
+            },
+
+            //Access Control Routes
+            {
+                path: 'access-control',
+                children: [
+                    {
+                        path: 'users',
+                        name: 'users',
+                        component: ()=> import("../views/access_control/ManageUsers.vue"),
+                    },
+                    {
+                        path: 'roles',
+                        name: 'roles',
+                        component: ()=> import("../views/access_control/ManageRoles.vue"),
+                    },
+                    {
+                        path: 'permissions',
+                        name: 'permissions',
+                        component: ()=> import("../views/access_control/Permissions.vue"),
+                    },
+                ]
+            },
         ]
+    },
+    {
+        path: '/user-invites/:token',
+        component: ()=> import("../views/access_control/UserInvite.vue"),
+        props: true
     },
 ]

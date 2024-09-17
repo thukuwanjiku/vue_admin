@@ -67,6 +67,27 @@ const apiRoutes = {
     INVESTMENT_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/investment-hub/listing-reviews-summary`,
     INVESTMENT_HUB_REPORTED_LISTINGS: `${apiBaseUrl}/investment-hub/reported-listings`,
     INVESTMENT_HUB_LISTING_REPORTS: `${apiBaseUrl}/investment-hub/listing-reports`,
+
+
+    /* ---------------------------------------
+    * ACCESS CONTROL ROUTES
+    * ---------------------------------------
+    * */
+    //Roles
+    LIST_ROLES: `${apiBaseUrl}/roles/list`,
+    ADD_NEW_ROLES: `${apiBaseUrl}/roles/add-roles`,
+    EDIT_ROLE: `${apiBaseUrl}/roles/edit-role`,
+    DELETE_ROLES: `${apiBaseUrl}/roles/delete-roles`,
+
+    //Permissions
+    GET_ROLE_PERMISSIONS: `${apiBaseUrl}/permissions/get-role-permissions`,
+    SAVE_ROLE_PERMISSIONS: `${apiBaseUrl}/permissions/save-role-permissions`,
+
+    //Users
+    LIST_USERS: `${apiBaseUrl}/users/list`,
+    INVITE_USERS: `${apiBaseUrl}/users/invite-users`,
+    VALIDATE_INVITE_TOKEN: `${apiBaseUrl}/users/validate-invite-token`,
+    ACCEPT_INVITE: `${apiBaseUrl}/users/accept-invite`,
 };
 
 export { baseUrl, apiBaseUrl, apiRoutes };

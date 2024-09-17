@@ -49,9 +49,10 @@ function login(){
             .then(response => {
                 //store access token
                 store.commit('auth/STORE_AUTH_TOKEN', response.data.token);
-
                 //store user details
                 store.commit('auth/STORE_AUTH_USER', response.data.user)
+                //store user permissions
+                store.commit('auth/STORE_PERMISSIONS', response.data.permissions)
 
                 //if "Remember Me" is checked, save the details in localStorage
                 if(rememberMe){
