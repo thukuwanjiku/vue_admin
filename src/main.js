@@ -11,6 +11,7 @@ import 'element-plus/dist/index.css'
 
 //import additional css
 import "@/assets/css/app.css";
+import {fetchSignedInUserPermissions} from "@/services/Helpers";
 
 createApp(App)
         .use(store)
@@ -20,3 +21,8 @@ createApp(App)
 
 //start idle timer
 startIdleTracking();
+
+//if there's a signed in user and their permissions aren't fetched, fetch them
+if(store.getters["auth/isAuthenticated"] && store.state.auth.permissions){
+    fetchSignedInUserPermissions();
+}

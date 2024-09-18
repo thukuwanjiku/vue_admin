@@ -8,7 +8,12 @@ import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
 import {AwesomeSocialButton} from "awesome-social-button";
 import {ArrowDown, Plus} from "@element-plus/icons-vue";
-import {fetchExploreHubCompanies, isSmallScreen} from "@/services/Helpers";
+import {
+    checkHasPermission,
+    fetchExploreHubCompanies,
+    hasPermissionsWhichContain,
+    isSmallScreen
+} from "@/services/Helpers";
 
 /* -----------------------------
  * Variables
@@ -41,7 +46,7 @@ let isLoading = computed({
  * */
 onMounted(()=>{
     //fetch companies
-    if(!companies.value.length) fetchExploreHubCompanies();
+    if(checkHasPermission('explore_hub.companies.list') && !companies.value.length) fetchExploreHubCompanies();
 });
 
 
@@ -66,6 +71,8 @@ function handleEntryAction(payload){
 }
 
 function viewCompany(company){
+    if(!checkHasPermission('explore_hub.companies.view')) return;
+
     //set the company being viewed
     activeCompany.value = JSON.parse(JSON.stringify(company));
     //view the company on a dialog
@@ -139,12 +146,12 @@ function archiveCompany(payload){
 <template>
 
     <div class="row p-2" v-loading="isLoading">
-        <div class="col-sm-12 d-flex m-b-10">
+        <div class="col-sm-12 d-flex m-b-10" v-if="checkHasPermission('explore_hub.companies.add')">
             <el-button @click="router.push({name: 'explore_hub.companies.add'})" type="primary" :icon="Plus" plain>Add Company</el-button>
         </div>
         <br>
 
-        <div class="table-responsive">
+        <div class="table-responsive" v-if="checkHasPermission('explore_hub.companies.list')">
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -166,14 +173,16 @@ function archiveCompany(payload){
                     <td @click="viewCompany(company)">{{ company.contact_name }}</td>
                     <td>
                         <el-dropdown trigger="click" @command="handleEntryAction">
-                            <el-button plain type="primary" size="small">
+                            <el-button plain type="primary"
+                                       :disabled="!hasPermissionsWhichContain(['explore_hub.companies.view', 'explore_hub.companies.edit', 'explore_hub.companies.archive'])"
+                                       size="small">
                                 Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
                             </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item :command="{action:'view',company}">View</el-dropdown-item>
-                                    <el-dropdown-item :command="{action:'edit',company}">Edit</el-dropdown-item>
-                                    <el-dropdown-item :command="{action:'archive',company}">Archive</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.view')" :command="{action:'view',company}">View</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.edit')" :command="{action:'edit',company}">Edit</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.archive')" :command="{action:'archive',company}">Archive</el-dropdown-item>
 <!--                                    <el-dropdown-item :command="{action:'delete',company}">Delete</el-dropdown-item>-->
                                 </el-dropdown-menu>
                             </template>

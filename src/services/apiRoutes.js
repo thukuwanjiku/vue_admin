@@ -82,12 +82,15 @@ const apiRoutes = {
     //Permissions
     GET_ROLE_PERMISSIONS: `${apiBaseUrl}/permissions/get-role-permissions`,
     SAVE_ROLE_PERMISSIONS: `${apiBaseUrl}/permissions/save-role-permissions`,
+    SIGNEDIN_USER_PERMISSIONS: `${apiBaseUrl}/permissions/auth-user`,
 
     //Users
     LIST_USERS: `${apiBaseUrl}/users/list`,
     INVITE_USERS: `${apiBaseUrl}/users/invite-users`,
     VALIDATE_INVITE_TOKEN: `${apiBaseUrl}/users/validate-invite-token`,
     ACCEPT_INVITE: `${apiBaseUrl}/users/accept-invite`,
+    SET_USER_ROLES: `${apiBaseUrl}/users/set-roles`,
+    DELETE_USER: `${apiBaseUrl}/users/delete-user`,
 };
 
 export { baseUrl, apiBaseUrl, apiRoutes };

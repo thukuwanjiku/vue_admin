@@ -1,6 +1,6 @@
 <script setup>
 
-import {checkHasPermission, fetchRoles} from "@/services/Helpers";
+import {checkHasPermission, fetchRoles, fetchSignedInUserPermissions} from "@/services/Helpers";
 import {startCase} from "lodash-es";
 import {computed, onMounted, ref} from "vue";
 import {useStore} from "vuex";
@@ -36,7 +36,7 @@ const roles = computed(()=> store.state.auth.roles);
  * */
 onMounted(()=>{
     //fetch roles
-    if(checkHasPermission('roles.list') && !roles.value.length) fetchRoles();
+    if(!roles.value.length) fetchRoles();
 });
 
 
@@ -65,8 +65,6 @@ function fetchRolePermissions(){
             .then(response => {
                 //set role permissions
                 rolePermissions.value = response.data.permissions;
-                //auto select all modules
-                selectedModules.value = JSON.parse(JSON.stringify(response.data.permissions.map(module => module.module)));
 
                 //reset role selection
                 roleID.value = null;
@@ -79,7 +77,7 @@ function fetchRolePermissions(){
 function handleSavePermissions(){
     //get all permissions as a direct array not the complex array grouped by modules/submodules
     let permissions = rolePermissions.value
-            .filter(_module => selectedModules.value.includes(_module.module))
+            .filter(_module => !selectedModules.length || selectedModules.value.includes(_module.module))
             .flatMap(module =>
                 module.submodules.flatMap(submodule =>
                         submodule.actions.map(action => ({
@@ -103,6 +101,9 @@ function handleSavePermissions(){
             .then(response => {
                 //show success message
                 $.growl.notice({message: response.data.message})
+
+                //reload page to reload app permissions
+                window.location.reload();
 
                 //hide loader
                 isLoading.value = false;
@@ -166,7 +167,7 @@ function handleSavePermissions(){
                     <div class="row m-t-10">
                         <el-checkbox-group
                                 class="d-flex flex-wrap justify-content-center align-items-center"
-                                v-model="selectedModules" :min="1">
+                                v-model="selectedModules">
                             <el-checkbox v-for="module in rolePermissions"
                                          :key="'modules-checker-'+module.module"
                                          :label="startCase(module.module)"
@@ -181,7 +182,7 @@ function handleSavePermissions(){
                     <div class="col-md-12">
                         <!-- Loop through permissions modules -->
                         <div class="col-md-12 p-2 permission_module m-t-10"
-                             v-for="(module, index) in rolePermissions.filter(_module => selectedModules.includes(_module.module))"
+                             v-for="(module, index) in rolePermissions.filter(_module => !selectedModules.length || selectedModules.includes(_module.module))"
                              :key="'permissions-module-'+module.module">
                             <el-divider v-if="index > 0"></el-divider>
 
@@ -221,7 +222,7 @@ function handleSavePermissions(){
                                          :key="'module-permission-'+action.action">
                                         <el-checkbox v-model="action.has_permission"
                                                      :label="startCase(action.action)"
-                                                     :disabled="!checkHasPermission(action.has_permission ? 'permissions.revoke' : 'permission.grant')"
+                                                     :disabled="!checkHasPermission(action.has_permission ? 'permissions.revoke' : 'permissions.grant')"
                                                      size="large" />
                                     </div>
                                 </div>

@@ -10,6 +10,7 @@ const state = {
     isFetchingUsers: false,
 
     permissions: [],
+    hasFetchedPermissions: false
 
 };
 
@@ -52,7 +53,10 @@ const mutations = {
     STORE_USERS: (state, data)=> state.users = data,
     SET_IS_FETCHING_USERS: (state, value)=> state.isFetchingUsers = value,
 
-    STORE_PERMISSIONS: (state, data)=> state.permissions = data,
+    STORE_PERMISSIONS: (state, data)=> {
+        state.permissions = data;
+        state.hasFetchedPermissions = true
+    },
 };
 
 const getters = {

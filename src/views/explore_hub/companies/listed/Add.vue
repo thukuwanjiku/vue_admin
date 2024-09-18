@@ -10,7 +10,7 @@ import { VueTelInput } from 'vue-tel-input';
 import 'vue-tel-input/vue-tel-input.css';
 import {AwesomeSocialButton} from "awesome-social-button";
 import {startCase} from "lodash-es";
-import {isSmallScreen, socialPlatforms} from "@/services/Helpers";
+import {checkHasPermission, isSmallScreen, socialPlatforms} from "@/services/Helpers";
 import {validateSocialHandle} from "@/services/SocialHandlesLinksValidator";
 import {ElMessage} from "element-plus";
 
@@ -270,7 +270,7 @@ function submit(){
 
         <hr>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="submit">Add Company</button>
+            <button class="btn btn-primary" type="submit" v-if="checkHasPermission('explore_hub.companies.add')">Add Company</button>
             &nbsp;
             <button @click="router.back()" class="btn btn-secondary" type="button">Cancel</button>
         </div>

@@ -6,7 +6,6 @@ import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
 import {useRouter} from "vue-router";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {AwesomeSocialButton} from "awesome-social-button";
 import {ArrowDown, Plus} from "@element-plus/icons-vue";
 import {checkHasPermission, fetchRoles, fetchUsers, isSmallScreen} from "@/services/Helpers";
 import {startCase} from "lodash-es";
@@ -22,6 +21,11 @@ const isModalLoading = ref(false);
 const isInvitingUsers = ref(false);
 const inviteEmail = ref("");
 const inviteRole = ref(null);
+
+const isManagingUserRoles = ref(false);
+const currentUser = ref({});
+const currentUserRoles = ref([]);
+const newUserRoles = ref([]);
 
 
 /* -----------------------------
@@ -82,35 +86,35 @@ function inviteUser(){
 }
 
 function handleEntryAction(payload){
-    return;
     switch (payload.action){
-        case 'edit':
-            return handleEditRole(payload.role);
-
         case 'delete':
-            return confirmDelete(payload.role);
+            return confirmDelete(payload.user);
+
+        case 'manage_roles':
+            return manageUserRoles(payload.user);
     }
 }
-function confirmDelete(role){
-    ElMessageBox.confirm('Sure you want to delete this role?', 'Confirm Delete', {
+
+function confirmDelete(user){
+    ElMessageBox.confirm('Sure you want to delete this user?', 'Confirm Delete', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
     })
             .then(() => {
                 //send payload to method handling the
-                deleteRole(role);
+                deleteUser(user);
             })
             .catch(() => {})
 }
-function deleteRole(role){
+function deleteUser(user){
     //show loader
     isLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.DELETE_ROLES, {ids: [role.id]})
+    api.post(apiRoutes.DELETE_USER, {user_id: user.id})
             .then(response => {
-                //refresh roles list
-                fetchRoles();
+                //refresh users list
+                fetchUsers();
 
                 //show success message
                 $.growl.notice({message: response.data.message});
@@ -119,6 +123,57 @@ function deleteRole(role){
                 isLoading.value = false;
             })
             .catch(error => isLoading.value = false)
+}
+
+function manageUserRoles(user){
+    //set current user
+    currentUser.value = JSON.parse(JSON.stringify(user));
+
+    //set current roles
+    currentUserRoles.value = JSON.parse(JSON.stringify(user.roles))
+            .map(role => {
+                role.deleted = false;
+                return role;
+            });
+
+    //show dialog window to manage roles
+    isManagingUserRoles.value = true;
+}
+function saveUserRoles(){
+    //prepare payload
+    let payload = {
+        user_id: currentUser.value.id,
+        roles: [
+                //add any saved roles not removed
+                ...currentUserRoles.value.filter(role => !role.deleted).map(role => role.name),
+                //and any new roles
+                ...newUserRoles.value
+        ],
+    };
+
+    //show loader
+    isModalLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.SET_USER_ROLES, payload)
+            .then(response => {
+                //refresh users
+                fetchUsers();
+
+                //show success message
+                $.growl.notice({message: response.data.message});
+
+                //dismiss modal
+                isManagingUserRoles.value = false;
+
+                //dismiss loader
+                isModalLoading.value = false;
+
+                //reset values
+                newUserRoles.value = [];
+                currentUserRoles.value = [];
+            })
+            .catch(error => isModalLoading.value = false)
 }
 
 </script>
@@ -168,16 +223,15 @@ function deleteRole(role){
                             <td>{{ user.roles.map(role => startCase(role.name)).join(', ') }}</td>
                             <td>
                                 <el-dropdown trigger="click"
-                                             @command="handleEntryAction"
-                                             v-if="!user.roles.some(entry => entry.name == 'super_admin')
-                                                && (checkHasPermission('users.delete') || checkHasPermission('users.manage_roles'))">
-                                    <el-button plain type="primary" size="small">
+                                             @command="handleEntryAction">
+                                    <el-button plain type="primary" size="small" :disabled="user.roles.some(entry => entry.name == 'super_admin')
+                                                || !(checkHasPermission('users.delete') || checkHasPermission('users.manage_roles'))">
                                         Actions<el-icon class="el-icon--right"><ArrowDown /></el-icon>
                                     </el-button>
                                     <template #dropdown>
                                         <el-dropdown-menu>
-                                            <el-dropdown-item :command="{action:'delete',user}" v-if="checkHasPermission('users.delete')">Delete</el-dropdown-item>
                                             <el-dropdown-item :command="{action:'manage_roles',user}" v-if="checkHasPermission('users.manage_roles')">Manage Roles</el-dropdown-item>
+                                            <el-dropdown-item :command="{action:'delete',user}" v-if="checkHasPermission('users.delete')">Delete</el-dropdown-item>
                                         </el-dropdown-menu>
                                     </template>
                                 </el-dropdown>
@@ -230,27 +284,77 @@ function deleteRole(role){
         </div>
     </el-dialog>
 
-    <!-- Modal to edit role -->
-<!--    <el-dialog-->
-<!--            v-if="editRole"-->
-<!--            v-model="isEditingRole"-->
-<!--            width="30%"-->
-<!--            title="Edit Role"-->
-<!--            :fullscreen="isSmallScreen">-->
-<!--        <div class="p-3" v-loading="isModalLoading">-->
-<!--            <form @submit.prevent="saveRoleChanges">-->
-<!--                <input type="text"-->
-<!--                       class="form-control"-->
-<!--                       placeholder="Enter role name here"-->
-<!--                       v-model="editRole.new_name" required>-->
+    <!-- Modal to manage user role -->
+    <el-dialog
+            v-if="currentUser"
+            v-model="isManagingUserRoles"
+            width="40%"
+            :title="'Roles for '+currentUser.name"
+            :fullscreen="isSmallScreen">
+        <div class="p-3" v-loading="isModalLoading">
 
-<!--                <div class="m-t-10">-->
-<!--                    <el-button size="small" native-type="submit" type="primary" :disabled="editRole.name == editRole.new_name">Save Changes</el-button>-->
-<!--                </div>-->
+            <template v-if="currentUserRoles.some(_role => !_role.deleted)">
+                <h6><small>Assigned Roles</small></h6>
+                <div class="col-md-12 m-t-10 d-flex flex-wrap">
+                    <div v-for="role in currentUserRoles.filter(_role => !_role.deleted)"
+                         :key="'assigned-roles-'+role.name" class="m-1">
+                        <el-tag
+                                closable
+                                @close="role.deleted = !role.deleted;"
+                        >
+                            {{ startCase(role.name) }}
+                        </el-tag>
+                    </div>
+                </div>
+            </template>
 
-<!--            </form>-->
-<!--        </div>-->
-<!--    </el-dialog>-->
+            <div :class="{'m-t-20':currentUserRoles.some(_role => !_role.deleted)}" v-if="currentUserRoles.some(_role => _role.deleted)">
+                <h6><small>Roles to be removed</small></h6>
+                <div class="col-md-12 m-t-10 d-flex flex-wrap">
+                    <div v-for="role in currentUserRoles.filter(_role => _role.deleted)"
+                         :key="'assigned-roles-'+role.name"
+                         class="m-1">
+                        <el-tag
+                                closable
+                                @close="role.deleted = !role.deleted;"
+                                type="danger"
+                        >
+                            {{ startCase(role.name) }}
+                        </el-tag>
+                    </div>
+                </div>
+            </div>
+
+            <div class="m-t-20">
+                <h6><small>New roles</small></h6>
+
+                <el-select
+                        v-model="newUserRoles"
+                        placeholder="Select new roles to assign"
+                        size="large"
+                        style="width: 70%;"
+                        multiple
+                        collapse-tags
+                        filterable>
+                    <el-option
+                            v-for="role in roles
+                                .filter(entry => entry.name != 'super_admin')
+                                .filter(entry => !currentUserRoles.find(_entry => _entry.id == entry.id))"
+                            :key="'new-user-roles-picker-'+role.id"
+                            :label="startCase(role.name)"
+                            :value="role.name" />
+                </el-select>
+            </div>
+
+            <el-divider></el-divider>
+            <div class="m-t-10 d-flex justify-content-end">
+                <el-button type="primary"
+                           @click="saveUserRoles"
+                           :disabled="!(currentUserRoles.some(_role => _role.deleted) || newUserRoles.length)">Save Roles</el-button>
+            </div>
+
+        </div>
+    </el-dialog>
 
 </template>
 

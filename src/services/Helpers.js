@@ -105,15 +105,29 @@ export function fetchUsers(){
             })
             .catch(error => store.commit('auth/SET_IS_FETCHING_USERS', false));
 }
+export function fetchSignedInUserPermissions(){
+    api.get(apiRoutes.SIGNEDIN_USER_PERMISSIONS)
+            .then(response => {
+                //store data in vuex store
+                store.commit('auth/STORE_PERMISSIONS', response.data);
+            })
+            .catch(error => {});
+}
 
 export function checkHasPermission(permission){
     return store.getters["auth/isSuperAdmin"]
             || store.state.auth.permissions.includes(permission);
 }
-export function checkHasSidemenuPermission(permissions){
-    return store.getters["auth/isSuperAdmin"]
-            || store.state.auth.permissions.some(perm => permissions.includes(perm));
+export function hasPermissionsWhichContain(searchPermissions = []){
+    if(store.getters["auth/isSuperAdmin"]) return true;
+    if(!searchPermissions.length) return false;
+
+    return searchPermissions.filter(perm => perm.length)
+            .reduce((accumulator, current)=>{
+                return accumulator || store.state.auth.permissions.some(perm => perm.includes(current));
+            }, false);
 }
+
 export function fetchMaterialIconsNames(){
     //fetch material icons data
     axios.get(materialIconsNamesUrl)

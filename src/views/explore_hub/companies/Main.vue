@@ -3,6 +3,7 @@
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
 import Reviews from "@/views/explore_hub/companies/Reviews.vue";
+import {hasPermissionsWhichContain} from "@/services/Helpers";
 
 /* ------------------------------
 * Variables & Properties
@@ -51,20 +52,20 @@ function tabChanged(tab){
 
             <!-- Default Tabs -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.companies'])">
                     <button class="nav-link active"
                             @click="tabChanged('listed')"
                             data-bs-toggle="tab" data-bs-target="#explore_companies_listed"
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Listed</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.company_reviews'])">
                     <button class="nav-link" id="profile-tab"
                             @click="tabChanged('reviews')"
                             data-bs-toggle="tab" data-bs-target="#explore_companies_reviews"
                             type="button" role="tab"
                             aria-controls="profile" aria-selected="false" tabindex="-1">Reviews</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.archived_companies'])">
                     <button class="nav-link" id="contact-tab"
                             @click="tabChanged('deleted')"
                             data-bs-toggle="tab" data-bs-target="#explore_companies_deleted"
