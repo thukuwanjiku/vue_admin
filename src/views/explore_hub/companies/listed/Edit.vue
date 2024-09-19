@@ -11,7 +11,7 @@ import 'vue-tel-input/vue-tel-input.css';
 import CloseButton from "@/components/CloseButton.vue";
 import {AwesomeSocialButton} from "awesome-social-button";
 import {startCase} from "lodash-es";
-import {isSmallScreen, socialPlatforms} from "@/services/Helpers";
+import {checkHasPermission, isSmallScreen, socialPlatforms} from "@/services/Helpers";
 import {ElMessage} from "element-plus";
 import InputLabel from "@/components/InputLabel.vue";
 
@@ -341,7 +341,7 @@ function submit(){
         <div class="modal-footer">
             <button class="btn btn-primary" type="submit">Save Edits</button>
             &nbsp;
-            <button @click="router.back()" class="btn btn-secondary" type="button">Cancel</button>
+            <button v-if="checkHasPermission('explore_hub.companies.edit')" @click="router.back()" class="btn btn-secondary" type="button">Cancel</button>
         </div>
     </form>
 

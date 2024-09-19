@@ -139,6 +139,8 @@ function acceptNewPayment(){
         return ElMessage.warning("Please select a payment mode");
     if(!newPayment.value.amount || !newPayment.value.amount.toString().length)
         return ElMessage.warning("Please enter the payment amount");
+    if(!newPayment.value.reference || !newPayment.value.reference.toString().length)
+        return ElMessage.warning("Please enter the payment reference");
     //validate that a valid payment amount has been entered
     if(isNaN(newPayment.value.amount))
         return ElMessage.warning("Please enter a valid amount");

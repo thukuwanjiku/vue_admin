@@ -3,6 +3,7 @@
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
 import ReportedListings from "@/views/explore_hub/listings/ReportedListings.vue";
+import {hasPermissionsWhichContain} from "@/services/Helpers";
 
 /* ------------------------------
 * Variables & Properties
@@ -51,13 +52,13 @@ function tabChanged(tab){
 
             <!-- Default Tabs -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.listings'])">
                     <button class="nav-link active"
                             @click="tabChanged('active')"
                             data-bs-toggle="tab" data-bs-target="#explore_listings_active"
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Active</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.reported_listings'])">
                     <button class="nav-link"
                             @click="tabChanged('reported')"
                             data-bs-toggle="tab" data-bs-target="#explore_listings_reported"
@@ -69,7 +70,7 @@ function tabChanged(tab){
                             data-bs-toggle="tab" data-bs-target="#explore_listings_closed"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Closed</button>
                 </li>-->
-                <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.archived_listings'])">
                     <button class="nav-link"
                             @click="tabChanged('archived')"
                             data-bs-toggle="tab" data-bs-target="#explore_listings_archived"
@@ -77,16 +78,19 @@ function tabChanged(tab){
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
-                <div class="tab-pane fade show active p-1" id="explore_listings_active" role="tabpanel" aria-labelledby="home-tab">
+                <div class="tab-pane fade show active p-1" id="explore_listings_active"
+                     role="tabpanel" aria-labelledby="home-tab" v-if="hasPermissionsWhichContain(['explore_hub.listings'])">
                     <router-view name="explore_listings_active"></router-view>
                 </div>
-                <div class="tab-pane fade" id="explore_listings_reported" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade" id="explore_listings_reported"
+                     role="tabpanel" aria-labelledby="profile-tab" v-if="hasPermissionsWhichContain(['explore_hub.reported_listings'])">
                     <reported-listings></reported-listings>
                 </div>
                 <div class="tab-pane fade" id="explore_listings_closed" role="tabpanel" aria-labelledby="profile-tab">
                     Browse closed listings here
                 </div>
-                <div class="tab-pane fade" id="explore_listings_archived" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="tab-pane fade" id="explore_listings_archived"
+                     role="tabpanel" aria-labelledby="contact-tab" v-if="hasPermissionsWhichContain(['explore_hub.archived_listings'])">
                     Browse archived listings
                 </div>
             </div>

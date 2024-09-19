@@ -5,7 +5,7 @@ import {useRouter} from "vue-router";
 import CloseButton from "@/components/CloseButton.vue";
 import {onMounted, ref} from "vue";
 import {startCase} from "lodash-es";
-import {isSmallScreen, moneyFormatter} from "@/services/Helpers";
+import {checkHasPermission, hasPermissionsWhichContain, isSmallScreen, moneyFormatter} from "@/services/Helpers";
 import {Carousel, Slide, Navigation, Pagination} from "vue3-carousel";
 import 'vue3-carousel/dist/carousel.css'
 import {ArrowDown, Comment, Edit, Money, PictureFilled, TopRight} from "@element-plus/icons-vue";
@@ -92,6 +92,9 @@ function handleActionsClick(action){
 }
 
 function goEditListing(){
+    //check has permissions
+    if(!checkHasPermission('investment_hub.listings.edit')) return;
+
     //store the entry to be edited in vuex
     store.commit("investmentHub/STORE_EDIT_LISTING", JSON.parse(JSON.stringify(listing.value)));
 
@@ -114,6 +117,8 @@ function acceptNewPayment(){
         return ElMessage.warning("Please select a payment mode");
     if(!newPayment.value.amount || !newPayment.value.amount.toString().length)
         return ElMessage.warning("Please enter the payment amount");
+    if(!newPayment.value.reference || !newPayment.value.reference.toString().length)
+        return ElMessage.warning("Please enter the payment reference");
     //validate that a valid payment amount has been entered
     if(isNaN(newPayment.value.amount))
         return ElMessage.warning("Please enter a valid amount");
@@ -242,6 +247,9 @@ function saveNewMedia(){
 }
 
 function goToReviews(){
+    //check has permissions
+    if(!checkHasPermission('investment_hub.reviewed_listings.list')) return;
+
     return router.push({
         name: 'investment_hub.listings.reviews',
         params:{
@@ -254,40 +262,22 @@ function goToReviews(){
 <template>
 
     <div class="row" v-if="Object.keys(listing).length">
-        <!--<div class="col-sm-12 mb-3 d-inline-flex justify-content-end align-items-center">
-            <div class="p-1">
-                <el-dropdown trigger="click" @command="handleActionsClick">
-                    <el-button plain size="small">
-                        Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item command="edit" :icon="Edit">Edit Listing</el-dropdown-item>
-                            <el-dropdown-item command="add_payments" :icon="Money">Add Payment</el-dropdown-item>
-                            <el-dropdown-item command="add_media" :icon="PictureFilled">Add Media</el-dropdown-item>
-                            <el-dropdown-item command="browse_reviews" :icon="Comment" v-if="listing.has_reviews">Browse Reviews</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
-            </div>
-
-            <close-button></close-button>
-        </div>-->
         <div class="col-sm-12 mb-3 d-inline-flex align-items-center"
              :class="{
                 'justify-content-end': !isSmallScreen,
                 'justify-content-between': isSmallScreen
              }">
-            <div class="p-1 m-r-10 d-flex align-items-center flex-wrap">
+            <div class="p-1 m-r-10 d-flex align-items-center flex-wrap"
+                 v-if="hasPermissionsWhichContain(['investment_hub.listings.edit', 'investment_hub.listings.add_media', 'investment_hub.listings.add_payment', 'investment_hub.reviewed_listings.list'])">
                 <template v-if="!isSmallScreen">
-                    <el-button @click="goEditListing" type="primary" :icon="Edit" text bg>Edit Listing</el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button @click="isAddingPayments = true" type="primary" :icon="Money" text bg>Add Payment</el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button @click="isAddingMedia = true" type="primary" :icon="PictureFilled" text bg>Add Media</el-button>
+                    <el-button v-if="checkHasPermission('investment_hub.listings.edit')" @click="goEditListing" type="primary" :icon="Edit" text bg>Edit Listing</el-button>
+                    <el-divider v-if="hasPermissionsWhichContain(['investment_hub.listings.add_payment'])" direction="vertical"></el-divider>
+                    <el-button v-if="checkHasPermission('investment_hub.listings.add_payment')" @click="isAddingPayments = true" type="primary" :icon="Money" text bg>Add Payment</el-button>
+                    <el-divider v-if="hasPermissionsWhichContain(['investment_hub.listings.add_media'])" direction="vertical"></el-divider>
+                    <el-button v-if="checkHasPermission('investment_hub.listings.add_media')" @click="isAddingMedia = true" type="primary" :icon="PictureFilled" text bg>Add Media</el-button>
                     <template v-if="listing.has_reviews">
-                        <el-divider direction="vertical"></el-divider>
-                        <el-button @click="goToReviews" type="primary" :icon="Comment" text bg>Browse Listing Reviews</el-button>
+                        <el-divider v-if="hasPermissionsWhichContain(['investment_hub.reviewed_listings.list'])" direction="vertical"></el-divider>
+                        <el-button v-if="checkHasPermission('investment_hub.reviewed_listings.list')" @click="goToReviews" type="primary" :icon="Comment" text bg>Browse Listing Reviews</el-button>
                     </template>
                 </template>
 
@@ -297,10 +287,10 @@ function goToReviews(){
                     </el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item command="edit" :icon="Edit">Edit Listing</el-dropdown-item>
-                            <el-dropdown-item command="add_payments" :icon="Money">Add Payment</el-dropdown-item>
-                            <el-dropdown-item command="add_media" :icon="PictureFilled">Add Media</el-dropdown-item>
-                            <el-dropdown-item command="browse_reviews" :icon="Comment" v-if="listing.has_reviews">Browse Reviews</el-dropdown-item>
+                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.edit')" command="edit" :icon="Edit">Edit Listing</el-dropdown-item>
+                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.add_payment')" command="add_payments" :icon="Money">Add Payment</el-dropdown-item>
+                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.add_media')" command="add_media" :icon="PictureFilled">Add Media</el-dropdown-item>
+                            <el-dropdown-item command="browse_reviews" :icon="Comment" v-if="checkHasPermission('investment_hub.reviewed_listings.list') && listing.has_reviews">Browse Reviews</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>

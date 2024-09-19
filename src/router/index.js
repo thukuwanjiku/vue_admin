@@ -44,7 +44,33 @@ router.beforeEach((to, from, next) => {
             // User is authenticated and the token is not expired
 
             // Check if app is locked
-            if (isAppLocked && to.name !== 'app_locked') {
+            if(isAppLocked){
+                if(to.name !== 'app_locked'){
+                    // App is locked and not already on the app_locked page, redirect to app locked page
+                    next({ name: 'app_locked' });
+                }else {
+                    //app is locked and they're on locked page
+                    // Extend access token expiry date
+                    store.commit('auth/EXTEND_TOKEN_EXPIRY');
+
+                    next();
+                }
+            }else{
+                //App not locked
+
+                // Extend access token expiry date
+                store.commit('auth/EXTEND_TOKEN_EXPIRY');
+
+                // Start idle time tracking
+                startIdleTracking();
+
+                if(to.name == 'app_locked'){
+                    //they coming to app locked, redirect them to dashboard
+                    next({ name: 'dashboard' });
+                }else next();
+            }
+
+            /*if (isAppLocked && to.name !== 'app_locked') {
                 // App is locked and not already on the app_locked page, redirect to app locked page
                 next({ name: 'app_locked' });
             } else {
@@ -58,7 +84,7 @@ router.beforeEach((to, from, next) => {
 
                 // Let user navigation proceed
                 next();
-            }
+            }*/
         } else {
             // User is not authenticated or the token is expired
 

@@ -137,18 +137,18 @@ function acceptNewPayment(){
         return ElMessage.warning("Please select a payment mode");
     if(!newPayment.value.amount || !newPayment.value.amount.toString().length)
         return ElMessage.warning("Please enter the payment amount");
+    if(!newPayment.value.reference || !newPayment.value.reference.toString().length)
+        return ElMessage.warning("Please enter the payment reference");
     //validate that a valid payment amount has been entered
     if(isNaN(newPayment.value.amount))
         return ElMessage.warning("Please enter a valid amount");
 
     //check that reference code is not repeated
-    if(newPayment.value.reference != null && newPayment.value.reference.length){
-        if(payments.value.find(entry =>
-                entry.reference != null
-                && entry.reference.toString().toLowerCase()
-                == newPayment.value.reference.toString().toLowerCase()))
-            return ElMessage.warning("Reference code has already been used");
-    }
+    if(payments.value.find(entry =>
+            entry.reference != null
+            && entry.reference.toString().toLowerCase()
+            == newPayment.value.reference.toString().toLowerCase()))
+        return ElMessage.warning("Reference code has already been used");
 
     //everything's ok, add the new payment to list of payments
     payments.value.push(JSON.parse(JSON.stringify(newPayment.value)));

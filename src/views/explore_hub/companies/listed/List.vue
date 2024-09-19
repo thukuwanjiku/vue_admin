@@ -63,10 +63,10 @@ function handleEntryAction(payload){
             return editCompany(payload.company);
 
         case 'archive':
-            break;
+            return confirmArchive(payload.company);
 
         case 'delete':
-            break;
+            return confirmDelete(payload.company);
     }
 }
 
@@ -134,9 +134,38 @@ function archiveCompany(payload){
 
                 //show success message
                 $.growl.notice({message: response.data.message});
+            })
+            .catch(error => isLoading.value = false)
+}
 
-                //dismiss loader
-                isLoading.value = false;
+function confirmDelete(company){
+    ElMessageBox.confirm('Sure you want to delete this company?', 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+    })
+            .then(() => {
+                //define payload to send to api
+                let payload = {
+                    id: company.id
+                };
+
+                //send payload to method handling the
+                deleteCompany(payload);
+            })
+            .catch(() => {})
+}
+function deleteCompany(payload){
+    //show loader
+    isLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.DELETE_EXPLORE_LISTED_COMPANY, payload)
+            .then(response => {
+                //refresh companies list
+                fetchExploreHubCompanies();
+
+                //show success message
+                $.growl.notice({message: response.data.message});
             })
             .catch(error => isLoading.value = false)
 }
@@ -174,7 +203,7 @@ function archiveCompany(payload){
                     <td>
                         <el-dropdown trigger="click" @command="handleEntryAction">
                             <el-button plain type="primary"
-                                       :disabled="!hasPermissionsWhichContain(['explore_hub.companies.view', 'explore_hub.companies.edit', 'explore_hub.companies.archive'])"
+                                       :disabled="!hasPermissionsWhichContain(['explore_hub.companies.view', 'explore_hub.companies.edit', 'explore_hub.companies.archive', 'explore_hub.companies.delete'])"
                                        size="small">
                                 Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
                             </el-button>
@@ -183,7 +212,7 @@ function archiveCompany(payload){
                                     <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.view')" :command="{action:'view',company}">View</el-dropdown-item>
                                     <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.edit')" :command="{action:'edit',company}">Edit</el-dropdown-item>
                                     <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.archive')" :command="{action:'archive',company}">Archive</el-dropdown-item>
-<!--                                    <el-dropdown-item :command="{action:'delete',company}">Delete</el-dropdown-item>-->
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.delete')" :command="{action:'delete',company}">Delete</el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>

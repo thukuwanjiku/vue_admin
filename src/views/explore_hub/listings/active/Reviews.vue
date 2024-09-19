@@ -124,7 +124,6 @@ function handlePaginationClick(link){
                 }
                 return entry;
             });
-    console.log(link.url, pageNo, newLinks);
 
     //update pagination links
     paginationLinks.value = newLinks;

@@ -58,7 +58,7 @@ function tabChanged(tab){
                             data-bs-toggle="tab" data-bs-target="#explore_companies_listed"
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Listed</button>
                 </li>
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.company_reviews'])">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.companies_reviews'])">
                     <button class="nav-link" id="profile-tab"
                             @click="tabChanged('reviews')"
                             data-bs-toggle="tab" data-bs-target="#explore_companies_reviews"
@@ -73,10 +73,12 @@ function tabChanged(tab){
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
-                <div class="tab-pane fade show active p-1" id="explore_companies_listed" role="tabpanel" aria-labelledby="home-tab">
+                <div class="tab-pane fade show active p-1" id="explore_companies_listed"
+                     role="tabpanel" aria-labelledby="home-tab" v-if="hasPermissionsWhichContain(['explore_hub.companies'])">
                     <router-view name="explore_companies_listed"></router-view>
                 </div>
-                <div class="tab-pane fade" id="explore_companies_reviews" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade" id="explore_companies_reviews"
+                     role="tabpanel" aria-labelledby="profile-tab" v-if="hasPermissionsWhichContain(['explore_hub.companies_reviews'])">
                     <reviews></reviews>
                 </div>
                 <div class="tab-pane fade" id="explore_companies_deleted" role="tabpanel" aria-labelledby="contact-tab">

@@ -15,7 +15,10 @@ export default [
         path: '/locked',
         name: 'app_locked',
         component: ()=> import("../views/auth/AppLocked.vue"),
-        meta: { requiresAuth: true },
+        meta: {
+            requiresAuth: true,
+            title: `Locked ${pageTitleSuffix}`
+        },
     },
     {
         path: '/',
@@ -284,16 +287,25 @@ export default [
                         path: 'users',
                         name: 'users',
                         component: ()=> import("../views/access_control/ManageUsers.vue"),
+                        meta: {
+                            title: `Users ${pageTitleSuffix}`
+                        }
                     },
                     {
                         path: 'roles',
                         name: 'roles',
                         component: ()=> import("../views/access_control/ManageRoles.vue"),
+                        meta: {
+                            title: `User Roles ${pageTitleSuffix}`
+                        }
                     },
                     {
                         path: 'permissions',
                         name: 'permissions',
                         component: ()=> import("../views/access_control/Permissions.vue"),
+                        meta: {
+                            title: `Permissions ${pageTitleSuffix}`
+                        }
                     },
                 ]
             },
@@ -302,6 +314,9 @@ export default [
     {
         path: '/user-invites/:token',
         component: ()=> import("../views/access_control/UserInvite.vue"),
-        props: true
+        props: true,
+        meta: {
+            title: `Accept Invite ${pageTitleSuffix}`
+        }
     },
 ]

@@ -6,7 +6,7 @@ import InputLabel from "@/components/InputLabel.vue";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {ElMessage} from "element-plus";
-import {isSmallScreen} from "@/services/Helpers";
+import {checkHasPermission, isSmallScreen} from "@/services/Helpers";
 
 
 /* -----------------------------
@@ -144,7 +144,8 @@ function handlePaginationClick(link){
 <template>
 
     <!-- When no company is selected -->
-    <div class="row d-flex align-items-center justify-content-center p-t-20 p-b-20" v-if="!Object.keys(company).length">
+    <div class="row d-flex align-items-center justify-content-center p-t-20 p-b-20"
+         v-if="checkHasPermission('explore_hub.companies_reviews.list') && !Object.keys(company).length">
         <div class="col-md-4 col-sm-12">
             <input-label>Select company to browse reviews</input-label>
             <el-select

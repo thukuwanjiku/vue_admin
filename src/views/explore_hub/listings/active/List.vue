@@ -7,7 +7,8 @@ import {useStore} from "vuex";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useRouter} from "vue-router";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
+import {checkHasPermission, fetchExploreHubCompanies, hasPermissionsWhichContain} from "@/services/Helpers";
 
 /* ----------------------------------
 * Variables & properties
@@ -64,7 +65,7 @@ watch(listingsSource, (newValue, oldValue)=> {
 * */
 onMounted(()=> {
     //fetch listings if they're not already
-    fetchListings();
+    if(checkHasPermission('explore_hub.listings.list')) fetchListings();
 });
 
 
@@ -142,14 +143,17 @@ function handleEntryAction(payload){
             return goEditListing(payload.listing);
 
         case 'archive':
-            break;
+            return confirmArchive(payload.listing);
 
         case 'delete':
-            break;
+            return confirmDelete(payload.listing);
     }
 }
 
 function viewListing(listing){
+    //check has permission to view listing
+    if(!checkHasPermission('explore_hub.listings.view')) return;
+
     //store viewed listing in vuex store
     store.commit("exploreHub/STORE_VIEWED_LISTING", JSON.parse(JSON.stringify(listing)));
     //go to view page
@@ -162,11 +166,88 @@ function viewListing(listing){
 }
 
 function goEditListing(listing){
+    //check has permissions to edit listing
+    if(!checkHasPermission('explore_hub.listings.edit'))return;
+
     //store the entry to be edited in vuex
     store.commit("exploreHub/STORE_EDIT_LISTING", JSON.parse(JSON.stringify(listing)));
 
     //navigate to the edit route
     return router.push({name: 'explore_hub.listings.edit'})
+}
+
+function confirmArchive(listing){
+    ElMessageBox.prompt('Sure you want to archive this listing?\nPlease give a reason why you want to archive', 'Confirm Archive', {
+        confirmButtonText: 'Archive',
+        cancelButtonText: 'Cancel',
+        inputPlaceholder: "Type here why you want to archive",
+        inputValidator: (value)=> {
+            if(!value || !value.length){
+                return "Please give a reason";
+            }
+            return true;
+        },
+    })
+            .then(({ value }) => {
+                //define payload to send to api
+                let payload = {
+                    id: listing.id,
+                    reason: value
+                };
+
+                //send payload to method handling the
+                archiveListing(payload);
+            })
+            .catch(() => {})
+}
+function archiveListing(payload){
+    //show loader
+    isLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.EXPLORE_HUB_ARCHIVE_LISTING, payload)
+            .then(response => {
+                //Refresh listings list
+                fetchListings(true);
+
+                //TODO Referesh archived listings
+
+                //show success message
+                $.growl.notice({message: response.data.message});
+            })
+            .catch(error => isLoading.value = false)
+}
+
+function confirmDelete(listing){
+    ElMessageBox.confirm('Sure you want to delete this listing?', 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+    })
+            .then(() => {
+                //define payload to send to api
+                let payload = {
+                    id: listing.id
+                };
+
+                //send payload to method handling the
+                deleteListing(payload);
+            })
+            .catch(() => {})
+}
+function deleteListing(payload){
+    //show loader
+    isLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.EXPLORE_HUB_DELETE_LISTING, payload)
+            .then(response => {
+                //refresh listings
+                fetchListings(true);
+
+                //show success message
+                $.growl.notice({message: response.data.message});
+            })
+            .catch(error => isLoading.value = false)
 }
 
 </script>
@@ -175,10 +256,10 @@ function goEditListing(listing){
 
     <div class="row" v-loading="isLoading">
         <div class="col-sm-12 d-flex justify-content-between align-items-center m-b-10">
-            <div>
+            <div v-if="checkHasPermission('explore_hub.listings.add')">
                 <el-button @click="router.push({name:'explore_hub.listings.create'})" type="primary" :icon="Plus" plain>Add Listing</el-button>
             </div>
-            <div class="d-none d-md-block">
+            <div class="d-none d-md-block" v-if="checkHasPermission('explore_hub.listings.list')">
                 <div class="d-flex align-items-center">
                     <h6 style="width: 200px;margin:0;">
                         <small>Showing listings</small>
@@ -231,11 +312,11 @@ function goEditListing(listing){
         <br>
 
         <!-- Datatable -->
-        <div class="table-responsive m-t-10">
+        <div class="table-responsive m-t-10" v-if="checkHasPermission('explore_hub.listings.list')">
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Select</th>
+                    <!--<th>Select</th>-->
                     <th>ID</th>
                     <th>Title</th>
                     <th>Company</th>
@@ -250,9 +331,9 @@ function goEditListing(listing){
                     :key="'explore_hub-active-listings-'+index"
                     :class="{'table-info': listing.selected}"
                     style="cursor: pointer;">
-                    <td class="text-center">
+                    <!--<td class="text-center">
                         <el-checkbox v-model="listing.selected"></el-checkbox>
-                    </td>
+                    </td>-->
                     <td @click="viewListing(listing)">
                         {{ listing.listing_id }}
                     </td>
@@ -300,15 +381,17 @@ function goEditListing(listing){
                     </td>
                     <td>
                         <el-dropdown trigger="click" @command="handleEntryAction">
-                            <el-button plain type="primary" size="small">
+                            <el-button plain type="primary"
+                                       :disabled="!hasPermissionsWhichContain(['explore_hub.listings.view', 'explore_hub.listings.edit', 'explore_hub.listings.delete', 'explore_hub.listings.archive'])"
+                                       size="small">
                                 Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
                             </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item :command="{action:'view',listing}">View</el-dropdown-item>
-                                    <el-dropdown-item :command="{action:'edit',listing}">Edit</el-dropdown-item>
-                                    <el-dropdown-item :command="{action:'archive',listing}">Archive</el-dropdown-item>
-                                    <el-dropdown-item :command="{action:'delete',listing}">Delete</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.view')" :command="{action:'view',listing}">View</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.edit')" :command="{action:'edit',listing}">Edit</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.archive')" :command="{action:'archive',listing}">Archive</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.delete')" :command="{action:'delete',listing}">Delete</el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>

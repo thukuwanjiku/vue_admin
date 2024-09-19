@@ -3,6 +3,7 @@
 import {useRouter} from "vue-router";
 import {onMounted} from "vue";
 import ManageCategories from "@/views/investment_hub/categories/ManageCategories.vue";
+import {hasPermissionsWhichContain} from "@/services/Helpers";
 
 /* ------------------------------
 * Variables & Properties
@@ -51,13 +52,13 @@ function tabChanged(tab){
 
             <!-- Default Tabs -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.categories'])">
                     <button class="nav-link active"
                             @click="tabChanged('active')"
                             data-bs-toggle="tab" data-bs-target="#investment_categories_active"
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Categories</button>
                 </li>
-                <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.archived_categories'])">
                     <button class="nav-link"
                             @click="tabChanged('deleted')"
                             data-bs-toggle="tab" data-bs-target="#investment_categories_deleted"
@@ -65,10 +66,14 @@ function tabChanged(tab){
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
-                <div class="tab-pane fade show active p-1" id="investment_categories_active" role="tabpanel" aria-labelledby="home-tab">
+                <div class="tab-pane fade show active p-1" id="investment_categories_active"
+                      v-if="hasPermissionsWhichContain(['investment_hub.categories'])"
+                     role="tabpanel" aria-labelledby="home-tab">
                     <manage-categories></manage-categories>
                 </div>
-                <div class="tab-pane fade" id="investment_categories_deleted" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="tab-pane fade" id="investment_categories_deleted"
+                      v-if="hasPermissionsWhichContain(['investment_hub.archived_categories'])"
+                     role="tabpanel" aria-labelledby="contact-tab">
                     Will browse archived categories here
                 </div>
             </div>

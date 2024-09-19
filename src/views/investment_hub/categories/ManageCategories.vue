@@ -7,6 +7,7 @@ import {AwesomeSocialButton} from "awesome-social-button";
 import axios from "axios";
 import {useStore} from "vuex";
 import {
+    checkHasPermission,
     fetchInvestmentHubListingCategories,
     fetchMaterialIconsNames, isSmallScreen,
     randomString
@@ -71,7 +72,7 @@ const hasEditedCategory = computed(() => {
  * */
 onMounted(()=>{
     //fetch listing categories if not already fetched
-    if(!categories.value.length) fetchInvestmentHubListingCategories();
+    if(checkHasPermission('investment_hub.categories.list') && !categories.value.length) fetchInvestmentHubListingCategories();
 
     //fetch material icons names is not previously fetched
     if(!materialIconsNames.value.length) {
@@ -159,6 +160,9 @@ function handleCategoryClick(category){
             selectedCategories.value.push(category);
         }
     }else {
+        //check that has permissions to edit
+        if(!checkHasPermission('investment_hub.categories.edit')) return;
+
         //set this category is the one to edit
         editCategory.value = JSON.parse(JSON.stringify(category));
         //show modal to edit category
@@ -313,18 +317,18 @@ function deleteCategories(payload){
 
     <div class="row p-2" v-loading="isLoading">
         <div class="col-sm-12 d-flex m-b-10">
-            <el-button type="primary" :icon="Plus" @click="goToAddCategories" plain>Add Categories</el-button>
+            <el-button v-if="checkHasPermission('investment_hub.categories.add')" type="primary" :icon="Plus" @click="goToAddCategories" plain>Add Categories</el-button>
             &nbsp;&nbsp;&nbsp;&nbsp;
 
-            <el-input v-model="searchString" style="width: 240px" placeholder="Type to search" clearable />
+            <el-input v-if="categories.length" v-model="searchString" style="width: 240px" placeholder="Type to search" clearable />
             &nbsp;&nbsp;&nbsp;&nbsp;
 
-            <el-button :icon="Check" :type="isSelectingMultiple ? 'primary' : ''" @click="toggleMultipleSelection" :plain="!isSelectingMultiple">Select Multiple to Delete</el-button>
+            <el-button v-if="checkHasPermission('investment_hub.categories.delete')" :icon="Check" :type="isSelectingMultiple ? 'primary' : ''" @click="toggleMultipleSelection" :plain="!isSelectingMultiple">Select Multiple to Delete</el-button>
         </div>
         <br>
 
-        <div class="row" v-if="categories.length">
-            <small class="text-muted text-italic" v-if="!isSelectingMultiple">Tap entry to edit</small><br>
+        <div class="row" v-if="checkHasPermission('investment_hub.categories.list') && categories.length">
+            <small class="text-muted text-italic" v-if="!isSelectingMultiple && checkHasPermission('investment_hub.categories.edit')">Tap entry to edit</small><br>
             <div class="d-flex m-t-10 m-b-10 flex-wrap align-items-center" v-if="isSelectingMultiple">
                 <small class="text-italic" v-if="!selectedCategories.length">Tap to select</small>
 
@@ -436,7 +440,7 @@ function deleteCategories(payload){
                 </el-table>
 
                 <el-divider />
-                <div class="row">
+                <div class="row" v-if="checkHasPermission('investment_hub.categories.add')">
                     <div class="col-sm-3">
                         <el-button type="primary" @click="saveNewCategories">Save Categories</el-button>
                     </div>
@@ -454,16 +458,18 @@ function deleteCategories(payload){
 
         <div class="row" v-loading="isModalLoading" v-if="editCategory">
             <div class="row m-b-20">
-                <div class="d-flex align-items-center">
-                    <h6 class="fw-bold m-0">
-                        <small class="text-muted">Edit category details below or </small>
-                    </h6>
-                    &nbsp;&nbsp;&nbsp;
+                <template v-if="checkHasPermission('investment_hub.categories.delete')">
+                    <div class="d-flex align-items-center">
+                        <h6 class="fw-bold m-0">
+                            <small class="text-muted">Edit category details below or </small>
+                        </h6>
+                        &nbsp;&nbsp;&nbsp;
 
-                    <el-button type="danger" @click="confirmDeleteCategory" plain>Delete category</el-button>
-                </div>
-                <br>
-                <el-divider />
+                        <el-button type="danger" @click="confirmDeleteCategory" plain>Delete category</el-button>
+                    </div>
+                    <br>
+                    <el-divider />
+                </template>
 
                 <div class="row p-l-20">
                     <div class="col-md-12">

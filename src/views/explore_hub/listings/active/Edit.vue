@@ -4,6 +4,7 @@ import CloseButton from "@/components/CloseButton.vue";
 import {computed, onMounted, ref} from "vue";
 import {useStore} from "vuex";
 import {
+    checkHasPermission,
     fetchExploreHubCompanies,
     fetchExploreHubListingCategories, isSmallScreen, moneyFormatter
 } from "@/services/Helpers";
@@ -184,6 +185,8 @@ function acceptNewPayment(){
         return ElMessage.warning("Please select a payment mode");
     if(!newPayment.value.amount || !newPayment.value.amount.toString().length)
         return ElMessage.warning("Please enter the payment amount");
+    if(!newPayment.value.reference || !newPayment.value.reference.length)
+        return ElMessage.warning("Please enter the payment reference");
     //validate that a valid payment amount has been entered
     if(isNaN(newPayment.value.amount))
         return ElMessage.warning("Please enter a valid amount");
@@ -218,6 +221,8 @@ function acceptPaymentEdits(){
         return ElMessage.warning("Please select a payment mode");
     if(!editPayment.value.amount || !editPayment.value.amount.toString().length)
         return ElMessage.warning("Please enter the payment amount");
+    if(!editPayment.value.reference || !editPayment.value.reference.length)
+        return ElMessage.warning("Please enter the payment reference");
     //validate that a valid payment amount has been entered
     if(isNaN(editPayment.value.amount))
         return ElMessage.warning("Please enter a valid amount");
@@ -542,7 +547,7 @@ function handleSaveEdits(){
                             <div class="d-flex flex-wrap">
                                 <div class="p-1 uploaded-image" v-for="(file, index) in savedMedia" :key="'uploaded-media-'+index">
                                     <img :src="file.path"  style="max-width:80px;max-height:60px;">
-                                    <div class="remover" @click="file.deleted = !file.deleted">
+                                    <div v-if="checkHasPermission('explore_hub.listings.delete_media')" class="remover" @click="file.deleted = !file.deleted">
                                         <i class="ri ri-close-line"></i>
                                     </div>
                                 </div>
@@ -562,7 +567,7 @@ function handleSaveEdits(){
                             </div>
                         </div>
 
-                        <div class="col-md-10 m-t-10 p-l-10">
+                        <div class="col-md-10 m-t-10 p-l-10" v-if="checkHasPermission('explore_hub.listings.add_media')">
                             <h6><small>Upload new media</small></h6>
                             <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
                             <div class="d-flex flex-wrap m-t-10">
@@ -580,7 +585,7 @@ function handleSaveEdits(){
                 <!-- Payments -->
                 <div class="col-md-12 m-b-20">
                     <div class="form-floating">
-                        <input-label>Payments</input-label>
+                        <input-label v-if="listingPayments.length || checkHasPermission('explore_hub.listings.add_payment')">Payments</input-label>
 
                         <div v-if="savedPayments.length" class="p-l-10 m-t-10">
                             <h6><small>Saved Payments</small></h6>
@@ -593,9 +598,9 @@ function handleSaveEdits(){
                                         {{ moneyFormatter(payment.amount) }}
                                     </small>
                                     <br>
-                                    <el-tag size="small" style="cursor: pointer;" @click="goEditPayment(payment)" round>Edit</el-tag>
+                                    <el-tag v-if="checkHasPermission('explore_hub.listings.edit_payment')" size="small" style="cursor: pointer;" @click="goEditPayment(payment)" round>Edit</el-tag>
                                     &nbsp;
-                                    <el-tag size="small" style="cursor:pointer;" round type="danger" @click="payment.deleted = !payment.deleted">Delete</el-tag>
+                                    <el-tag v-if="checkHasPermission('explore_hub.listings.delete_payment')" size="small" style="cursor:pointer;" round type="danger" @click="payment.deleted = !payment.deleted">Delete</el-tag>
                                 </div>
                             </div>
                         </div>
@@ -648,7 +653,7 @@ function handleSaveEdits(){
                                 </div>
 
                                 &nbsp;&nbsp;
-                                <el-button @click="isAddingPayments = !isAddingPayments" :icon="Plus" round>
+                                <el-button v-if="checkHasPermission('explore_hub.listings.add_payment')" @click="isAddingPayments = !isAddingPayments" :icon="Plus" round>
                                     Add payment
                                 </el-button>
                             </div>

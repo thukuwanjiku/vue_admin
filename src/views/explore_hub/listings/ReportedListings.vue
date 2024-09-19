@@ -4,7 +4,7 @@ import {computed, onMounted, ref} from "vue";
 import {apiRoutes} from "@/services/apiRoutes";
 import api from "@/services/api";
 import {Box} from "@element-plus/icons-vue";
-import {isSmallScreen} from "@/services/Helpers";
+import {checkHasPermission, isSmallScreen} from "@/services/Helpers";
 import {ElMessageBox} from "element-plus";
 import {useStore} from "vuex";
 
@@ -68,6 +68,8 @@ function fetchListings(){
             }).catch(error => isLoading.value = false)
 }
 function viewListing(listing){
+    if(!checkHasPermission('explore_hub.reported_listings.view')) return;
+
     //set listing being viewed
     activeListing.value = JSON.parse(JSON.stringify(listing));
 
@@ -194,7 +196,7 @@ function archiveListing(payload){
     <div class="row" v-loading="isLoading">
 
         <!-- Datatable -->
-        <div class="table-responsive m-t-10">
+        <div class="table-responsive m-t-10" v-if="checkHasPermission('explore_hub.reported_listings.list')">
             <table class="table">
                 <thead>
                 <tr>
@@ -215,7 +217,7 @@ function archiveListing(payload){
                     <td @click="viewListing(listing)">{{ listing.title }}</td>
                     <td @click="viewListing(listing)">{{ listing.company }}</td>
                     <td @click="viewListing(listing)">{{ listing.times_reported }}</td>
-                    <td><el-button @click="viewListing(listing)" type="primary" size="small" plain>View</el-button></td>
+                    <td><el-button :disabled="!checkHasPermission('explore_hub.reported_listings.view')" @click="viewListing(listing)" type="primary" size="small" plain>View</el-button></td>
                 </tr>
                 <tr v-else><td colspan="5" class="text-center p-3">No data</td></tr>
                 </tbody>
@@ -234,7 +236,7 @@ function archiveListing(payload){
             :fullscreen="isSmallScreen"
             @closed="reports = {}">
 
-        <div class="row" style="height:95vh;overflow-y:scroll;" v-loading="isModalLoading">
+        <div class="row" style="max-height:95vh;overflow-y:scroll;" v-loading="isModalLoading">
 
             <!-- Listing Indicator -->
             <div class="col-md-12 d-flex justify-content-center flex-wrap p-t-15">
@@ -329,8 +331,8 @@ function archiveListing(payload){
                 </ul>
             </div>
 
-            <div class="m-t-20 m-b-20 d-flex justify-content-end">
-                <el-button @click="confirmArchive" :icon="Box" type="danger" text bg>Archive Listing</el-button>
+            <div v-if="checkHasPermission('explore_hub.listings.archive')" class="m-t-20 m-b-20 d-flex justify-content-end">
+                <el-button @click="confirmArchive" :icon="Box" type="danger">Archive Listing</el-button>
             </div>
         </div>
     </el-dialog>

@@ -8,7 +8,12 @@ import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
 import {AwesomeSocialButton} from "awesome-social-button";
 import {ArrowDown, Plus} from "@element-plus/icons-vue";
-import {fetchInvestmentHubCompanies, isSmallScreen} from "@/services/Helpers";
+import {
+    checkHasPermission,
+    fetchInvestmentHubCompanies,
+    hasPermissionsWhichContain,
+    isSmallScreen
+} from "@/services/Helpers";
 
 /* -----------------------------
  * Variables
@@ -41,7 +46,7 @@ let isLoading = computed({
  * */
 onMounted(()=>{
     //fetch companies
-    if(!companies.value.length) fetchInvestmentHubCompanies();
+    if(checkHasPermission('investment_hub.companies.list') && !companies.value.length) fetchInvestmentHubCompanies();
 });
 
 
@@ -58,14 +63,16 @@ function handleEntryAction(payload){
             return editCompany(payload.company);
 
         case 'archive':
-            break;
+            return confirmArchive(payload.company);
 
         case 'delete':
-            break;
+            return confirmDelete(payload.company);
     }
 }
 
 function viewCompany(company){
+    if(!checkHasPermission('investment_hub.companies.view')) return;
+
     //set the company being viewed
     activeCompany.value = JSON.parse(JSON.stringify(company));
     //view the company on a dialog
@@ -73,6 +80,8 @@ function viewCompany(company){
 }
 
 function editCompany(company){
+    if(!checkHasPermission('investment_hub.companies.edit'))return;
+
     //store the company to be edited in vuex store
     store.commit('investmentHub/SET_EDIT_COMPANY', JSON.parse(JSON.stringify(company)));
 
@@ -80,11 +89,13 @@ function editCompany(company){
     router.push({name: 'investment_hub.companies.edit'});
 }
 
-function confirmDelete(company){
-    ElMessageBox.prompt('Sure you want to delete this company?\nPlease give a reason why you want to delete', 'Confirm Delete', {
-        confirmButtonText: 'Delete',
+function confirmArchive(company){
+    if(!checkHasPermission('investment_hub.companies.archive'))return;
+
+    ElMessageBox.prompt('Sure you want to archive this company?\nPlease give a reason why you want to archive', 'Confirm Archive', {
+        confirmButtonText: 'Archive',
         cancelButtonText: 'Cancel',
-        inputPlaceholder: "Type here why you want to delete",
+        inputPlaceholder: "Type here why you want to archive",
         inputValidator: (value)=> {
             if(!value || !value.length){
                 return "Please give a reason";
@@ -100,6 +111,40 @@ function confirmDelete(company){
                 };
 
                 //send payload to method handling the
+                archiveCompany(payload);
+            })
+            .catch(() => {})
+}
+function archiveCompany(payload){
+    //show loader
+    isLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.ARCHIVE_INVESTMENT_HUB_LISTED_COMPANY, payload)
+            .then(response => {
+                //refresh companies list
+                fetchInvestmentHubCompanies();
+
+                //show success message
+                $.growl.notice({message: response.data.message});
+            })
+            .catch(error => isLoading.value = false)
+}
+
+function confirmDelete(company){
+    if(!checkHasPermission('investment_hub.companies.delete'))return;
+
+    ElMessageBox.confirm('Sure you want to delete this company?', 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+    })
+            .then(() => {
+                //define payload to send to api
+                let payload = {
+                    id: company.id
+                };
+
+                //send payload to method handling the
                 deleteCompany(payload);
             })
             .catch(() => {})
@@ -111,23 +156,11 @@ function deleteCompany(payload){
     //make api call
     api.post(apiRoutes.DELETE_INVESTMENT_HUB_LISTED_COMPANY, payload)
             .then(response => {
-                //delete the company entry from list of companies
-                //create copy of companies list
-                let companiesCopy = JSON.parse(JSON.stringify(companies.value));
-                //find the index of the entry that's been deleted
-                let deletedIndex = companiesCopy.findIndex(entry => entry.id == payload.id);
-                //delete the entry at that index
-                if(deletedIndex > -1){
-                    companiesCopy.splice(deletedIndex, 1);
-                    //write the updated copy to vuex companies list
-                    companies.value = companiesCopy;
-                }
+                //refresh companies list
+                fetchInvestmentHubCompanies();
 
                 //show success message
                 $.growl.notice({message: response.data.message});
-
-                //dismiss loader
-                isLoading.value = false;
             })
             .catch(error => isLoading.value = false)
 }
@@ -137,12 +170,12 @@ function deleteCompany(payload){
 <template>
 
     <div class="row p-2" v-loading="isLoading">
-        <div class="col-sm-12 d-flex m-b-10">
+        <div class="col-sm-12 d-flex m-b-10" v-if="checkHasPermission('investment_hub.companies.add')">
             <el-button @click="router.push({name: 'investment_hub.companies.add'})" type="primary" :icon="Plus" plain>Add Company</el-button>
         </div>
         <br>
 
-        <div class="table-responsive">
+        <div class="table-responsive" v-if="checkHasPermission('investment_hub.companies.list')">
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -164,15 +197,16 @@ function deleteCompany(payload){
                     <td @click="viewCompany(company)">{{ company.contact_name }}</td>
                     <td>
                         <el-dropdown trigger="click" @command="handleEntryAction">
-                            <el-button plain type="primary" size="small">
+                            <el-button plain type="primary" size="small"
+                                       :disabled="!hasPermissionsWhichContain(['investment_hub.companies.view', 'investment_hub.companies.edit', 'investment_hub.companies.archive', 'investment_hub.companies.delete'])">
                                 Actions<el-icon class="el-icon--right"><ArrowDown /></el-icon>
                             </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item :command="{action:'view',company}">View</el-dropdown-item>
-                                    <el-dropdown-item :command="{action:'edit',company}">Edit</el-dropdown-item>
-                                    <el-dropdown-item :command="{action:'archive',company}">Archive</el-dropdown-item>
-                                    <!--                                    <el-dropdown-item :command="{action:'delete',company}">Delete</el-dropdown-item>-->
+                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.companies.view')" :command="{action:'view',company}">View</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.companies.edit')" :command="{action:'edit',company}">Edit</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.companies.archive')" :command="{action:'archive',company}">Archive</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.companies.delete')" :command="{action:'delete',company}">Delete</el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
