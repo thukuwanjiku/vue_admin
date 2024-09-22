@@ -63,6 +63,10 @@ api.interceptors.response.use(
                 $.growl.warning({message});
                 throw error;
             }
+            if (error?.response?.status === 403) {
+                $.growl.warning({message: "Oops! It looks like you don’t have permission to do that. Contact your admin to request access."});
+                throw error;
+            }
 
             $.growl.error({message});
             throw error;

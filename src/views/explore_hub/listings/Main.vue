@@ -21,12 +21,12 @@ onMounted(()=>{
 
 function tabChanged(tab){
     switch (tab){
-        case 'listed':
-            router.push({name: 'explore_hub.listings.active'})
+        case 'active':
+            return router.push({name: 'explore_hub.listings.active'})
         case 'reviews':
             //router.push({name: 'explore_hub.companies.listed'})
-        case 'deleted':
-            //router.push({name: 'explore_hub.companies.listed'})
+        case 'archived':
+            return router.push({name: 'explore_hub.listings.archived'})
     }
 }
 
@@ -91,7 +91,7 @@ function tabChanged(tab){
                 </div>
                 <div class="tab-pane fade" id="explore_listings_archived"
                      role="tabpanel" aria-labelledby="contact-tab" v-if="hasPermissionsWhichContain(['explore_hub.archived_listings'])">
-                    Browse archived listings
+                    <router-view name="explore_listings_archived"></router-view>
                 </div>
             </div>
             <!-- End Default Tabs -->

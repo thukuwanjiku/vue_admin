@@ -8,7 +8,12 @@ import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useRouter} from "vue-router";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {checkHasPermission, fetchExploreHubCompanies, hasPermissionsWhichContain} from "@/services/Helpers";
+import {
+    checkHasPermission,
+    fetchExploreHubActiveListings, fetchExploreHubArchivedListings,
+    fetchExploreHubCompanies,
+    hasPermissionsWhichContain
+} from "@/services/Helpers";
 
 /* ----------------------------------
 * Variables & properties
@@ -26,13 +31,16 @@ const filters = ref({
 const isDefaultFilters = ref(true);
 
 const listings = ref([]);
-const isLoading = ref(false);
 
 
 /* ----------------------------------
 * Computed properties
 * ----------------------------------
 * */
+const isLoading = computed({
+    get: ()=> store.state.exploreHub.isActiveListingsLoading,
+    set: (value)=> store.commit("exploreHub/SET_IS_ACTIVE_LISTINGS_LOADING", value)
+});
 const listingsSource = computed({
     get: ()=> store.state.exploreHub.activeListings,
     set: (data)=> store.commit("exploreHub/STORE_ACTIVE_LISTINGS", data)
@@ -56,6 +64,10 @@ watch(listingsSource, (newValue, oldValue)=> {
         entry.selected = false;
         return entry;
     })
+
+    //update new filters
+    let newFilters = JSON.parse(JSON.stringify(store.state.exploreHub.activeListingsFilters));
+    setCurrentFilters(newFilters);
 })
 
 
@@ -91,22 +103,7 @@ function fetchListings(forceFetch = false){
     }
 
     //fetch listings from API
-    //show loader
-    isLoading.value = true;
-
-    //make api call
-    api.post(apiRoutes.EXPLORE_HUB_FETCH_LISTINGS, filters.value)
-            .then(response => {
-                //refresh original listings array
-                listingsSource.value = response.data.data;
-                //store current filters
-                store.commit('exploreHub/STORE_ACTIVE_LISTINGS_FILTERS', response.data.filters);
-                //set filters values where not set
-                setCurrentFilters(response.data.filters);
-
-                //dismiss loader
-                isLoading.value = false;
-            }).catch(error => isLoading.value = false)
+    return fetchExploreHubActiveListings(JSON.parse(JSON.stringify(filters.value)))
 }
 function setCurrentFilters(activeFilters) {
     filters.value.from = activeFilters.from;
@@ -131,6 +128,7 @@ function handleFilters(){
 
         isDefaultFilters.value = false;
     }
+
     return fetchListings(true)
 }
 
@@ -210,7 +208,8 @@ function archiveListing(payload){
                 //Refresh listings list
                 fetchListings(true);
 
-                //TODO Referesh archived listings
+                //Refresh archived listings
+                fetchExploreHubArchivedListings();
 
                 //show success message
                 $.growl.notice({message: response.data.message});

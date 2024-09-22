@@ -4,6 +4,7 @@ import {useRouter} from "vue-router";
 import {onMounted} from "vue";
 import Reviews from "@/views/investment_hub/companies/Reviews.vue";
 import {hasPermissionsWhichContain} from "@/services/Helpers";
+import Archived from "@/views/investment_hub/companies/Archived.vue";
 
 /* ------------------------------
 * Variables & Properties
@@ -58,18 +59,18 @@ function tabChanged(tab){
                             data-bs-toggle="tab" data-bs-target="#investment_hub_companies_listed"
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Listed</button>
                 </li>
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.archived_companies'])">
+                    <button class="nav-link" id="contact-tab"
+                            @click="tabChanged('deleted')"
+                            data-bs-toggle="tab" data-bs-target="#investment_hub_companies_deleted"
+                            type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
+                </li>
                 <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.companies_reviews'])">
                     <button class="nav-link" id="profile-tab"
                             @click="tabChanged('reviews')"
                             data-bs-toggle="tab" data-bs-target="#investment_hub_companies_reviews"
                             type="button" role="tab"
                             aria-controls="profile" aria-selected="false" tabindex="-1">Reviews</button>
-                </li>
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.archived_companies'])">
-                    <button class="nav-link" id="contact-tab"
-                            @click="tabChanged('deleted')"
-                            data-bs-toggle="tab" data-bs-target="#investment_hub_companies_deleted"
-                            type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
                 </li>
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
@@ -86,7 +87,7 @@ function tabChanged(tab){
                 <div class="tab-pane fade" id="investment_hub_companies_deleted"
                      v-if="hasPermissionsWhichContain(['investment_hub.archived_companies'])"
                      role="tabpanel" aria-labelledby="contact-tab">
-                    Browse archived companies
+                    <archived></archived>
                 </div>
             </div>
             <!-- End Default Tabs -->

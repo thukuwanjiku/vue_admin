@@ -152,6 +152,23 @@ export default [
                                     title: `Explore Hub:Listing Reviews ${pageTitleSuffix}`
                                 },
                             },
+                            {
+                                path: "archived",
+                                name: 'explore_hub.listings.archived',
+                                components: {
+                                    explore_listings_archived: ()=> import('@/views/explore_hub/listings/archived/List.vue')
+                                },
+                            },
+                            {
+                                path: "archived/:listingTitleSlug",
+                                name: 'explore_hub.listings.archived.view',
+                                components: {
+                                    explore_listings_archived: ()=> import('@/views/explore_hub/listings/archived/View.vue')
+                                },
+                                meta: {
+                                    title: `Explore Hub: View Archived Listing ${pageTitleSuffix}`
+                                },
+                            },
                         ]
                     }
                 ]
@@ -231,7 +248,7 @@ export default [
                                 path: "",
                                 name: 'investment_hub.listings.active',
                                 components: {
-                                    investment_listings_active: ()=> import('@/views/investment_hub/listings/active/List.vue')
+                                    investment_listings_active: ()=> import('@/views/investment_hub/listings/active/List.vue'),
                                 },
                             },
                             {
@@ -274,8 +291,25 @@ export default [
                                     title: `Investment Hub:Listing Reviews ${pageTitleSuffix}`
                                 },
                             },
+                            {
+                                path: "archived",
+                                name: 'investment_hub.listings.archived',
+                                components: {
+                                    investment_listings_archived: ()=> import('@/views/investment_hub/listings/archived/List.vue')
+                                },
+                            },
+                            {
+                                path: "archived/:listingTitleSlug",
+                                name: 'investment_hub.listings.archived.view',
+                                components: {
+                                    investment_listings_archived: ()=> import('@/views/investment_hub/listings/archived/View.vue')
+                                },
+                                meta: {
+                                    title: `Investment Hub: View Archived Listing ${pageTitleSuffix}`
+                                },
+                            },
                         ]
-                    }
+                    },
                 ]
             },
 

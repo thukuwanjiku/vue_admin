@@ -148,8 +148,7 @@ function goToLogin(){
 
                                         <div class="col-12">
                                             <button class="btn btn-primary w-100" type="submit">
-                                                <i class="ri ri-lock-unlock-line"></i>
-                                                Unlock
+                                                Login
                                             </button>
                                         </div>
                                         <div class="col-12">

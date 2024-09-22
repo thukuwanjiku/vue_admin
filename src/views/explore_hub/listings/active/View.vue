@@ -277,14 +277,9 @@ function goToReviews(){
                  v-if="hasPermissionsWhichContain(['explore_hub.listings.edit', 'explore_hub.listings.add_media', 'explore_hub.listings.add_payment', 'explore_hub.reviewed_listings.list'])">
                 <template v-if="!isSmallScreen">
                     <el-button v-if="checkHasPermission('explore_hub.listings.edit')" @click="goEditListing" type="primary" :icon="Edit" text bg>Edit Listing</el-button>
-                    <el-divider v-if="hasPermissionsWhichContain(['explore_hub.listings.add_payment'])" direction="vertical"></el-divider>
                     <el-button v-if="checkHasPermission('explore_hub.listings.add_payment')" @click="isAddingPayments = true" type="primary" :icon="Money" text bg>Add Payment</el-button>
-                    <el-divider v-if="hasPermissionsWhichContain(['explore_hub.listings.add_media'])" direction="vertical"></el-divider>
                     <el-button v-if="checkHasPermission('explore_hub.listings.add_media')" @click="isAddingMedia = true" type="primary" :icon="PictureFilled" text bg>Add Media</el-button>
-                    <template v-if="listing.has_reviews">
-                        <el-divider v-if="hasPermissionsWhichContain(['explore_hub.reviewed_listings.list'])" direction="vertical"></el-divider>
-                        <el-button v-if="checkHasPermission('explore_hub.reviewed_listings.list')" @click="goToReviews" type="primary" :icon="Comment" text bg>Browse Listing Reviews</el-button>
-                    </template>
+                    <el-button v-if="listing.has_reviews && checkHasPermission('explore_hub.reviewed_listings.list')" @click="goToReviews" type="primary" :icon="Comment" text bg>Browse Listing Reviews</el-button>
                 </template>
 
                 <el-dropdown trigger="click" @command="handleActionsClick" v-if="isSmallScreen">

@@ -18,7 +18,10 @@ const apiRoutes = {
 
     LOGIN: `${apiBaseUrl}/auth/login`,
 
-    //Explore hub
+    /* -----------------------------
+     * EXPLORE HUB COMPANIES
+     * -----------------------------
+     * */
     GET_EXPLORE_LISTED_COMPANIES: `${apiBaseUrl}/explore-hub/get-listed-companies`,
     ADD_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/add-listed-company`,
     EDIT_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/edit-listed-company`,
@@ -26,12 +29,23 @@ const apiRoutes = {
     DELETE_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/delete-listed-company`,
     EXPLORE_HUB_COMPANY_REVIEWS: `${apiBaseUrl}/explore-hub/company-reviews`,
     EXPLORE_HUB_COMPANY_REVIEWS_SUMMARY: `${apiBaseUrl}/explore-hub/company-reviews-summary`,
+    EXPLORE_HUB_ARCHIVED_COMPANIES: `${apiBaseUrl}/explore-hub/get-archived-companies`,
+    EXPLORE_HUB_RESTORE_ARCHIVED_COMPANY: `${apiBaseUrl}/explore-hub/restore-archived-company`,
+    EXPLORE_HUB_DELETE_ARCHIVED_COMPANY: `${apiBaseUrl}/explore-hub/delete-archived-company`,
 
+    /* -----------------------------
+     * EXPLORE HUB LISTING CATEGORIES
+     * -----------------------------
+     * */
     EXPLORE_HUB_ADD_LISTING_CATEGORIES: `${apiBaseUrl}/explore-hub/add-listing-categories`,
     EXPLORE_HUB_FETCH_LISTING_CATEGORIES: `${apiBaseUrl}/explore-hub/get-listing-categories`,
     EXPLORE_HUB_EDIT_LISTING_CATEGORY: `${apiBaseUrl}/explore-hub/edit-listing-category`,
     EXPLORE_HUB_DELETE_LISTING_CATEGORIES: `${apiBaseUrl}/explore-hub/delete-listing-categories`,
 
+    /* -----------------------------
+     * EXPLORE HUB LISTINGS
+     * -----------------------------
+     * */
     EXPLORE_HUB_FETCH_LISTINGS: `${apiBaseUrl}/explore-hub/get-listings`,
     EXPLORE_HUB_ADD_LISTING: `${apiBaseUrl}/explore-hub/add-listing`,
     EXPLORE_HUB_EDIT_LISTING: `${apiBaseUrl}/explore-hub/edit-listing`,
@@ -43,9 +57,15 @@ const apiRoutes = {
     EXPLORE_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/explore-hub/listing-reviews-summary`,
     EXPLORE_HUB_REPORTED_LISTINGS: `${apiBaseUrl}/explore-hub/reported-listings`,
     EXPLORE_HUB_LISTING_REPORTS: `${apiBaseUrl}/explore-hub/listing-reports`,
+    EXPLORE_HUB_ARCHIVED_LISTINGS: `${apiBaseUrl}/explore-hub/get-archived-listings`,
+    EXPLORE_HUB_RESTORE_ARCHIVED_LISTING: `${apiBaseUrl}/explore-hub/restore-archived-listing`,
+    EXPLORE_HUB_DELETE_ARCHIVED_LISTING: `${apiBaseUrl}/explore-hub/delete-archived-listing`,
 
 
-    //Investment hub
+    /* -----------------------------
+     * INVESTMENT HUB COMPANIES
+     * -----------------------------
+     * */
     GET_INVESTMENT_HUB_LISTED_COMPANIES: `${apiBaseUrl}/investment-hub/get-listed-companies`,
     ADD_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/add-listed-company`,
     EDIT_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/edit-listed-company`,
@@ -53,12 +73,23 @@ const apiRoutes = {
     DELETE_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/delete-listed-company`,
     INVESTMENT_HUB_COMPANY_REVIEWS: `${apiBaseUrl}/investment-hub/company-reviews`,
     INVESTMENT_HUB_COMPANY_REVIEWS_SUMMARY: `${apiBaseUrl}/investment-hub/company-reviews-summary`,
+    INVESTMENT_HUB_ARCHIVED_COMPANIES: `${apiBaseUrl}/investment-hub/get-archived-companies`,
+    INVESTMENT_HUB_RESTORE_ARCHIVED_COMPANY: `${apiBaseUrl}/investment-hub/restore-archived-company`,
+    INVESTMENT_HUB_DELETE_ARCHIVED_COMPANY: `${apiBaseUrl}/investment-hub/delete-archived-company`,
 
+    /* -----------------------------
+     * INVESTMENT HUB LISTING CATEGORIES
+     * -----------------------------
+     * */
     INVESTMENT_HUB_ADD_LISTING_CATEGORIES: `${apiBaseUrl}/investment-hub/add-listing-categories`,
     INVESTMENT_HUB_FETCH_LISTING_CATEGORIES: `${apiBaseUrl}/investment-hub/get-listing-categories`,
     INVESTMENT_HUB_EDIT_LISTING_CATEGORY: `${apiBaseUrl}/investment-hub/edit-listing-category`,
     INVESTMENT_HUB_DELETE_LISTING_CATEGORIES: `${apiBaseUrl}/investment-hub/delete-listing-categories`,
 
+    /* -----------------------------
+     * INVESTMENT HUB LISTINGS
+     * -----------------------------
+     * */
     INVESTMENT_HUB_FETCH_LISTINGS: `${apiBaseUrl}/investment-hub/get-listings`,
     INVESTMENT_HUB_ADD_LISTING: `${apiBaseUrl}/investment-hub/add-listing`,
     INVESTMENT_HUB_EDIT_LISTING: `${apiBaseUrl}/investment-hub/edit-listing`,
@@ -70,6 +101,9 @@ const apiRoutes = {
     INVESTMENT_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/investment-hub/listing-reviews-summary`,
     INVESTMENT_HUB_REPORTED_LISTINGS: `${apiBaseUrl}/investment-hub/reported-listings`,
     INVESTMENT_HUB_LISTING_REPORTS: `${apiBaseUrl}/investment-hub/listing-reports`,
+    INVESTMENT_HUB_ARCHIVED_LISTINGS: `${apiBaseUrl}/investment-hub/get-archived-listings`,
+    INVESTMENT_HUB_RESTORE_ARCHIVED_LISTING: `${apiBaseUrl}/investment-hub/restore-archived-listing`,
+    INVESTMENT_HUB_DELETE_ARCHIVED_LISTING: `${apiBaseUrl}/investment-hub/delete-archived-listing`,
 
 
     /* ---------------------------------------

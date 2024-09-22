@@ -9,7 +9,7 @@ import {ElMessageBox} from "element-plus";
 import {AwesomeSocialButton} from "awesome-social-button";
 import {ArrowDown, Plus} from "@element-plus/icons-vue";
 import {
-    checkHasPermission,
+    checkHasPermission, fetchExploreHubArchivedCompanies,
     fetchExploreHubCompanies,
     hasPermissionsWhichContain,
     isSmallScreen
@@ -46,7 +46,7 @@ let isLoading = computed({
  * */
 onMounted(()=>{
     //fetch companies
-    if(checkHasPermission('explore_hub.companies.list') && !companies.value.length) fetchExploreHubCompanies();
+    if(checkHasPermission('explore_hub.companies.list')) fetchExploreHubCompanies();
 });
 
 
@@ -118,19 +118,11 @@ function archiveCompany(payload){
     //make api call
     api.post(apiRoutes.ARCHIVE_EXPLORE_LISTED_COMPANY, payload)
             .then(response => {
-                //remove the company entry from list of companies
-                //create copy of companies list
-                let companiesCopy = JSON.parse(JSON.stringify(companies.value));
-                //find the index of the entry that's been deleted
-                let deletedIndex = companiesCopy.findIndex(entry => entry.id == payload.id);
-                //delete the entry at that index
-                if(deletedIndex > -1){
-                    companiesCopy.splice(deletedIndex, 1);
-                    //write the updated copy to vuex companies list
-                    companies.value = companiesCopy;
-                }
+                //refresh companies
+                fetchExploreHubCompanies();
 
-                //TODO Referesh archived listings
+                //refresh archived companies
+                fetchExploreHubArchivedCompanies();
 
                 //show success message
                 $.growl.notice({message: response.data.message});

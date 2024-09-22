@@ -8,7 +8,12 @@ import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useRouter} from "vue-router";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {checkHasPermission, hasPermissionsWhichContain} from "@/services/Helpers";
+import {
+    checkHasPermission,
+    fetchInvestmentHubActiveListings,
+    fetchInvestmentHubArchivedListings,
+    hasPermissionsWhichContain
+} from "@/services/Helpers";
 
 /* ----------------------------------
 * Variables & properties
@@ -26,13 +31,16 @@ const filters = ref({
 const isDefaultFilters = ref(true);
 
 const listings = ref([]);
-const isLoading = ref(false);
 
 
 /* ----------------------------------
 * Computed properties
 * ----------------------------------
 * */
+const isLoading = computed({
+    get: ()=> store.state.investmentHub.isActiveListingsLoading,
+    set: (value)=> store.commit("investmentHub/SET_IS_ACTIVE_LISTINGS_LOADING", value)
+});
 const listingsSource = computed({
     get: ()=> store.state.investmentHub.activeListings,
     set: (data)=> store.commit("investmentHub/STORE_ACTIVE_LISTINGS", data)
@@ -50,12 +58,15 @@ const hasChangedFilters = computed(() => {
 * Watchers
 * ----------------------------------
 * */
-watch(listingsSource, (newValue, oldValue)=> {
-    let newListings = JSON.parse(JSON.stringify(newValue))
-    listings.value = newListings.map((entry) => {
+watch(listingsSource, (newListings, _)=> {
+    listings.value = JSON.parse(JSON.stringify(newListings)).map((entry) => {
         entry.selected = false;
         return entry;
-    })
+    });
+
+    //update new filters
+    let newFilters = JSON.parse(JSON.stringify(store.state.investmentHub.activeListingsFilters));
+    setCurrentFilters(newFilters);
 })
 
 
@@ -91,22 +102,7 @@ function fetchListings(forceFetch = false){
     }
 
     //fetch listings from API
-    //show loader
-    isLoading.value = true;
-
-    //make api call
-    api.post(apiRoutes.INVESTMENT_HUB_FETCH_LISTINGS, filters.value)
-            .then(response => {
-                //refresh original listings array
-                listingsSource.value = response.data.data;
-                //store current filters
-                store.commit('investmentHub/STORE_ACTIVE_LISTINGS_FILTERS', response.data.filters);
-                //set filters values where not set
-                setCurrentFilters(response.data.filters);
-
-                //dismiss loader
-                isLoading.value = false;
-            }).catch(error => isLoading.value = false)
+    return fetchInvestmentHubActiveListings(JSON.parse(JSON.stringify(filters.value)));
 }
 function setCurrentFilters(activeFilters) {
     filters.value.from = activeFilters.from;
@@ -210,7 +206,8 @@ function archiveListing(payload){
                 //Refresh listings list
                 fetchListings(true);
 
-                //TODO Referesh archived listings
+                //Refresh archived listings
+                fetchInvestmentHubArchivedListings();
 
                 //show success message
                 $.growl.notice({message: response.data.message});
@@ -316,7 +313,7 @@ function deleteListing(payload){
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Select</th>
+                    <!--<th>Select</th>-->
                     <th>ID</th>
                     <th>Title</th>
                     <th>Company</th>
@@ -331,9 +328,9 @@ function deleteListing(payload){
                     :key="'investment_hub-active-listings-'+index"
                     :class="{'table-info': listing.selected}"
                     style="cursor: pointer;">
-                    <td class="text-center">
+                    <!--<td class="text-center">
                         <el-checkbox v-model="listing.selected"></el-checkbox>
-                    </td>
+                    </td>-->
                     <td @click="viewListing(listing)">
                         {{ listing.listing_id }}
                     </td>

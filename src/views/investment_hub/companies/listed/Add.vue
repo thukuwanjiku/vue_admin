@@ -104,16 +104,20 @@ function addSocial(){
     newSocialHandle.value = {platform: "", link: ""};
 }
 function submit(){
+    //validate that logo has been uploaded
+    if(!logoUpload.value)
+        return ElMessage.warning("Please upload the company logo");
+
     //validate that company about is provided
     let about = aboutQuillEditor.getSemanticHTML();
     if(!about || !about.toString().length || about == "<p></p>") {
-        return $.growl.warning({message: "Please enter the company's bio"})
+        return ElMessage.warning("Please enter the company's bio");
     }
     company.value['about'] = about;
 
     //validate that phone number is entered
     if(!company.value.contact_phone || !company.value.contact_phone.toString().length) {
-        return $.growl.warning({message: "Please enter contact phone"})
+        return ElMessage.warning("Please enter contact phone");
     }
 
     //prepare request payload

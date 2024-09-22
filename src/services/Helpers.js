@@ -39,6 +39,20 @@ export function fetchExploreHubCompanies(){
             })
             .catch(error => store.commit("exploreHub/SET_IS_FETCHING_COMPANIES", false));
 }
+export function fetchExploreHubArchivedCompanies(){
+    //show loader
+    store.commit("exploreHub/SET_IS_FETCHING_ARCHIVED_COMPANIES", true);
+
+    //make api call
+    api.get(apiRoutes.EXPLORE_HUB_ARCHIVED_COMPANIES)
+            .then(response => {
+                store.commit("exploreHub/STORE_ARCHIVED_COMPANIES", response.data);
+
+                //dismiss loader
+                store.commit("exploreHub/SET_IS_FETCHING_ARCHIVED_COMPANIES", false);
+            })
+            .catch(error => store.commit("exploreHub/SET_IS_FETCHING_ARCHIVED_COMPANIES", false));
+}
 export function fetchExploreHubListingCategories(){
     //show loading overlay
     store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', true);
@@ -52,6 +66,38 @@ export function fetchExploreHubListingCategories(){
             })
             .catch(error => store.commit('exploreHub/SET_IS_FETCHING_CATEGORIES', false));
 }
+export function fetchExploreHubActiveListings(payload){
+    //show loader
+    store.commit('exploreHub/SET_IS_ACTIVE_LISTINGS_LOADING', true);
+
+    //make api call
+    api.post(apiRoutes.EXPLORE_HUB_FETCH_LISTINGS, payload)
+            .then(response => {
+                //store fetched listings
+                store.commit('exploreHub/STORE_ACTIVE_LISTINGS', response.data.data);
+
+                //store current filters
+                store.commit('exploreHub/STORE_ACTIVE_LISTINGS_FILTERS', response.data.filters);
+
+                //dismiss loader
+                store.commit('exploreHub/SET_IS_ACTIVE_LISTINGS_LOADING', false);
+            }).catch(error => store.commit('exploreHub/SET_IS_ACTIVE_LISTINGS_LOADING', false))
+}
+export function fetchExploreHubArchivedListings(){
+    //show loader
+    store.commit("exploreHub/SET_IS_ARCHIVED_LISTINGS_LOADING", true);
+
+    //make api call
+    api.get(apiRoutes.EXPLORE_HUB_ARCHIVED_LISTINGS)
+            .then(response => {
+                store.commit("exploreHub/STORE_ARCHIVED_LISTINGS", response.data);
+
+                //dismiss loader
+                store.commit("exploreHub/SET_IS_ARCHIVED_LISTINGS_LOADING", false);
+            })
+            .catch(error => store.commit("exploreHub/SET_IS_ARCHIVED_LISTINGS_LOADING", false));
+}
+
 export function fetchInvestmentHubCompanies(){
     //show loader
     store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", true);
@@ -66,6 +112,20 @@ export function fetchInvestmentHubCompanies(){
             })
             .catch(error => store.commit("investmentHub/SET_IS_FETCHING_COMPANIES", false));
 }
+export function fetchInvestmentHubArchivedCompanies(){
+    //show loader
+    store.commit("investmentHub/SET_IS_FETCHING_ARCHIVED_COMPANIES", true);
+
+    //make api call
+    api.get(apiRoutes.INVESTMENT_HUB_ARCHIVED_COMPANIES)
+            .then(response => {
+                store.commit("investmentHub/STORE_ARCHIVED_COMPANIES", response.data);
+
+                //dismiss loader
+                store.commit("investmentHub/SET_IS_FETCHING_ARCHIVED_COMPANIES", false);
+            })
+            .catch(error => store.commit("investmentHub/SET_IS_FETCHING_ARCHIVED_COMPANIES", false));
+}
 export function fetchInvestmentHubListingCategories(){
     //show loading overlay
     store.commit('investmentHub/SET_IS_FETCHING_CATEGORIES', true);
@@ -79,6 +139,38 @@ export function fetchInvestmentHubListingCategories(){
             })
             .catch(error => store.commit('investmentHub/SET_IS_FETCHING_CATEGORIES', false));
 }
+export function fetchInvestmentHubActiveListings(payload){
+    //show loader
+    store.commit('investmentHub/SET_IS_ACTIVE_LISTINGS_LOADING', true);
+
+    //make api call
+    api.post(apiRoutes.INVESTMENT_HUB_FETCH_LISTINGS, payload)
+            .then(response => {
+                //store fetched listings
+                store.commit('investmentHub/STORE_ACTIVE_LISTINGS', response.data.data);
+
+                //store current filters
+                store.commit('investmentHub/STORE_ACTIVE_LISTINGS_FILTERS', response.data.filters);
+
+                //dismiss loader
+                store.commit('investmentHub/SET_IS_ACTIVE_LISTINGS_LOADING', false);
+            }).catch(error => store.commit('investmentHub/SET_IS_ACTIVE_LISTINGS_LOADING', false))
+}
+export function fetchInvestmentHubArchivedListings(){
+    //show loader
+    store.commit("investmentHub/SET_IS_FETCHING_ARCHIVED_LISTINGS", true);
+
+    //make api call
+    api.get(apiRoutes.INVESTMENT_HUB_ARCHIVED_LISTINGS)
+            .then(response => {
+                store.commit("investmentHub/STORE_ARCHIVED_LISTINGS", response.data);
+
+                //dismiss loader
+                store.commit("investmentHub/SET_IS_FETCHING_ARCHIVED_LISTINGS", false);
+            })
+            .catch(error => store.commit("investmentHub/SET_IS_FETCHING_ARCHIVED_LISTINGS", false));
+}
+
 export function fetchRoles(){
     store.commit('auth/SET_IS_FETCHING_ROLES', true);
 

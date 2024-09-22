@@ -9,7 +9,7 @@ import {ElMessageBox} from "element-plus";
 import {AwesomeSocialButton} from "awesome-social-button";
 import {ArrowDown, Plus} from "@element-plus/icons-vue";
 import {
-    checkHasPermission,
+    checkHasPermission, fetchInvestmentHubArchivedCompanies,
     fetchInvestmentHubCompanies,
     hasPermissionsWhichContain,
     isSmallScreen
@@ -124,6 +124,8 @@ function archiveCompany(payload){
             .then(response => {
                 //refresh companies list
                 fetchInvestmentHubCompanies();
+                //refresh archived companies
+                fetchInvestmentHubArchivedCompanies();
 
                 //show success message
                 $.growl.notice({message: response.data.message});
