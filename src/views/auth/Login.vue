@@ -8,8 +8,9 @@ import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import {startIdleTracking} from "@/services/idleAppLockTimer";
 
-/**
+/* -----------------------------
  * All variables definitions
+ * -----------------------------
  * */
 const router = useRouter();
 const store = useStore();
@@ -22,9 +23,17 @@ const isPasswordFocused = ref(false)
 const showPassword = ref(false)
 
 
-/**
+/* -----------------------------
  * Methods definitions
+ * ---------------------------
  * */
+function toggleShowPassword(){
+    showPassword.value = !showPassword.value;
+    //focus the password field
+    setTimeout(()=>{
+        $("#password").focus();
+    }, 100);
+}
 function getSanctumCSRFToken(){
     //show loader
     isLoading.value = true;
@@ -125,7 +134,7 @@ function login(){
 
                                                 <i
                                                         :class="showPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"
-                                                        @click="showPassword = !showPassword"
+                                                        @click="toggleShowPassword"
                                                         class="toggle-password" v-if="password.length"
                                                 ></i>
                                             </div>

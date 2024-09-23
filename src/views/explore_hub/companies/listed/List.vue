@@ -14,6 +14,7 @@ import {
     isSmallScreen
 } from "@/services/Helpers";
 import SocialHandle from "@/components/SocialHandle.vue";
+import AccessDenied from "@/components/AccessDenied.vue";
 
 /* -----------------------------
  * Variables
@@ -46,7 +47,7 @@ let isLoading = computed({
  * */
 onMounted(()=>{
     //fetch companies
-    if(checkHasPermission('explore_hub.companies.list')) fetchExploreHubCompanies();
+    if(checkHasPermission('explore_hub.companies.view')) fetchExploreHubCompanies();
 });
 
 
@@ -172,7 +173,7 @@ function deleteCompany(payload){
         </div>
         <br>
 
-        <div class="table-responsive" v-if="checkHasPermission('explore_hub.companies.list')">
+        <div class="table-responsive" v-if="checkHasPermission('explore_hub.companies.view')">
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -213,6 +214,9 @@ function deleteCompany(payload){
                 <tr v-else><td colspan="5" class="text-center p-3">No data</td></tr>
                 </tbody>
             </table>
+        </div>
+        <div v-else>
+            <access-denied></access-denied>
         </div>
     </div>
 

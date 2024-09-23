@@ -12,6 +12,7 @@ import {
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {ElMessageBox} from "element-plus";
+import AccessDenied from "@/components/AccessDenied.vue";
 
 
 /* -----------------------------
@@ -69,7 +70,7 @@ const hasEditedCategory = computed(() => {
  * */
 onMounted(()=>{
     //fetch listing categories if not already fetched
-    if(checkHasPermission('investment_hub.categories.list') && !categories.value.length) fetchInvestmentHubListingCategories();
+    if(checkHasPermission('investment_hub.categories.view') && !categories.value.length) fetchInvestmentHubListingCategories();
 
     //fetch material icons names is not previously fetched
     if(!materialIconsNames.value.length) {
@@ -324,41 +325,46 @@ function deleteCategories(payload){
         </div>
         <br>
 
-        <div class="row" v-if="checkHasPermission('investment_hub.categories.list') && categories.length">
-            <small class="text-muted text-italic" v-if="!isSelectingMultiple && checkHasPermission('investment_hub.categories.edit')">Tap entry to edit</small><br>
-            <div class="d-flex m-t-10 m-b-10 flex-wrap align-items-center" v-if="isSelectingMultiple">
-                <small class="text-italic" v-if="!selectedCategories.length">Tap to select</small>
+        <template v-if="checkHasPermission('investment_hub.categories.view')">
+            <div class="row" v-if="categories.length">
+                <small class="text-muted text-italic" v-if="!isSelectingMultiple && checkHasPermission('investment_hub.categories.edit')">Tap entry to edit</small><br>
+                <div class="d-flex m-t-10 m-b-10 flex-wrap align-items-center" v-if="isSelectingMultiple">
+                    <small class="text-italic" v-if="!selectedCategories.length">Tap to select</small>
 
-                <small class="fw-bold" v-if="selectedCategories.length">Selected:</small>&nbsp;
-                <div class="m-1" v-for="category in selectedCategories"
-                     :key="'categories-selection-'+category.id">
-                    <el-tag
-                            closable
-                            @close="handleCategoryClick(category)"
-                    >
-                        {{ category.name }}
-                    </el-tag>
+                    <small class="fw-bold" v-if="selectedCategories.length">Selected:</small>&nbsp;
+                    <div class="m-1" v-for="category in selectedCategories"
+                         :key="'categories-selection-'+category.id">
+                        <el-tag
+                                closable
+                                @close="handleCategoryClick(category)"
+                        >
+                            {{ category.name }}
+                        </el-tag>
+                    </div>
+
+                    <el-button class="m-l-10" v-if="selectedCategories.length" @click="confirmDeleteSelections" type="danger" plain>Delete selections</el-button>
                 </div>
 
-                <el-button class="m-l-10" v-if="selectedCategories.length" @click="confirmDeleteSelections" type="danger" plain>Delete selections</el-button>
+                <div v-for="category in categories" :key="'investment_hub-categories-list-'+category.id"
+                     class="col-md-2 col-sm-4 col-xs-6 p-1 hov-pointer" @click="handleCategoryClick(category)">
+                    <el-card shadow="hover">
+                        <div class="text-center">
+                            <span class="material-symbols-outlined fs-40">{{ category.icon }}</span>
+                            <br>
+                            {{ category.name }}
+                        </div>
+                    </el-card>
+                </div>
             </div>
 
-            <div v-for="category in categories" :key="'investment_hub-categories-list-'+category.id"
-                 class="col-md-2 col-sm-4 col-xs-6 p-1 hov-pointer" @click="handleCategoryClick(category)">
-                <el-card shadow="hover">
-                    <div class="text-center">
-                        <span class="material-symbols-outlined fs-40">{{ category.icon }}</span>
-                        <br>
-                        {{ category.name }}
-                    </div>
-                </el-card>
+            <div class="row" v-else>
+                <p class="p-5 text-center">
+                    <small>No categories found</small>
+                </p>
             </div>
-        </div>
-
-        <div class="row" v-else>
-            <p class="p-5 text-center">
-                <small>No categories found</small>
-            </p>
+        </template>
+        <div v-else>
+            <access-denied></access-denied>
         </div>
     </div>
 

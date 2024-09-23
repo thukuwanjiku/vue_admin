@@ -14,6 +14,7 @@ import {
     fetchExploreHubCompanies,
     hasPermissionsWhichContain
 } from "@/services/Helpers";
+import AccessDenied from "@/components/AccessDenied.vue";
 
 /* ----------------------------------
 * Variables & properties
@@ -77,7 +78,7 @@ watch(listingsSource, (newValue, oldValue)=> {
 * */
 onMounted(()=> {
     //fetch listings if they're not already
-    if(checkHasPermission('explore_hub.listings.list')) fetchListings();
+    if(checkHasPermission('explore_hub.listings.view')) fetchListings();
 });
 
 
@@ -258,7 +259,7 @@ function deleteListing(payload){
             <div v-if="checkHasPermission('explore_hub.listings.add')">
                 <el-button @click="router.push({name:'explore_hub.listings.create'})" type="primary" :icon="Plus" plain>Add Listing</el-button>
             </div>
-            <div class="d-none d-md-block" v-if="checkHasPermission('explore_hub.listings.list')">
+            <div class="d-none d-md-block" v-if="checkHasPermission('explore_hub.listings.view')">
                 <div class="d-flex align-items-center">
                     <h6 style="width: 200px;margin:0;">
                         <small>Showing listings</small>
@@ -311,7 +312,7 @@ function deleteListing(payload){
         <br>
 
         <!-- Datatable -->
-        <div class="table-responsive m-t-10" v-if="checkHasPermission('explore_hub.listings.list')">
+        <div class="table-responsive m-t-10" v-if="checkHasPermission('explore_hub.listings.view')">
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -399,6 +400,9 @@ function deleteListing(payload){
                 <tr v-else><td colspan="8" class="text-center p-3">No data, change filters and try again</td></tr>
                 </tbody>
             </table>
+        </div>
+        <div v-else>
+            <access-denied></access-denied>
         </div>
     </div>
 

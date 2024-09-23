@@ -129,7 +129,7 @@ function handleSavePermissions(){
     <div class="card">
         <div class="card-body">
             <br>
-            <div class="row p-2" v-loading="isLoading" v-if="checkHasPermission('permissions.list')">
+            <div class="row p-2" v-loading="isLoading" v-if="checkHasPermission('permissions.view')">
 
                 <!-- Role Selector-->
                 <div class="row p-b-10">

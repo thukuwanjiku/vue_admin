@@ -53,19 +53,19 @@ function tabChanged(tab){
 
             <!-- Default Tabs -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.companies'])">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.companies.view'])">
                     <button class="nav-link active"
                             @click="tabChanged('listed')"
                             data-bs-toggle="tab" data-bs-target="#investment_hub_companies_listed"
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Listed</button>
                 </li>
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.archived_companies'])">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.archived_companies.view'])">
                     <button class="nav-link" id="contact-tab"
                             @click="tabChanged('deleted')"
                             data-bs-toggle="tab" data-bs-target="#investment_hub_companies_deleted"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Archived</button>
                 </li>
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.companies_reviews'])">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.companies_reviews.view'])">
                     <button class="nav-link" id="profile-tab"
                             @click="tabChanged('reviews')"
                             data-bs-toggle="tab" data-bs-target="#investment_hub_companies_reviews"
@@ -75,17 +75,17 @@ function tabChanged(tab){
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
                 <div class="tab-pane fade show active p-1" id="investment_hub_companies_listed"
-                     v-if="hasPermissionsWhichContain(['investment_hub.companies'])"
+                     v-if="hasPermissionsWhichContain(['investment_hub.companies.view'])"
                      role="tabpanel" aria-labelledby="home-tab">
                     <router-view name="investment_hub_companies_listed"></router-view>
                 </div>
                 <div class="tab-pane fade" id="investment_hub_companies_reviews"
-                     v-if="hasPermissionsWhichContain(['investment_hub.companies_reviews'])"
+                     v-if="hasPermissionsWhichContain(['investment_hub.companies_reviews.view'])"
                      role="tabpanel" aria-labelledby="profile-tab">
                     <reviews></reviews>
                 </div>
                 <div class="tab-pane fade" id="investment_hub_companies_deleted"
-                     v-if="hasPermissionsWhichContain(['investment_hub.archived_companies'])"
+                     v-if="hasPermissionsWhichContain(['investment_hub.archived_companies.view'])"
                      role="tabpanel" aria-labelledby="contact-tab">
                     <archived></archived>
                 </div>

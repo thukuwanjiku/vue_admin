@@ -47,7 +47,7 @@ const isLoading = computed({
  * */
 onMounted(()=>{
     //fetch users
-    if(checkHasPermission('users.list') && !users.value.length) fetchUsers();
+    if(checkHasPermission('users.view') && !users.value.length) fetchUsers();
     if(!roles.value.length) fetchRoles();
 });
 
@@ -203,7 +203,7 @@ function saveUserRoles(){
                     <br>
                 </template>
 
-                <div v-if="checkHasPermission('users.list')" class="table-responsive">
+                <div v-if="checkHasPermission('users.view')" class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                         <tr>

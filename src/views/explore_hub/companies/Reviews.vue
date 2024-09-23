@@ -145,7 +145,7 @@ function handlePaginationClick(link){
 
     <!-- When no company is selected -->
     <div class="row d-flex align-items-center justify-content-center p-t-20 p-b-20"
-         v-if="checkHasPermission('explore_hub.companies_reviews.list') && !Object.keys(company).length">
+         v-if="checkHasPermission('explore_hub.companies_reviews.view') && !Object.keys(company).length">
         <div class="col-md-4 col-sm-12">
             <input-label>Select company to browse reviews</input-label>
             <el-select

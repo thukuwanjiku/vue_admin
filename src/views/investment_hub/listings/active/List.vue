@@ -256,7 +256,7 @@ function deleteListing(payload){
             <div v-if="checkHasPermission('investment_hub.listings.add')">
                 <el-button @click="router.push({name:'investment_hub.listings.create'})" type="primary" :icon="Plus" plain>Add Listing</el-button>
             </div>
-            <div class="d-none d-md-block" v-if="checkHasPermission('investment_hub.listings.list')">
+            <div class="d-none d-md-block" v-if="checkHasPermission('investment_hub.listings.view')">
                 <div class="d-flex align-items-center">
                     <h6 style="width: 200px;margin:0;">
                         <small>Showing listings</small>
@@ -309,7 +309,7 @@ function deleteListing(payload){
         <br>
 
         <!-- Datatable -->
-        <div class="table-responsive m-t-10" v-if="checkHasPermission('investment_hub.listings.list')">
+        <div class="table-responsive m-t-10" v-if="checkHasPermission('investment_hub.listings.view')">
             <table class="table table-hover">
                 <thead>
                 <tr>

@@ -44,7 +44,7 @@ const isLoading = computed({
  * */
 onMounted(()=>{
     //fetch roles
-    if(checkHasPermission('roles.list') && !roles.value.length) fetchRoles();
+    if(checkHasPermission('roles.view') && !roles.value.length) fetchRoles();
 });
 
 
@@ -178,7 +178,7 @@ function deleteRole(role){
                     <br>
                 </template>
 
-                <div v-if="checkHasPermission('roles.list')" class="table-responsive">
+                <div v-if="checkHasPermission('roles.view')" class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                         <tr>

@@ -13,6 +13,7 @@ import {
     hasPermissionsWhichContain,
     isSmallScreen
 } from "@/services/Helpers";
+import AccessDenied from "@/components/AccessDenied.vue";
 
 /* -----------------------------
  * Variables
@@ -45,7 +46,7 @@ let isLoading = computed({
  * */
 onMounted(()=>{
     //fetch companies
-    if(checkHasPermission('investment_hub.companies.list') && !companies.value.length) fetchInvestmentHubCompanies();
+    if(checkHasPermission('investment_hub.companies.view') && !companies.value.length) fetchInvestmentHubCompanies();
 });
 
 
@@ -176,7 +177,7 @@ function deleteCompany(payload){
         </div>
         <br>
 
-        <div class="table-responsive" v-if="checkHasPermission('investment_hub.companies.list')">
+        <div class="table-responsive" v-if="checkHasPermission('investment_hub.companies.view')">
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -216,6 +217,9 @@ function deleteCompany(payload){
                 <tr v-else><td colspan="5" class="text-center p-3">No data</td></tr>
                 </tbody>
             </table>
+        </div>
+        <div v-else>
+            <access-denied></access-denied>
         </div>
     </div>
 

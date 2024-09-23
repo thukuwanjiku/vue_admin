@@ -347,7 +347,7 @@ export default [
     },
     {
         path: '/user-invites/:token',
-        component: ()=> import("../views/access_control/UserInvite.vue"),
+        component: ()=> import("../views/access_control/AcceptInvite.vue"),
         props: true,
         meta: {
             title: `Accept Invite ${pageTitleSuffix}`

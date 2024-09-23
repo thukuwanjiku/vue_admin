@@ -52,13 +52,13 @@ function tabChanged(tab){
 
             <!-- Default Tabs -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.listings'])">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.listings.view'])">
                     <button class="nav-link active"
                             @click="tabChanged('active')"
                             data-bs-toggle="tab" data-bs-target="#investment_listings_active"
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Active</button>
                 </li>
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.reported_listings'])">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.reported_listings.view'])">
                     <button class="nav-link"
                             @click="tabChanged('reported')"
                             data-bs-toggle="tab" data-bs-target="#investment_listings_reported"
@@ -70,7 +70,7 @@ function tabChanged(tab){
                             data-bs-toggle="tab" data-bs-target="#investment_listings_closed"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Closed</button>
                 </li>-->
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.archived_listings'])">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.archived_listings.view'])">
                     <button class="nav-link" id="contact-tab"
                             @click="tabChanged('archived')"
                             data-bs-toggle="tab" data-bs-target="#investment_listings_archived"
@@ -79,7 +79,7 @@ function tabChanged(tab){
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
                 <div class="tab-pane fade show active p-1" id="investment_listings_active"
-                     v-if="hasPermissionsWhichContain(['investment_hub.listings'])"
+                     v-if="hasPermissionsWhichContain(['investment_hub.listings.view'])"
                      role="tabpanel" aria-labelledby="home-tab">
                     <router-view name="investment_listings_active"></router-view>
                 </div>
@@ -87,12 +87,12 @@ function tabChanged(tab){
                     Closed Listings
                 </div>
                 <div class="tab-pane fade" id="investment_listings_reported"
-                     v-if="hasPermissionsWhichContain(['investment_hub.reported_listings'])"
+                     v-if="hasPermissionsWhichContain(['investment_hub.reported_listings.view'])"
                      role="tabpanel" aria-labelledby="profile-tab">
                     <reported-listings></reported-listings>
                 </div>
                 <div class="tab-pane fade" id="investment_listings_archived"
-                     v-if="hasPermissionsWhichContain(['investment_hub.archived_listings'])"
+                     v-if="hasPermissionsWhichContain(['investment_hub.archived_listings.view'])"
                      role="tabpanel" aria-labelledby="contact-tab">
                     <router-view name="investment_listings_archived"></router-view>
                 </div>

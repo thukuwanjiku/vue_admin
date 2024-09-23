@@ -7,6 +7,7 @@ import {Box} from "@element-plus/icons-vue";
 import {checkHasPermission, isSmallScreen} from "@/services/Helpers";
 import {ElMessageBox} from "element-plus";
 import {useStore} from "vuex";
+import AccessDenied from "@/components/AccessDenied.vue";
 
 /* ----------------------------------
 * Variables & properties
@@ -196,7 +197,7 @@ function archiveListing(payload){
     <div class="row" v-loading="isLoading">
 
         <!-- Datatable -->
-        <div class="table-responsive m-t-10" v-if="checkHasPermission('explore_hub.reported_listings.list')">
+        <div class="table-responsive m-t-10" v-if="checkHasPermission('explore_hub.reported_listings.view')">
             <table class="table">
                 <thead>
                 <tr>
@@ -223,7 +224,9 @@ function archiveListing(payload){
                 </tbody>
             </table>
         </div>
-
+        <div v-else>
+            <access-denied></access-denied>
+        </div>
     </div>
 
     <!-- Modal to view listing's reports -->
@@ -315,7 +318,7 @@ function archiveListing(payload){
 
             </div>
 
-            <!-- Reviews Pagination -->
+            <!-- Pagination -->
             <div class="col-sm-12 reviews_pagination m-t-20" v-if="paginationLinks.length > 3">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" v-for="link in paginationLinks" :key="'pagination-link-'+link.label">

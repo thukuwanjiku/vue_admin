@@ -11,6 +11,7 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {
     checkHasPermission, fetchExploreHubActiveListings, fetchExploreHubArchivedListings,
 } from "@/services/Helpers";
+import AccessDenied from "@/components/AccessDenied.vue";
 
 /* ----------------------------------
 * Variables & properties
@@ -191,6 +192,9 @@ function deleteListing(payload){
                 <tr v-else><td colspan="7" class="text-center p-3">No data</td></tr>
                 </tbody>
             </table>
+        </div>
+        <div v-else>
+            <access-denied></access-denied>
         </div>
     </div>
 

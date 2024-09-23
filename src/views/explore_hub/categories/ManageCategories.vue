@@ -69,7 +69,7 @@ const hasEditedCategory = computed(() => {
  * */
 onMounted(()=>{
     //fetch listing categories if not already fetched
-    if(checkHasPermission('explore_hub.categories.list') && !categories.value.length)
+    if(checkHasPermission('explore_hub.categories.view') && !categories.value.length)
         fetchExploreHubListingCategories();
 
     //fetch material icons names is not previously fetched
@@ -325,7 +325,7 @@ function deleteCategories(payload){
         </div>
         <br>
 
-        <div v-if="checkHasPermission('explore_hub.categories.list') && categories.length" class="row">
+        <div v-if="checkHasPermission('explore_hub.categories.view') && categories.length" class="row">
             <small class="text-muted text-italic" v-if="!isSelectingMultiple && checkHasPermission('explore_hub.categories.edit')">Tap entry to edit</small><br>
             <div class="d-flex m-t-10 m-b-10 flex-wrap align-items-center" v-if="isSelectingMultiple">
                 <small class="text-italic" v-if="!selectedCategories.length">Tap to select</small>

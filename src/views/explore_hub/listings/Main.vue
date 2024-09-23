@@ -52,13 +52,13 @@ function tabChanged(tab){
 
             <!-- Default Tabs -->
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.listings'])">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.listings.view'])">
                     <button class="nav-link active"
                             @click="tabChanged('active')"
                             data-bs-toggle="tab" data-bs-target="#explore_listings_active"
                             type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1">Active</button>
                 </li>
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.reported_listings'])">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.reported_listings.view'])">
                     <button class="nav-link"
                             @click="tabChanged('reported')"
                             data-bs-toggle="tab" data-bs-target="#explore_listings_reported"
@@ -70,7 +70,7 @@ function tabChanged(tab){
                             data-bs-toggle="tab" data-bs-target="#explore_listings_closed"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Closed</button>
                 </li>-->
-                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.archived_listings'])">
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.archived_listings.view'])">
                     <button class="nav-link"
                             @click="tabChanged('archived')"
                             data-bs-toggle="tab" data-bs-target="#explore_listings_archived"
@@ -79,18 +79,18 @@ function tabChanged(tab){
             </ul>
             <div class="tab-content pt-2" id="myTabContent">
                 <div class="tab-pane fade show active p-1" id="explore_listings_active"
-                     role="tabpanel" aria-labelledby="home-tab" v-if="hasPermissionsWhichContain(['explore_hub.listings'])">
+                     role="tabpanel" aria-labelledby="home-tab" v-if="hasPermissionsWhichContain(['explore_hub.listings.view'])">
                     <router-view name="explore_listings_active"></router-view>
                 </div>
                 <div class="tab-pane fade" id="explore_listings_reported"
-                     role="tabpanel" aria-labelledby="profile-tab" v-if="hasPermissionsWhichContain(['explore_hub.reported_listings'])">
+                     role="tabpanel" aria-labelledby="profile-tab" v-if="hasPermissionsWhichContain(['explore_hub.reported_listings.view'])">
                     <reported-listings></reported-listings>
                 </div>
                 <div class="tab-pane fade" id="explore_listings_closed" role="tabpanel" aria-labelledby="profile-tab">
                     Browse closed listings here
                 </div>
                 <div class="tab-pane fade" id="explore_listings_archived"
-                     role="tabpanel" aria-labelledby="contact-tab" v-if="hasPermissionsWhichContain(['explore_hub.archived_listings'])">
+                     role="tabpanel" aria-labelledby="contact-tab" v-if="hasPermissionsWhichContain(['explore_hub.archived_listings.view'])">
                     <router-view name="explore_listings_archived"></router-view>
                 </div>
             </div>

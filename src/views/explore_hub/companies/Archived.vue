@@ -12,6 +12,7 @@ import {ArrowDown, Plus} from "@element-plus/icons-vue";
 import {ElMessageBox} from "element-plus";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
+import AccessDenied from "@/components/AccessDenied.vue";
 
 /* -----------------------------
  * Variables
@@ -36,7 +37,7 @@ const isLoading = computed({
  * -----------------------------
  * */
 onMounted(()=>{
-    if(checkHasPermission("explore_hub.archived_companies.list")) fetchExploreHubArchivedCompanies();
+    if(checkHasPermission("explore_hub.archived_companies.view")) fetchExploreHubArchivedCompanies();
 });
 
 
@@ -124,7 +125,7 @@ function deleteCompany(payload){
 
     <div class="row p-2" v-loading="isLoading">
 
-        <div class="table-responsive" v-if="checkHasPermission('explore_hub.archived_companies.list')">
+        <div class="table-responsive" v-if="checkHasPermission('explore_hub.archived_companies.view')">
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -163,6 +164,9 @@ function deleteCompany(payload){
                 <tr v-else><td colspan="6" class="text-center p-3">No data</td></tr>
                 </tbody>
             </table>
+        </div>
+        <div v-else>
+            <access-denied></access-denied>
         </div>
     </div>
 

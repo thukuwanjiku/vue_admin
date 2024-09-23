@@ -43,7 +43,7 @@ const isLoading = computed({
 * */
 onMounted(()=> {
     //fetch listings if they're not already
-    if(checkHasPermission('investment_hub.archived_listings.list') && !listings.value.length) fetchInvestmentHubArchivedListings();
+    if(checkHasPermission('investment_hub.archived_listings.view') && !listings.value.length) fetchInvestmentHubArchivedListings();
 });
 
 
@@ -148,7 +148,7 @@ function deleteListing(payload){
 
     <div class="row" v-loading="isLoading">
         <!-- Datatable -->
-        <div class="table-responsive m-t-10" v-if="checkHasPermission('investment_hub.archived_listings.list')">
+        <div class="table-responsive m-t-10" v-if="checkHasPermission('investment_hub.archived_listings.view')">
             <table class="table table-hover">
                 <thead>
                 <tr>

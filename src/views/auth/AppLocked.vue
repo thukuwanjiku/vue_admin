@@ -39,9 +39,17 @@ const userNameInitials = computed(()=> {
 })
 
 
-/**
+/* -----------------------------
  * Methods definitions
+ * -----------------------------
  * */
+function toggleShowPassword(){
+    showPassword.value = !showPassword.value;
+    //focus the password field
+    setTimeout(()=>{
+        $("#password").focus();
+    }, 100);
+}
 function getSanctumCSRFToken(){
     //show loader
     isLoading.value = true;
@@ -140,7 +148,7 @@ function goToLogin(){
 
                                                 <i
                                                         :class="showPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"
-                                                        @click="showPassword = !showPassword"
+                                                        @click="toggleShowPassword"
                                                         class="toggle-password" v-if="password.length"
                                                 ></i>
                                             </div>
