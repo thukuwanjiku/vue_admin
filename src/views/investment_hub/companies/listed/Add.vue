@@ -8,11 +8,11 @@ import {useStore} from "vuex";
 import CloseButton from "@/components/CloseButton.vue";
 import { VueTelInput } from 'vue-tel-input';
 import 'vue-tel-input/vue-tel-input.css';
-import {AwesomeSocialButton} from "awesome-social-button";
 import {startCase} from "lodash-es";
 import {isSmallScreen, socialPlatforms} from "@/services/Helpers";
 import {validateSocialHandle} from "@/services/SocialHandlesLinksValidator";
 import {ElMessage} from "element-plus";
+import SocialHandle from "@/components/SocialHandle.vue";
 
 /* ------------------------------
 * Variables & Properties
@@ -255,13 +255,9 @@ function submit(){
                     <h6>Social Media Handles</h6>
                     <div class="d-inline-flex align-items-center flex-wrap">
                         <div v-if="addedSocials.length" class="d-inline-flex">
-                            <div class="p-1"
-                                 v-for="(social, index) in addedSocials" :key="'form-current-socials-'+index">
-                                <AwesomeSocialButton
-                                        :type="social.platform"
-                                        :link="{src: social.link}"
-                                />
-                            </div>
+                            <social-handle v-for="(social, index) in addedSocials"
+                                           :key="'form-current-socials-'+index"
+                                           v-bind="social"></social-handle>
                         </div>
                         <el-button @click="isAddingSocialHandles = !isAddingSocialHandles" size="small" round>
                             <i class="ri ri-add-line" v-if="!addedSocials.length"></i>{{ addedSocials.length ? "Click to edit" : "Click to add" }}
@@ -292,10 +288,7 @@ function submit(){
             <div class="d-inline-flex">
                 <div class="p-1" @click="addedSocials.splice(index,1)"
                      v-for="(social, index) in addedSocials" :key="'current-socials-'+index">
-                    <AwesomeSocialButton
-                            :type="social.platform"
-                            :link="{src: '#'}"
-                    />
+                    <social-handle :platform="social.platform"></social-handle>
                 </div>
             </div>
         </div>
@@ -306,26 +299,19 @@ function submit(){
             </h6>
             <div class="p-l-20">
                 <form @submit.prevent="addSocial">
-                    <small>Select Platform</small>
-                    <br>
+                    <p><small>Select Platform</small></p>
                     <div class="d-inline-flex flex-wrap">
-                        <div class="p-1" @click="selectSocialPlatform(social)"
-                             v-for="(social, index) in availableSocials" :key="'to-add-social'+index">
-                            <template v-if="newSocialHandle.platform == social">
+                        <template v-for="(social, index) in availableSocials"
+                                  :key="'to-add-social'+index">
+                            <div @click="selectSocialPlatform(social)" v-if="social == newSocialHandle.platform">
                                 <el-badge value="✓" class="item" type="primary">
-                                    <AwesomeSocialButton
-                                            :type="social"
-                                            :link="{src: '#'}"
-                                    />
+                                    <social-handle :platform="social"></social-handle>
                                 </el-badge>
-                            </template>
-                            <template v-else>
-                                <AwesomeSocialButton
-                                        :type="social"
-                                        :link="{src: '#'}"
-                                />
-                            </template>
-                        </div>
+                            </div>
+                            <div @click="selectSocialPlatform(social)" v-else>
+                                <social-handle :platform="social"></social-handle>
+                            </div>
+                        </template>
                     </div>
                     <br><br>
                     <div class="col-md-6" v-if="newSocialHandle.platform.length">

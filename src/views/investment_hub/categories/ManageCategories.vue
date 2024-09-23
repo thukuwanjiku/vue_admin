@@ -2,9 +2,6 @@
 
 import {ref, computed, onMounted} from "vue";
 import {Check, Delete, Plus} from "@element-plus/icons-vue";
-import {startCase} from "lodash-es";
-import {AwesomeSocialButton} from "awesome-social-button";
-import axios from "axios";
 import {useStore} from "vuex";
 import {
     checkHasPermission,

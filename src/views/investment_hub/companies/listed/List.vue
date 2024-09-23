@@ -6,7 +6,6 @@ import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
 import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
-import {AwesomeSocialButton} from "awesome-social-button";
 import {ArrowDown, Plus} from "@element-plus/icons-vue";
 import {
     checkHasPermission, fetchInvestmentHubArchivedCompanies,
@@ -250,13 +249,9 @@ function deleteCompany(payload){
                     <div v-if="activeCompany.socials.length" class="col-sm-6">
                         <h6>Social Media Handles</h6>
                         <div class="d-inline-flex">
-                            <div class="p-1"
-                                 v-for="(social, index) in activeCompany.socials" :key="'form-current-socials-'+index">
-                                <AwesomeSocialButton
-                                        :type="social.platform"
-                                        :link="{src: social.link}"
-                                />
-                            </div>
+                            <social-handle v-for="(social, index) in activeCompany.socials"
+                                           :key="'form-current-socials-'+index"
+                                           v-bind="social"></social-handle>
                         </div>
                     </div>
                 </div>

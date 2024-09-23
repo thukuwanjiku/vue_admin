@@ -5,15 +5,15 @@ import {computed, onMounted, ref} from "vue";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
-import BackButton from "@/components/CloseButton.vue";
 import { VueTelInput } from 'vue-tel-input';
 import 'vue-tel-input/vue-tel-input.css';
 import CloseButton from "@/components/CloseButton.vue";
-import {AwesomeSocialButton} from "awesome-social-button";
 import {startCase} from "lodash-es";
 import {checkHasPermission, isSmallScreen, socialPlatforms} from "@/services/Helpers";
 import {ElMessage} from "element-plus";
 import InputLabel from "@/components/InputLabel.vue";
+import SocialHandle from "@/components/SocialHandle.vue";
+import {validateSocialHandle} from "@/services/SocialHandlesLinksValidator";
 
 /* ------------------------------
 * Variables & Properties
@@ -114,7 +114,19 @@ function unmarkForDelete(social){
     //unmark this social for deletion
     social.deleted = !social.deleted;
 }
+function selectSocialPlatform(social){
+    newSocialHandle.value.platform = social;
+    //if social platform is whatsapp, prefill the link field with whatsapp api link
+    newSocialHandle.value.link = social == 'whatsapp' ? "https://wa.me/" : "";
+}
 function addNewSocial(){
+    if(newSocialHandle.value.platform != 'whatsapp')
+        newSocialHandle.value.link = newSocialHandle.value.link.replace(/\/+$/, '');
+
+    //validate link entered
+    if(!validateSocialHandle(newSocialHandle.value))
+        return ElMessage.warning(`Please enter a valid ${startCase(newSocialHandle.value.platform)} url`);
+
     //add new social to company list of socials
     newSocials.value.push({
         platform: newSocialHandle.value.platform,
@@ -289,13 +301,10 @@ function submit(){
                     <div class="p-l-10 m-t-10" v-if="savedSocials.length">
                         <h6><small>Currently saved</small></h6>
                         <div class="d-inline-flex align-items-center flex-wrap">
-                            <div class="p-1 save-social"
+                            <div class="saved-social"
                                  v-for="(social, index) in savedSocials"
                                  :key="'saved-socials-'+index">
-                                <AwesomeSocialButton
-                                        :type="social.platform"
-                                        :link="{src: '#'}"
-                                />
+                                <social-handle v-bind="social"></social-handle>
 
                                 <div class="remover" @click="social.deleted = !social.deleted">
                                     <i class="ri ri-close-line"></i>
@@ -320,12 +329,8 @@ function submit(){
                         <h6 v-if="companySocials.length"><small>{{ newSocials.length ? "Newly added to be saved" : "Add new handles" }}</small></h6>
                         <div class="d-inline-flex align-items-center flex-wrap">
                             <div v-if="newSocials.length" class="d-inline-flex">
-                                <div class="p-1"
-                                     v-for="(social, index) in newSocials" :key="'form-new-socials-'+index">
-                                    <AwesomeSocialButton
-                                            :type="social.platform"
-                                            :link="{src: social.link}"
-                                    />
+                                <div v-for="(social, index) in newSocials" :key="'form-new-socials-'+index">
+                                    <social-handle v-bind="social"></social-handle>
                                 </div>
                             </div>
                             <el-button @click="isAddingSocialHandles = !isAddingSocialHandles" size="small" round>
@@ -355,12 +360,10 @@ function submit(){
             </h6>
             <small class="text-muted text-italic">Click to remove</small>
             <div class="d-inline-flex">
-                <div class="p-1" @click="newSocials.splice(index,1)"
-                     v-for="(social, index) in newSocials" :key="'current-socials-'+index">
-                    <AwesomeSocialButton
-                            :type="social.platform"
-                            :link="{src: '#'}"
-                    />
+                <div v-for="(social, index) in newSocials"
+                     :key="'current-socials-'+index"
+                     @click="newSocials.splice(index,1)">
+                    <social-handle :platform="social.platform"></social-handle>
                 </div>
             </div>
         </div>
@@ -371,26 +374,19 @@ function submit(){
             </h6>
             <div class="p-l-20">
                 <form @submit.prevent="addNewSocial">
-                    <small>Select Platform</small>
-                    <br>
+                    <p><small>Select Platform</small></p>
                     <div class="d-inline-flex flex-wrap">
-                        <div class="p-1" @click="newSocialHandle.platform = social"
+                        <template
                              v-for="(social, index) in availableSocials" :key="'to-add-social'+index">
-                            <template v-if="newSocialHandle.platform == social">
+                            <div @click="selectSocialPlatform(social)" v-if="newSocialHandle.platform == social">
                                 <el-badge value="✓" class="item" type="primary">
-                                    <AwesomeSocialButton
-                                            :type="social"
-                                            :link="{src: '#'}"
-                                    />
+                                    <social-handle :platform="social"></social-handle>
                                 </el-badge>
-                            </template>
-                            <template v-else>
-                                <AwesomeSocialButton
-                                        :type="social"
-                                        :link="{src: '#'}"
-                                />
-                            </template>
-                        </div>
+                            </div>
+                            <div @click="selectSocialPlatform(social)" v-else>
+                                <social-handle :platform="social"></social-handle>
+                            </div>
+                        </template>
                     </div>
                     <br><br>
                     <div class="col-md-6" v-if="newSocialHandle.platform.length">
@@ -408,7 +404,7 @@ function submit(){
                 </form>
             </div>
             <div class="col-sm-12 d-flex justify-content-end">
-                <el-button type="info" @click="isAddingSocialHandles = !isAddingSocialHandles" plain>Done</el-button>
+                <el-button type="primary" @click="isAddingSocialHandles = !isAddingSocialHandles" plain>Close</el-button>
             </div>
         </div>
     </el-dialog>
@@ -417,26 +413,5 @@ function submit(){
 <!---->
 
 <style scoped>
-.save-social{
-    position: relative;
-    margin: 3px;
-    border-radius: 5px;
-}
-.save-social:hover .remover{
-    display: flex;
-}
-.save-social > .remover {
-    position: absolute;
-    right: -5px;
-    top: -6px;
-    background: #b7b4b4;
-    border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    cursor: pointer;
-}
+
 </style>

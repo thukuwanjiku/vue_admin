@@ -9,7 +9,8 @@ import {apiRoutes} from "@/services/apiRoutes";
 * */
 const materialIconsNamesUrl = "https://raw.githubusercontent.com/google/material-design-icons/master/font/MaterialIcons-Regular.codepoints";
 const socialPlatforms = [
-    "instagram","facebook","whatsapp","linkedin","youtube","twitter",
+    /*"instagram","facebook","whatsapp","linkedin","youtube","twitter",*/
+    "facebook", "instagram", "x",  "linkedin", "website", "whatsapp", "tiktok", "youtube"
 ];
 const isSmallScreen = window.innerWidth <= 768;
 
