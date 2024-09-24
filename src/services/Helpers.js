@@ -199,6 +199,7 @@ export function fetchUsers(){
             .catch(error => store.commit('auth/SET_IS_FETCHING_USERS', false));
 }
 export function fetchSignedInUserPermissions(){
+    console.log("Fetching permissions");
     api.get(apiRoutes.SIGNEDIN_USER_PERMISSIONS)
             .then(response => {
                 //store data in vuex store
