@@ -7,7 +7,7 @@
 *
 * */
 const baseUrl = process.env.NODE_ENV === 'production'
-        ? 'https://staging.myzola.io'
+        ? 'https://zola-api.codebreeze.co.ke'
         : 'http://127.0.0.1:8000';
 
 const apiBaseUrl = `${baseUrl}/api/admin`;
