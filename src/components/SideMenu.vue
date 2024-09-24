@@ -73,11 +73,6 @@ import {hasPermissionsWhichContain} from "@/services/Helpers";
                     <i class="bx bx-shield-quarter"></i><span>Access Control</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
                 <ul id="user-management-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li v-if="hasPermissionsWhichContain(['users.'])">
-                        <router-link :to="{name:'users'}">
-                            <i class="bi bi-circle"></i><span>Users</span>
-                        </router-link>
-                    </li>
                     <li v-if="hasPermissionsWhichContain(['roles.'])">
                         <router-link :to="{name: 'roles'}">
                             <i class="bi bi-circle"></i><span>Roles</span>
@@ -86,6 +81,11 @@ import {hasPermissionsWhichContain} from "@/services/Helpers";
                     <li v-if="hasPermissionsWhichContain(['permissions.'])">
                         <router-link :to="{name: 'permissions'}">
                             <i class="bi bi-circle"></i><span>Permissions</span>
+                        </router-link>
+                    </li>
+                    <li v-if="hasPermissionsWhichContain(['users.'])">
+                        <router-link :to="{name:'users'}">
+                            <i class="bi bi-circle"></i><span>Users</span>
                         </router-link>
                     </li>
                 </ul>

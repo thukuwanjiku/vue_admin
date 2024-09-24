@@ -146,6 +146,15 @@ function handleEntryAction(payload){
 
         case 'delete':
             return confirmDelete(payload.listing);
+
+        case 'submit_for_approval':
+            return confirmSubmitForApproval(payload.listing);
+
+        case 'approve':
+            return confirmApprove(payload.listing);
+
+        case 'reject':
+            return confirmReject(payload.listing);
     }
 }
 
@@ -250,6 +259,111 @@ function deleteListing(payload){
             .catch(error => isLoading.value = false)
 }
 
+function confirmSubmitForApproval(listing){
+    ElMessageBox.confirm('Sure you want to submit this listing for approval?', 'Confirm', {
+        confirmButtonText: 'Yes, continue',
+        cancelButtonText: 'Cancel',
+    })
+            .then(() => {
+                //define payload to send to api
+                let payload = {
+                    listing_id: listing.id
+                };
+
+                //send payload to method handling the
+                submitListingForApproval(payload);
+            })
+            .catch(() => {})
+}
+function submitListingForApproval(payload){
+    //show loader
+    isLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.EXPLORE_HUB_SUBMIT_LISTING_FOR_APPROVAL, payload)
+            .then(response => {
+                //refresh listings
+                fetchListings(true);
+
+                //show success message
+                $.growl.notice({message: response.data.message});
+            })
+            .catch(error => isLoading.value = false)
+}
+
+function confirmApprove(listing){
+    ElMessageBox.confirm(`Sure you want to <strong>approve</strong> this listing?`, 'Confirm', {
+        confirmButtonText: 'Approve',
+        cancelButtonText: 'Cancel',
+        dangerouslyUseHTMLString:true
+    })
+            .then(() => {
+                //define payload to send to api
+                let payload = {
+                    listing_id: listing.id
+                };
+
+                //send payload to method handling the
+                approveListing(payload);
+            })
+            .catch(() => {})
+}
+function approveListing(payload){
+    //show loader
+    isLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.EXPLORE_HUB_APPROVE_LISTING, payload)
+            .then(response => {
+                //refresh listings
+                fetchListings(true);
+
+                //show success message
+                $.growl.notice({message: response.data.message});
+            })
+            .catch(error => isLoading.value = false)
+}
+
+function confirmReject(listing){
+    ElMessageBox.prompt('Sure you want to reject this listing?\nPlease give a reason why you want to reject', 'Confirm Reject', {
+        confirmButtonText: 'Reject',
+        cancelButtonText: 'Cancel',
+        inputPlaceholder: "Type here why you want to reject",
+        inputValidator: (value)=> {
+            if(!value || !value.length){
+                return "Please give a reason";
+            }
+            return true;
+        },
+    })
+            .then(({ value }) => {
+                //define payload to send to api
+                let payload = {
+                    listing_id: listing.id,
+                    reason: value
+                };
+
+                //send payload to method handling the
+                rejectListing(payload);
+            })
+            .catch(() => {})
+}
+function rejectListing(payload){
+    //show loader
+    isLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.EXPLORE_HUB_REJECT_LISTING, payload)
+            .then(response => {
+                //Refresh listings list
+                fetchListings(true);
+
+                //show success message
+                $.growl.notice({message: response.data.message});
+            })
+            .catch(error => isLoading.value = false)
+}
+
 </script>
 
 <template>
@@ -321,7 +435,9 @@ function deleteListing(payload){
                     <th>Title</th>
                     <th>Company</th>
                     <th>Placement</th>
-                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <th>By</th>
                     <th>Payment Status</th>
                     <th>Actions</th>
                 </tr>
@@ -368,7 +484,14 @@ function deleteListing(payload){
                             {{ startCase(listing.placement) }}
                         </el-tag>
                     </td>
-                    <td @click="viewListing(listing)">{{ listing.category_name }}</td>
+                    <td @click="viewListing(listing)">
+                        <span class="badge bg-secondary" v-if="listing.status == 'pending'">{{ startCase(listing.status) }}</span>
+                        <span class="badge bg-warning" v-if="listing.status == 'waiting_approval'">{{ startCase(listing.status) }}</span>
+                        <span class="badge bg-success" v-if="listing.status == 'approved'">{{ startCase(listing.status) }}</span>
+                        <span class="badge bg-danger" v-if="listing.status == 'rejected'">{{ startCase(listing.status) }}</span>
+                    </td>
+                    <td @click="viewListing(listing)">{{ listing.last_action }}</td>
+                    <td @click="viewListing(listing)">{{ listing.last_action_by }}</td>
                     <td @click="viewListing(listing)">
                         <div v-if="listing.is_paid" class="text-success d-flex align-items-center">
                             <i class="bi bi-circle big-dot m-r-8" style="background:green;"></i>
@@ -382,16 +505,23 @@ function deleteListing(payload){
                     <td>
                         <el-dropdown trigger="click" @command="handleEntryAction">
                             <el-button plain type="primary"
-                                       :disabled="!hasPermissionsWhichContain(['explore_hub.listings.view', 'explore_hub.listings.edit', 'explore_hub.listings.delete', 'explore_hub.listings.archive'])"
                                        size="small">
                                 Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
                             </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.view')" :command="{action:'view',listing}">View</el-dropdown-item>
-                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.edit')" :command="{action:'edit',listing}">Edit</el-dropdown-item>
-                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.archive')" :command="{action:'archive',listing}">Archive</el-dropdown-item>
-                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.delete')" :command="{action:'delete',listing}">Delete</el-dropdown-item>
+
+                                    <el-dropdown-item v-if="!checkHasPermission('explore_hub.listings.approve') && listing.is_creator && ['pending', 'rejected'].includes(listing.status)" :command="{action:'submit_for_approval',listing}">
+                                        {{ listing.status == 'pending' ? 'Submit for Approval' : 'Re-submit for Approval' }}
+                                    </el-dropdown-item>
+
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.approve') && ((listing.status == 'pending' && listing.is_creator) || (listing.status == 'waiting_approval'))" :command="{action:'approve',listing}">Approve</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.approve') && (!listing.is_creator && listing.status == 'waiting_approval')" :command="{action:'reject',listing}">Reject</el-dropdown-item>
+
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" :command="{action:'edit',listing}">Edit</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.archive') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" :command="{action:'archive',listing}">Archive</el-dropdown-item>
+                                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.delete') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" :command="{action:'delete',listing}">Delete</el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>

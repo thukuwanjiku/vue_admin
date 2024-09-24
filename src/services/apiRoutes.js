@@ -60,6 +60,9 @@ const apiRoutes = {
     EXPLORE_HUB_ARCHIVED_LISTINGS: `${apiBaseUrl}/explore-hub/get-archived-listings`,
     EXPLORE_HUB_RESTORE_ARCHIVED_LISTING: `${apiBaseUrl}/explore-hub/restore-archived-listing`,
     EXPLORE_HUB_DELETE_ARCHIVED_LISTING: `${apiBaseUrl}/explore-hub/delete-archived-listing`,
+    EXPLORE_HUB_SUBMIT_LISTING_FOR_APPROVAL: `${apiBaseUrl}/explore-hub/submit-listing-for-approval`,
+    EXPLORE_HUB_APPROVE_LISTING: `${apiBaseUrl}/explore-hub/approve-listing`,
+    EXPLORE_HUB_REJECT_LISTING: `${apiBaseUrl}/explore-hub/reject-listing`,
 
 
     /* -----------------------------
@@ -104,6 +107,9 @@ const apiRoutes = {
     INVESTMENT_HUB_ARCHIVED_LISTINGS: `${apiBaseUrl}/investment-hub/get-archived-listings`,
     INVESTMENT_HUB_RESTORE_ARCHIVED_LISTING: `${apiBaseUrl}/investment-hub/restore-archived-listing`,
     INVESTMENT_HUB_DELETE_ARCHIVED_LISTING: `${apiBaseUrl}/investment-hub/delete-archived-listing`,
+    INVESTMENT_HUB_SUBMIT_LISTING_FOR_APPROVAL: `${apiBaseUrl}/investment-hub/submit-listing-for-approval`,
+    INVESTMENT_HUB_APPROVE_LISTING: `${apiBaseUrl}/investment-hub/approve-listing`,
+    INVESTMENT_HUB_REJECT_LISTING: `${apiBaseUrl}/investment-hub/reject-listing`,
 
 
     /* ---------------------------------------

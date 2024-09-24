@@ -665,7 +665,7 @@ function handleSaveEdits(){
 
         <hr class="m-0">
         <div class="modal-footer m-t-10">
-            <el-button size="large" type="primary" @click="handleSaveEdits">Save Edits</el-button>
+            <el-button v-if="checkHasPermission('explore_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" size="large" type="primary" @click="handleSaveEdits">Save Edits</el-button>
             <el-button size="large" type="info" @click="router.back()">Cancel</el-button>
         </div>
 

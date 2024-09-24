@@ -321,7 +321,7 @@ function deleteCategories(payload){
             <el-input v-if="categories.length" v-model="searchString" style="width: 240px" placeholder="Type to search" clearable />
             &nbsp;&nbsp;&nbsp;&nbsp;
 
-            <el-button v-if="checkHasPermission('explore_hub.categories.delete')" :icon="Check" :type="isSelectingMultiple ? 'primary' : ''" @click="toggleMultipleSelection" :plain="!isSelectingMultiple">Select Multiple to Delete</el-button>
+            <el-button v-if="checkHasPermission('explore_hub.categories.delete') && categories.length" :icon="Check" :type="isSelectingMultiple ? 'primary' : ''" @click="toggleMultipleSelection" :plain="!isSelectingMultiple">Select Multiple to Delete</el-button>
         </div>
         <br>
 

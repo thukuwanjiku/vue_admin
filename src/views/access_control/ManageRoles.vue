@@ -183,8 +183,8 @@ function deleteRole(role){
                         <thead>
                         <tr>
                             <th>Role</th>
-                            <th>Users Added</th>
-                            <th>Permissions Assigned</th>
+                            <th>Users</th>
+                            <th>Permissions</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -198,10 +198,10 @@ function deleteRole(role){
                             </td>
                             <td>{{ parseInt(role.permissions_count) == 0 ? '' : `${parseInt(role.permissions_count).toString()} permission${parseInt(role.permissions_count) > 1 ? 's' : ''}` }}</td>
                             <td>
-                                <el-dropdown trigger="click"
+                                <el-dropdown v-if="role.name != 'super_admin'" trigger="click"
                                              @command="handleEntryAction">
-                                    <el-button plain type="primary" size="small" :disabled="role.name == 'super_admin'
-                                                || !(checkHasPermission('roles.edit') || checkHasPermission('roles.delete'))">
+                                    <el-button plain type="primary" size="small"
+                                               :disabled="!(checkHasPermission('roles.edit') || checkHasPermission('roles.delete'))">
                                         Actions<el-icon class="el-icon--right"><ArrowDown /></el-icon>
                                     </el-button>
                                     <template #dropdown>

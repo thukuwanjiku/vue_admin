@@ -51,6 +51,20 @@ onMounted(()=>{
 * Methods
 * ----------------------------
 * */
+function toggleShowPassword(){
+    showPassword.value = !showPassword.value;
+    //focus the password field
+    setTimeout(()=>{
+        $("#password").focus();
+    }, 100);
+}
+function toggleShowConfirmPassword(){
+    showPasswordConfirmation.value = !showPasswordConfirmation.value;
+    //focus the password field
+    setTimeout(()=>{
+        $("#passwordConfirmation").focus();
+    }, 100);
+}
 function validateToken(){
     //show loader
     isLoading.value = true;
@@ -160,7 +174,7 @@ function acceptInvite(){
 
                                                     <i
                                                             :class="showPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"
-                                                            @click="showPassword = !showPassword"
+                                                            @click="toggleShowPassword"
                                                             class="toggle-password" v-if="password.length"
                                                     ></i>
                                                 </div>
@@ -179,7 +193,7 @@ function acceptInvite(){
 
                                                     <i
                                                             :class="showPasswordConfirmation ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"
-                                                            @click="showPasswordConfirmation = !showPasswordConfirmation"
+                                                            @click="toggleShowConfirmPassword"
                                                             class="toggle-password" v-if="passwordConfirmation.length"
                                                     ></i>
                                                 </div>

@@ -217,7 +217,7 @@ function handleSavePermissions(){
 
                                 <!-- Submodule actions -->
                                 <div class="p-1 row m-l-10">
-                                    <div class="col-md-2 col-sm-6"
+                                    <div class="col-md-3 col-sm-6"
                                          v-for="action in submodule.actions"
                                          :key="'module-permission-'+action.action">
                                         <el-checkbox v-model="action.has_permission"

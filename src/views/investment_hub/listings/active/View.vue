@@ -5,13 +5,27 @@ import {useRouter} from "vue-router";
 import CloseButton from "@/components/CloseButton.vue";
 import {onMounted, ref} from "vue";
 import {startCase} from "lodash-es";
-import {checkHasPermission, hasPermissionsWhichContain, isSmallScreen, moneyFormatter} from "@/services/Helpers";
+import {
+    checkHasPermission, fetchInvestmentHubActiveListings,
+    hasPermissionsWhichContain,
+    isSmallScreen,
+    moneyFormatter
+} from "../../../../services/Helpers";
 import {Carousel, Slide, Navigation, Pagination} from "vue3-carousel";
 import 'vue3-carousel/dist/carousel.css'
-import {ArrowDown, Comment, Edit, Money, PictureFilled, TopRight} from "@element-plus/icons-vue";
+import {
+    ArrowDown,
+    CircleCheck,
+    CircleCheckFilled, CloseBold,
+    Comment,
+    Edit,
+    Money,
+    PictureFilled,
+    TopRight
+} from "@element-plus/icons-vue";
 import InputLabel from "@/components/InputLabel.vue";
 import axios from "axios";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 
@@ -88,6 +102,9 @@ function handleActionsClick(action){
         case 'browse_reviews':
             goToReviews();
             break;
+
+        case 'submit_for_approval':
+            return confirmSubmitForApproval();
     }
 }
 
@@ -257,11 +274,126 @@ function goToReviews(){
         }
     })
 }
+
+function confirmSubmitForApproval(){
+    ElMessageBox.confirm('Sure you want to submit this listing for approval?', 'Confirm', {
+        confirmButtonText: 'Yes, continue',
+        cancelButtonText: 'Cancel',
+    })
+            .then(() => {
+                //define payload to send to api
+                let payload = {
+                    listing_id: listing.value.id
+                };
+
+                //send payload to method handling the
+                submitListingForApproval(payload);
+            })
+            .catch(() => {})
+}
+function submitListingForApproval(payload){
+    //show loader
+    isLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.INVESTMENT_HUB_SUBMIT_LISTING_FOR_APPROVAL, payload)
+            .then(response => {
+                //refresh listings
+                fetchInvestmentHubActiveListings(JSON.parse(JSON.stringify(store.state.investmentHub.activeListingsFilters)));
+
+                //show success message
+                $.growl.notice({message: response.data.message});
+
+                //redirect back
+                router.back();
+            })
+            .catch(error => isLoading.value = false)
+}
+
+function confirmApprove(){
+    ElMessageBox.confirm(`Sure you want to <strong>approve</strong> this listing?`, 'Confirm', {
+        confirmButtonText: 'Approve',
+        cancelButtonText: 'Cancel',
+        dangerouslyUseHTMLString:true
+    })
+            .then(() => {
+                //define payload to send to api
+                let payload = {
+                    listing_id: listing.value.id
+                };
+
+                //send payload to method handling the
+                approveListing(payload);
+            })
+            .catch(() => {})
+}
+function approveListing(payload){
+    //show loader
+    isLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.INVESTMENT_HUB_APPROVE_LISTING, payload)
+            .then(response => {
+                //refresh listings
+                fetchInvestmentHubActiveListings(JSON.parse(JSON.stringify(store.state.investmentHub.activeListingsFilters)));
+
+                //show success message
+                $.growl.notice({message: response.data.message});
+
+                //redirect back
+                router.back();
+            })
+            .catch(error => isLoading.value = false)
+}
+
+function confirmReject(){
+    ElMessageBox.prompt('Sure you want to reject this listing?\nPlease give a reason why you want to reject', 'Confirm Reject', {
+        confirmButtonText: 'Reject',
+        cancelButtonText: 'Cancel',
+        inputPlaceholder: "Type here why you want to reject",
+        inputValidator: (value)=> {
+            if(!value || !value.length){
+                return "Please give a reason";
+            }
+            return true;
+        },
+    })
+            .then(({ value }) => {
+                //define payload to send to api
+                let payload = {
+                    listing_id: listing.value.id,
+                    reason: value
+                };
+
+                //send payload to method handling the
+                rejectListing(payload);
+            })
+            .catch(() => {})
+}
+function rejectListing(payload){
+    //show loader
+    isLoading.value = true;
+
+    //make api call
+    api.post(apiRoutes.INVESTMENT_HUB_REJECT_LISTING, payload)
+            .then(response => {
+                //refresh listings
+                fetchInvestmentHubActiveListings(JSON.parse(JSON.stringify(store.state.investmentHub.activeListingsFilters)));
+
+                //show success message
+                $.growl.notice({message: response.data.message});
+
+                //redirect back
+                router.back();
+            })
+            .catch(error => isLoading.value = false)
+}
+
 </script>
 
 <template>
 
-    <div class="row" v-if="Object.keys(listing).length">
+    <div class="row" v-if="Object.keys(listing).length" v-loading="isLoading">
         <div class="col-sm-12 mb-3 d-inline-flex align-items-center"
              :class="{
                 'justify-content-end': !isSmallScreen,
@@ -270,15 +402,17 @@ function goToReviews(){
             <div class="p-1 m-r-10 d-flex align-items-center flex-wrap"
                  v-if="hasPermissionsWhichContain(['investment_hub.listings.edit', 'investment_hub.listings.add_media', 'investment_hub.listings.add_payment', 'investment_hub.reviewed_listings.list'])">
                 <template v-if="!isSmallScreen">
-                    <el-button v-if="checkHasPermission('investment_hub.listings.edit')" @click="goEditListing" type="primary" :icon="Edit" text bg>Edit Listing</el-button>
-                    <el-divider v-if="hasPermissionsWhichContain(['investment_hub.listings.add_payment'])" direction="vertical"></el-divider>
-                    <el-button v-if="checkHasPermission('investment_hub.listings.add_payment')" @click="isAddingPayments = true" type="primary" :icon="Money" text bg>Add Payment</el-button>
-                    <el-divider v-if="hasPermissionsWhichContain(['investment_hub.listings.add_media'])" direction="vertical"></el-divider>
-                    <el-button v-if="checkHasPermission('investment_hub.listings.add_media')" @click="isAddingMedia = true" type="primary" :icon="PictureFilled" text bg>Add Media</el-button>
-                    <template v-if="listing.has_reviews">
-                        <el-divider v-if="hasPermissionsWhichContain(['investment_hub.reviewed_listings.list'])" direction="vertical"></el-divider>
-                        <el-button v-if="checkHasPermission('investment_hub.reviewed_listings.list')" @click="goToReviews" type="primary" :icon="Comment" text bg>Browse Listing Reviews</el-button>
-                    </template>
+                    <el-button v-if="!checkHasPermission('investment_hub.listings.approve') && listing.is_creator && ['pending', 'rejected'].includes(listing.status)" @click="confirmSubmitForApproval" type="primary" :icon="TopRight" text bg>
+                        {{ listing.status == 'pending' ? "Submit for Approval" : "Re-submit for Approval" }}
+                    </el-button>
+
+                    <el-button v-if="checkHasPermission('investment_hub.listings.approve') && ((listing.status == 'pending' && listing.is_creator) || (listing.status == 'waiting_approval'))" @click="confirmApprove" type="primary" :icon="CircleCheck" text bg>Approve</el-button>
+                    <el-button v-if="checkHasPermission('investment_hub.listings.approve') && (!listing.is_creator && listing.status == 'waiting_approval')" @click="confirmReject" type="danger" :icon="CloseBold" text bg>Reject</el-button>
+
+                    <el-button v-if="checkHasPermission('investment_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" @click="goEditListing" type="primary" :icon="Edit" text bg>Edit Listing</el-button>
+                    <el-button v-if="checkHasPermission('investment_hub.listings.add_payment') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" @click="isAddingPayments = true" type="primary" :icon="Money" text bg>Add Payment</el-button>
+                    <el-button v-if="checkHasPermission('investment_hub.listings.add_media') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" @click="isAddingMedia = true" type="primary" :icon="PictureFilled" text bg>Add Media</el-button>
+                    <el-button v-if="listing.has_reviews && checkHasPermission('investment_hub.reviewed_listings.list')" @click="goToReviews" type="primary" :icon="Comment" text bg>Browse Listing Reviews</el-button>
                 </template>
 
                 <el-dropdown trigger="click" @command="handleActionsClick" v-if="isSmallScreen">
@@ -287,10 +421,17 @@ function goToReviews(){
                     </el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.edit')" command="edit" :icon="Edit">Edit Listing</el-dropdown-item>
+                            <el-dropdown-item v-if="!checkHasPermission('investment_hub.listings.approve') && listing.is_creator && ['pending', 'rejected'].includes(listing.status)" command="submit_for_approval" :icon="TopRight">
+                                {{ listing.status == 'pending' ? "Submit for Approval" : "Re-submit for Approval" }}
+                            </el-dropdown-item>
+
+                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.approve') && ((listing.status == 'pending' && listing.is_creator) || (listing.status == 'waiting_approval'))" command="approve" :icon="CircleCheck">Approve Listing</el-dropdown-item>
+                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.approve') && (!listing.is_creator && listing.status == 'waiting_approval')" command="reject" :icon="CloseBold">Reject Listing</el-dropdown-item>
+
+                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" command="edit" :icon="Edit">Edit Listing</el-dropdown-item>
                             <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.add_payment')" command="add_payments" :icon="Money">Add Payment</el-dropdown-item>
-                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.add_media')" command="add_media" :icon="PictureFilled">Add Media</el-dropdown-item>
-                            <el-dropdown-item command="browse_reviews" :icon="Comment" v-if="checkHasPermission('investment_hub.reviewed_listings.list') && listing.has_reviews">Browse Reviews</el-dropdown-item>
+                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.add_media') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" command="add_media" :icon="PictureFilled">Add Media</el-dropdown-item>
+                            <el-dropdown-item v-if="checkHasPermission('investment_hub.reviewed_listings.list') && listing.has_reviews" command="browse_reviews" :icon="Comment">Browse Reviews</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>

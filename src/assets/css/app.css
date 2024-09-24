@@ -7,6 +7,9 @@
 .mz-bg-hover:hover{
     background: #3E1A8D;
 }
+table{
+    font-size: 14px !important;
+}
 
 .review_card {
     box-sizing: border-box;
