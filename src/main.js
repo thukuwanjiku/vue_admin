@@ -23,7 +23,7 @@ createApp(App)
 startIdleTracking();
 
 //if there's a signed in user and their permissions aren't fetched, fetch them
-if(store.getters["auth/isAuthenticated"] && store.state.auth.permissions){
+if(store.getters["auth/isAuthenticated"] && !store.state.auth.permissions.length){
     fetchSignedInUserPermissions();
 }
 //if the app is loaded on an unprotected route, set empty permissions so that the app can load
