@@ -196,7 +196,7 @@ function archiveListing(payload){
     <div class="row" v-loading="isLoading">
 
         <!-- Datatable -->
-        <div class="table-responsive m-t-10" v-if="checkHasPermission('investment_hub.reported_listings.list')">
+        <div class="table-responsive m-t-10" v-if="checkHasPermission('investment_hub.reported_listings.view')">
             <table class="table">
                 <thead>
                 <tr>

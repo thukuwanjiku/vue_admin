@@ -28,6 +28,6 @@ if(store.getters["auth/isAuthenticated"] && !store.state.auth.permissions.length
 }
 //if the app is loaded on an unprotected route, set empty permissions so that the app can load
 if(!router.currentRoute.value.meta.requiresAuth){
-    console.log('Setting empty permissions for unprotected route');
+    //console.log('Setting empty permissions for unprotected route');
     store.commit("auth/STORE_PERMISSIONS", []);
 }

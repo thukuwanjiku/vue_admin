@@ -98,6 +98,20 @@ export function fetchExploreHubArchivedListings(){
             })
             .catch(error => store.commit("exploreHub/SET_IS_ARCHIVED_LISTINGS_LOADING", false));
 }
+export function fetchExploreHubApprovedReviewsListings(){
+    //show loader
+    store.commit('exploreHub/SET_IS_APPROVED_REVIEWS_LISTINGS_LOADING', true);
+
+    //make api call
+    api.get(apiRoutes.EXPLORE_HUB_LISTINGS_WITH_APPROVED_REVIEWS)
+            .then(response => {
+                //store reviews
+                store.commit("exploreHub/STORE_APPROVED_REVIEWS_LISTINGS", response.data);
+
+                //dismiss loader
+                store.commit('exploreHub/SET_IS_APPROVED_REVIEWS_LISTINGS_LOADING', false);
+            }).catch(error => store.commit('exploreHub/SET_IS_APPROVED_REVIEWS_LISTINGS_LOADING', false))
+}
 
 export function fetchInvestmentHubCompanies(){
     //show loader
@@ -171,6 +185,20 @@ export function fetchInvestmentHubArchivedListings(){
             })
             .catch(error => store.commit("investmentHub/SET_IS_FETCHING_ARCHIVED_LISTINGS", false));
 }
+export function fetchInvestmentHubApprovedReviewsListings(){
+    //show loader
+    store.commit('investmentHub/SET_IS_APPROVED_REVIEWS_LISTINGS_LOADING', true);
+
+    //make api call
+    api.get(apiRoutes.INVESTMENT_HUB_LISTINGS_WITH_APPROVED_REVIEWS)
+            .then(response => {
+                //store reviews
+                store.commit("investmentHub/STORE_APPROVED_REVIEWS_LISTINGS", response.data);
+
+                //dismiss loader
+                store.commit('investmentHub/SET_IS_APPROVED_REVIEWS_LISTINGS_LOADING', false);
+            }).catch(error => store.commit('investmentHub/SET_IS_APPROVED_REVIEWS_LISTINGS_LOADING', false))
+}
 
 export function fetchRoles(){
     store.commit('auth/SET_IS_FETCHING_ROLES', true);
@@ -199,7 +227,6 @@ export function fetchUsers(){
             .catch(error => store.commit('auth/SET_IS_FETCHING_USERS', false));
 }
 export function fetchSignedInUserPermissions(){
-    console.log("Fetching permissions");
     api.get(apiRoutes.SIGNEDIN_USER_PERMISSIONS)
             .then(response => {
                 //store data in vuex store

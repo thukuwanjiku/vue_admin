@@ -128,7 +128,7 @@ function goToLogin(){
 
                                     <div class="pt-4 pb-2">
                                         <div class="col-sm-12 d-flex justify-content-center">
-                                            <div class="user_initials">{{ userNameInitials }}</div>
+                                            <div :class="{'user_initials':true, 'single_letter': userNameInitials.length == 1}">{{ userNameInitials }}</div>
                                         </div>
 
                                         <h5 class="card-title text-center pb-0">Hello, {{ userFirstName }}</h5>
@@ -201,5 +201,8 @@ function goToLogin(){
     border-radius: 50%;
     font-size: 25px;
     font-weight: 600 !important;
+}
+.user_initials.single_letter{
+    padding: 20px 30px;
 }
 </style>

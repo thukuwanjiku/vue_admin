@@ -17,6 +17,9 @@ const state = {
     archivedListings: [],
     isArchivedListingsLoading: false,
     viewedArchivedListing: null,
+
+    approvedReviewsListings: [],
+    isApprovedReviewsListingsLoading: false,
 };
 
 const mutations = {
@@ -37,6 +40,9 @@ const mutations = {
     STORE_ARCHIVED_LISTINGS: (state, data)=> state.archivedListings = data,
     SET_IS_ARCHIVED_LISTINGS_LOADING: (state, value)=> state.isArchivedListingsLoading = value,
     STORE_VIEWED_ARCHIVED_LISTING: (state, data)=> state.viewedArchivedListing = data,
+
+    STORE_APPROVED_REVIEWS_LISTINGS: (state, data)=> state.approvedReviewsListings = data,
+    SET_IS_APPROVED_REVIEWS_LISTINGS_LOADING: (state, value)=> state.isApprovedReviewsListingsLoading = value,
 };
 
 export default {

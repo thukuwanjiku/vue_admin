@@ -265,7 +265,7 @@ function saveNewMedia(){
 
 function goToReviews(){
     //check has permissions
-    if(!checkHasPermission('explore_hub.reviewed_listings.list')) return;
+    if(!checkHasPermission('explore_hub.reviewed_listings.view')) return;
 
     return router.push({
         name: 'explore_hub.listings.reviews',
@@ -399,8 +399,7 @@ function rejectListing(payload){
                 'justify-content-end': !isSmallScreen,
                 'justify-content-between': isSmallScreen
              }">
-            <div class="p-1 m-r-10 d-flex align-items-center flex-wrap"
-                 v-if="hasPermissionsWhichContain(['explore_hub.listings.edit', 'explore_hub.listings.add_media', 'explore_hub.listings.add_payment', 'explore_hub.reviewed_listings.list'])">
+            <div class="p-1 m-r-10 d-flex align-items-center flex-wrap">
                 <template v-if="!isSmallScreen">
                     <el-button v-if="!checkHasPermission('explore_hub.listings.approve') && listing.is_creator && ['pending', 'rejected'].includes(listing.status)" @click="confirmSubmitForApproval" type="primary" :icon="TopRight" text bg>
                         {{ listing.status == 'pending' ? "Submit for Approval" : "Re-submit for Approval" }}
@@ -412,7 +411,7 @@ function rejectListing(payload){
                     <el-button v-if="checkHasPermission('explore_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" @click="goEditListing" type="primary" :icon="Edit" text bg>Edit Listing</el-button>
                     <el-button v-if="checkHasPermission('explore_hub.listings.add_payment') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" @click="isAddingPayments = true" type="primary" :icon="Money" text bg>Add Payment</el-button>
                     <el-button v-if="checkHasPermission('explore_hub.listings.add_media') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" @click="isAddingMedia = true" type="primary" :icon="PictureFilled" text bg>Add Media</el-button>
-                    <el-button v-if="listing.has_reviews && checkHasPermission('explore_hub.reviewed_listings.list')" @click="goToReviews" type="primary" :icon="Comment" text bg>Browse Listing Reviews</el-button>
+                    <el-button v-if="listing.has_reviews && checkHasPermission('explore_hub.reviewed_listings.view')" @click="goToReviews" type="primary" :icon="Comment" text bg>Browse Listing Reviews</el-button>
                 </template>
 
                 <el-dropdown trigger="click" @command="handleActionsClick" v-if="isSmallScreen">
@@ -431,7 +430,7 @@ function rejectListing(payload){
                             <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" command="edit" :icon="Edit">Edit Listing</el-dropdown-item>
                             <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.add_payment')" command="add_payments" :icon="Money">Add Payment</el-dropdown-item>
                             <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.add_media') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" command="add_media" :icon="PictureFilled">Add Media</el-dropdown-item>
-                            <el-dropdown-item v-if="checkHasPermission('explore_hub.reviewed_listings.list') && listing.has_reviews" command="browse_reviews" :icon="Comment">Browse Reviews</el-dropdown-item>
+                            <el-dropdown-item v-if="checkHasPermission('explore_hub.reviewed_listings.view') && listing.has_reviews" command="browse_reviews" :icon="Comment">Browse Reviews</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>

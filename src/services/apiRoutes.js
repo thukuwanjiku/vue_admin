@@ -7,7 +7,7 @@
 *
 * */
 const baseUrl = process.env.NODE_ENV === 'production'
-        ? 'https://zola-api.codebreeze.co.ke'
+        ? 'https://staging.myzola.io'
         : 'http://127.0.0.1:8000';
 
 const apiBaseUrl = `${baseUrl}/api/admin`;
@@ -53,8 +53,6 @@ const apiRoutes = {
     EXPLORE_HUB_DELETE_LISTING: `${apiBaseUrl}/explore-hub/delete-listing`,
     EXPLORE_HUB_ADD_LISTING_PAYMENTS: `${apiBaseUrl}/explore-hub/add-listing-payments`,
     EXPLORE_HUB_ADD_LISTING_MEDIA: `${apiBaseUrl}/explore-hub/add-listing-media`,
-    EXPLORE_HUB_LISTING_REVIEWS: `${apiBaseUrl}/explore-hub/listing-reviews`,
-    EXPLORE_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/explore-hub/listing-reviews-summary`,
     EXPLORE_HUB_REPORTED_LISTINGS: `${apiBaseUrl}/explore-hub/reported-listings`,
     EXPLORE_HUB_LISTING_REPORTS: `${apiBaseUrl}/explore-hub/listing-reports`,
     EXPLORE_HUB_ARCHIVED_LISTINGS: `${apiBaseUrl}/explore-hub/get-archived-listings`,
@@ -63,6 +61,12 @@ const apiRoutes = {
     EXPLORE_HUB_SUBMIT_LISTING_FOR_APPROVAL: `${apiBaseUrl}/explore-hub/submit-listing-for-approval`,
     EXPLORE_HUB_APPROVE_LISTING: `${apiBaseUrl}/explore-hub/approve-listing`,
     EXPLORE_HUB_REJECT_LISTING: `${apiBaseUrl}/explore-hub/reject-listing`,
+    EXPLORE_HUB_PENDING_REVIEWS: `${apiBaseUrl}/explore-hub/pending-reviews`,
+    EXPLORE_HUB_APPROVE_PENDING_REVIEW: `${apiBaseUrl}/explore-hub/approve-pending-review`,
+    EXPLORE_HUB_REJECT_PENDING_REVIEW: `${apiBaseUrl}/explore-hub/reject-pending-review`,
+    EXPLORE_HUB_LISTINGS_WITH_APPROVED_REVIEWS: `${apiBaseUrl}/explore-hub/listings-with-approved-reviews`,
+    EXPLORE_HUB_LISTING_REVIEWS: `${apiBaseUrl}/explore-hub/listing-reviews`,
+    EXPLORE_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/explore-hub/listing-reviews-summary`,
 
 
     /* -----------------------------
@@ -100,8 +104,6 @@ const apiRoutes = {
     INVESTMENT_HUB_DELETE_LISTING: `${apiBaseUrl}/investment-hub/delete-listing`,
     INVESTMENT_HUB_ADD_LISTING_PAYMENTS: `${apiBaseUrl}/investment-hub/add-listing-payments`,
     INVESTMENT_HUB_ADD_LISTING_MEDIA: `${apiBaseUrl}/investment-hub/add-listing-media`,
-    INVESTMENT_HUB_LISTING_REVIEWS: `${apiBaseUrl}/investment-hub/listing-reviews`,
-    INVESTMENT_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/investment-hub/listing-reviews-summary`,
     INVESTMENT_HUB_REPORTED_LISTINGS: `${apiBaseUrl}/investment-hub/reported-listings`,
     INVESTMENT_HUB_LISTING_REPORTS: `${apiBaseUrl}/investment-hub/listing-reports`,
     INVESTMENT_HUB_ARCHIVED_LISTINGS: `${apiBaseUrl}/investment-hub/get-archived-listings`,
@@ -110,6 +112,12 @@ const apiRoutes = {
     INVESTMENT_HUB_SUBMIT_LISTING_FOR_APPROVAL: `${apiBaseUrl}/investment-hub/submit-listing-for-approval`,
     INVESTMENT_HUB_APPROVE_LISTING: `${apiBaseUrl}/investment-hub/approve-listing`,
     INVESTMENT_HUB_REJECT_LISTING: `${apiBaseUrl}/investment-hub/reject-listing`,
+    INVESTMENT_HUB_PENDING_REVIEWS: `${apiBaseUrl}/investment-hub/pending-reviews`,
+    INVESTMENT_HUB_APPROVE_PENDING_REVIEW: `${apiBaseUrl}/investment-hub/approve-pending-review`,
+    INVESTMENT_HUB_REJECT_PENDING_REVIEW: `${apiBaseUrl}/investment-hub/reject-pending-review`,
+    INVESTMENT_HUB_LISTINGS_WITH_APPROVED_REVIEWS: `${apiBaseUrl}/investment-hub/listings-with-approved-reviews`,
+    INVESTMENT_HUB_LISTING_REVIEWS: `${apiBaseUrl}/investment-hub/listing-reviews`,
+    INVESTMENT_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/investment-hub/listing-reviews-summary`,
 
 
     /* ---------------------------------------

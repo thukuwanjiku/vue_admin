@@ -253,19 +253,12 @@ function saveUserRoles(){
             :fullscreen="isSmallScreen">
         <div class="p-3" v-loading="isModalLoading">
             <form @submit.prevent="inviteUser">
-                <input-label>Email</input-label>
-                <input type="email"
-                       class="form-control"
-                       placeholder="Enter email to invite here"
-                       v-model="inviteEmail" required>
-
-                <br>
                 <input-label>Role</input-label>
                 <br>
 
                 <el-select
                         v-model="inviteRole"
-                        placeholder="Select a role for the invited user"
+                        placeholder="Select a role for the invitee"
                         size="large"
                         filterable>
                     <el-option
@@ -274,6 +267,14 @@ function saveUserRoles(){
                             :label="startCase(role.name)"
                             :value="role.id" />
                 </el-select>
+                <br><br>
+
+                <input-label>Email</input-label>
+                <input type="email"
+                       class="form-control"
+                       placeholder="Enter email to invite here"
+                       v-model="inviteEmail" required>
+
                 <br>
 
                 <div class="m-t-10">

@@ -56,7 +56,7 @@ const mutations = {
     STORE_PERMISSIONS: (state, data)=> {
         state.permissions = data;
         state.hasFetchedPermissions = true
-        console.log('Set permissions', data);
+        //console.log('Set permissions', data);
     },
 };
 

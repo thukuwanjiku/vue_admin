@@ -4,6 +4,7 @@ import {useRouter} from "vue-router";
 import {onMounted} from "vue";
 import ReportedListings from "@/views/explore_hub/listings/ReportedListings.vue";
 import {hasPermissionsWhichContain} from "@/services/Helpers";
+import ListingsReviews from "@/views/explore_hub/listings/reviewed/Main.vue";
 
 /* ------------------------------
 * Variables & Properties
@@ -70,6 +71,12 @@ function tabChanged(tab){
                             data-bs-toggle="tab" data-bs-target="#explore_listings_closed"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Closed</button>
                 </li>-->
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.reviewed_listings.view'])">
+                    <button class="nav-link"
+                            @click="tabChanged('reviewed')"
+                            data-bs-toggle="tab" data-bs-target="#explore_listings_reviewed"
+                            type="button" role="tab" aria-controls="contact" aria-selected="true">Reviews</button>
+                </li>
                 <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['explore_hub.archived_listings.view'])">
                     <button class="nav-link"
                             @click="tabChanged('archived')"
@@ -88,6 +95,10 @@ function tabChanged(tab){
                 </div>
                 <div class="tab-pane fade" id="explore_listings_closed" role="tabpanel" aria-labelledby="profile-tab">
                     Browse closed listings here
+                </div>
+                <div class="tab-pane fade" id="explore_listings_reviewed"
+                     role="tabpanel" aria-labelledby="contact-tab" v-if="hasPermissionsWhichContain(['explore_hub.reviewed_listings.view'])">
+                    <listings-reviews></listings-reviews>
                 </div>
                 <div class="tab-pane fade" id="explore_listings_archived"
                      role="tabpanel" aria-labelledby="contact-tab" v-if="hasPermissionsWhichContain(['explore_hub.archived_listings.view'])">

@@ -4,6 +4,7 @@ import {useRouter} from "vue-router";
 import {onMounted} from "vue";
 import ReportedListings from "@/views/investment_hub/listings/ReportedListings.vue";
 import {hasPermissionsWhichContain} from "@/services/Helpers";
+import ListingsReviews from "@/views/investment_hub/listings/reviewed/Main.vue";
 
 /* ------------------------------
 * Variables & Properties
@@ -70,6 +71,12 @@ function tabChanged(tab){
                             data-bs-toggle="tab" data-bs-target="#investment_listings_closed"
                             type="button" role="tab" aria-controls="contact" aria-selected="true">Closed</button>
                 </li>-->
+                <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.reviewed_listings.view'])">
+                    <button class="nav-link"
+                            @click="tabChanged('reviewed')"
+                            data-bs-toggle="tab" data-bs-target="#investment_listings_reviewed"
+                            type="button" role="tab" aria-controls="contact" aria-selected="true">Reviews</button>
+                </li>
                 <li class="nav-item" role="presentation" v-if="hasPermissionsWhichContain(['investment_hub.archived_listings.view'])">
                     <button class="nav-link" id="contact-tab"
                             @click="tabChanged('archived')"
@@ -90,6 +97,10 @@ function tabChanged(tab){
                      v-if="hasPermissionsWhichContain(['investment_hub.reported_listings.view'])"
                      role="tabpanel" aria-labelledby="profile-tab">
                     <reported-listings></reported-listings>
+                </div>
+                <div class="tab-pane fade" id="investment_listings_reviewed"
+                     role="tabpanel" aria-labelledby="contact-tab" v-if="hasPermissionsWhichContain(['investment_hub.reviewed_listings.view'])">
+                    <listings-reviews></listings-reviews>
                 </div>
                 <div class="tab-pane fade" id="investment_listings_archived"
                      v-if="hasPermissionsWhichContain(['investment_hub.archived_listings.view'])"
