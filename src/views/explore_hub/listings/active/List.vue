@@ -457,16 +457,7 @@ function rejectListing(payload){
                     <td @click="viewListing(listing)">{{ listing.company.name }}</td>
                     <td @click="viewListing(listing)">
                         <el-tag
-                                v-if="listing.placement == 'for_you'"
-                                type="success"
-                                effect="light"
-                                round
-                                size="small"
-                        >
-                            {{ startCase(listing.placement) }}
-                        </el-tag>
-                        <el-tag
-                                v-if="listing.placement == 'featured'"
+                                v-if="listing.placement == 'top_picks'"
                                 type="primary"
                                 effect="light"
                                 round
@@ -475,7 +466,7 @@ function rejectListing(payload){
                             {{ startCase(listing.placement) }}
                         </el-tag>
                         <el-tag
-                                v-if="listing.placement == 'exclusive'"
+                                v-if="listing.placement == 'popular'"
                                 type="warning"
                                 effect="light"
                                 round
