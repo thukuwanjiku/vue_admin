@@ -60,6 +60,10 @@ onMounted(()=>{
         theme: 'snow',
         placeholder: 'Enter company about here'
     });
+
+    aboutQuillEditor.on('text-change', () => {
+        let aboutLength = aboutQuillEditor.getLength();
+    });
 });
 
 /* ------------------------------
@@ -187,8 +191,13 @@ function submit(){
                 <div class="col-md-10 m-b-20">
                     <div class="form-floating">
                         <input type="text" class="form-control" id="companyTagline"
-                               placeholder="Tagline" v-model="company.description" required>
+                               placeholder="Tagline" v-model="company.description"
+                               maxlength="100" required>
                         <label for="companyTagline">Tagline</label>
+
+                        <div v-if="company.description.toString().length" class="d-flex justify-content-end character_count_indicator">
+                            {{ company.description.toString().length }}/100
+                        </div>
                     </div>
                 </div>
 
@@ -226,6 +235,8 @@ function submit(){
                     <div id="addCompanyAboutEditor" class="quill-editor-default">
                     </div>
                     <!-- End Quill Editor Default -->
+
+                    
                 </div>
             </div>
             <div class="col-md-6">

@@ -29,7 +29,7 @@ function validateWhatsAppUrl(url) {
 }
 
 function validateYouTubeUrl(url) {
-    const regex = /^(https?:\/\/)?((\w{2,3}\.)?youtube.com\/(user|channel)\/[A-Za-z0-9_-]+|youtu.be\/[A-Za-z0-9_-]+)$/;
+    const regex = /^(https?:\/\/)?(www\.)?youtube\.com\/(channel\/|c\/|user\/|@)[A-Za-z0-9_-]{1,30}$/;
     return regex.test(url);
 }
 
