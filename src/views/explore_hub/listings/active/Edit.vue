@@ -27,7 +27,7 @@ const router = useRouter();
 const isLoading = ref(false);
 const listing = ref({});
 
-const placements = ref(['for_you', 'featured', 'exclusive']);
+const placements = ref([ 'top_picks', 'popular']);
 let descriptionQuillEditor = ref(null);
 
 const listingMedia = ref([]);
@@ -403,16 +403,7 @@ function handleSaveEdits(){
                                     :value="placement"
                             >
                                 <el-tag
-                                        v-if="placement == 'for_you'"
-                                        type="success"
-                                        effect="light"
-                                        round
-                                        size="small"
-                                >
-                                    {{ startCase(placement) }}
-                                </el-tag>
-                                <el-tag
-                                        v-if="placement == 'featured'"
+                                        v-if="placement == 'top_picks'"
                                         type="primary"
                                         effect="light"
                                         round
@@ -421,7 +412,7 @@ function handleSaveEdits(){
                                     {{ startCase(placement) }}
                                 </el-tag>
                                 <el-tag
-                                        v-if="placement == 'exclusive'"
+                                        v-if="placement == 'popular'"
                                         type="warning"
                                         effect="light"
                                         round

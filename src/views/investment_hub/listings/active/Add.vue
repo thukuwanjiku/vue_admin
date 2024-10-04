@@ -36,7 +36,7 @@ const listing = ref({
     description: null,
 });
 
-const placements = ref(['for_you', 'featured', 'exclusive']);
+const placements = ref(['top_picks', 'popular']);
 let descriptionQuillEditor = ref(null);
 const primaryMedia = ref(null);
 const primaryMediaFile = ref(null);
@@ -294,16 +294,7 @@ function handleCreateListing(){
                                     :value="placement"
                             >
                                 <el-tag
-                                        v-if="placement == 'for_you'"
-                                        type="success"
-                                        effect="light"
-                                        round
-                                        size="small"
-                                >
-                                    {{ startCase(placement) }}
-                                </el-tag>
-                                <el-tag
-                                        v-if="placement == 'featured'"
+                                        v-if="placement == 'top_picks'"
                                         type="primary"
                                         effect="light"
                                         round
@@ -312,7 +303,7 @@ function handleCreateListing(){
                                     {{ startCase(placement) }}
                                 </el-tag>
                                 <el-tag
-                                        v-if="placement == 'exclusive'"
+                                        v-if="placement == 'popular'"
                                         type="warning"
                                         effect="light"
                                         round
