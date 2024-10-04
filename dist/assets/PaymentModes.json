@@ -1,0 +1,22 @@
+[
+  {
+    "name": "cash",
+    "image": "cash.png"
+  },
+  {
+    "name": "mpesa",
+    "image": "mpesa.png"
+  },
+  {
+    "name": "cheque",
+    "image": "cheque.png"
+  },
+  {
+    "name": "bank_transfer",
+    "image": "bank_transfer.webp"
+  },
+  {
+    "name": "card",
+    "image": "card.png"
+  }
+]
