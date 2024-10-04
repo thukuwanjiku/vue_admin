@@ -1,6 +1,6 @@
 "use strict";(self["webpackChunkmyzola_admin"]=self["webpackChunkmyzola_admin"]||[]).push([[114],{1114:function(e,t,n){n.d(t,{FN:function(){return w},Vx:function(){return y},dK:function(){return _},q7:function(){return A}});n(4114);var a=n(6768),i=n(144);
 /**
- * Vue 3 Carousel 0.3.3
+ * Vue 3 Carousel 0.3.4
  * (c) 2024
  * @license MIT
  */
