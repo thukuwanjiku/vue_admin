@@ -26,6 +26,10 @@ let company = ref({});
 
 let logoUpload = ref(null);
 let logoFile = ref(null);
+
+let bannerUpload = ref(null);
+let bannerFile = ref(null);
+
 const isLoading = ref(false);
 let aboutQuillEditor = ref(null);
 
@@ -95,14 +99,34 @@ function processUpload(event){
     };
     reader.readAsDataURL(file);
 }
+
+function processBannerUpload(event){
+  bannerUpload.value = event.target.files[0];
+
+  const file = event.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = (e) => {
+    bannerFile.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 function removeUpload(){
     logoUpload.value = null;
     logoFile.value = null;
     $("#companyLogo").val("");
 }
+
+function removeBannerUpload(){
+  bannerUpload.value = null;
+  bannerFile.value = null;
+  $("#companyBanner").val("");
+}
+
 function unmarkForDelete(social){
     //check if save platform has been newly added and remove it
-    let index = newSocials.value.findIndex(_social => _social.platform == social.platform);
+    let index = newSocials.value.findIndex(_social => _social.platform === social.platform);
     if(index > -1){
         //remove that entry and show user message
         newSocials.value.splice(index, 1);
@@ -117,10 +141,11 @@ function unmarkForDelete(social){
 function selectSocialPlatform(social){
     newSocialHandle.value.platform = social;
     //if social platform is whatsapp, prefill the link field with whatsapp api link
-    newSocialHandle.value.link = social == 'whatsapp' ? "https://wa.me/" : "";
+    newSocialHandle.value.link = social === 'whatsapp' ? "https://wa.me/" : "";
 }
+
 function addNewSocial(){
-    if(newSocialHandle.value.platform != 'whatsapp')
+    if(newSocialHandle.value.platform !== 'whatsapp')
         newSocialHandle.value.link = newSocialHandle.value.link.replace(/\/+$/, '');
 
     //validate link entered
@@ -135,6 +160,7 @@ function addNewSocial(){
     //reset new social handle details
     newSocialHandle.value = {platform: "", link: ""};
 }
+
 function submit(){
     //validate that company about is provided
     let about = aboutQuillEditor.getSemanticHTML();
@@ -155,12 +181,15 @@ function submit(){
             .filter(value => !['socials', 'logo'].includes(value))
             .forEach(key => {
                 let value = company.value[key];
-                if(key == 'contact_phone') value = value.toString().replaceAll(" ", "");
+                if(key === 'contact_phone') value = value.toString().replaceAll(" ", "");
                 payload.append(key, value)
             });
 
     //add logo to payload, where necessary
     if(logoUpload.value != null) payload.append('company_logo', logoUpload.value);
+
+    //add banner to payload, where necessary
+    if(bannerUpload.value != null) payload.append('company_banner', bannerUpload.value);
 
     //add any new social handles
     if(newSocials.value.length){
@@ -293,6 +322,28 @@ function submit(){
                         </div>
                     </div>
                 </div>
+
+              <!-- Banner -->
+              <div class="col-md-10 m-b-20">
+                <input-label>Saved Banner</input-label>
+                <div class="m-b-10">
+                  <img :src="company.banner" style="max-height: 80px;max-width:100px;">
+                </div>
+
+                <div class="form-floating">
+                  <input type="file" class="form-control" id="companyBanner" @change="processBannerUpload" accept=".png,.jpg,.jpeg,.gif">
+                  <label for="companyBanner">Company Banner</label>
+                </div>
+
+                <div class="d-flex flex-wrap m-t-10" v-if="bannerFile">
+                  <div class="p-1 uploaded-image">
+                    <img :src="bannerFile"  style="max-width:80px;max-height:60px;">
+                    <div class="remover" @click="removeBannerUpload">
+                      <i class="ri ri-close-line"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
                 <!-- Socials -->
                 <div class="col-md-10 m-b-20">

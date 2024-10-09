@@ -182,6 +182,7 @@ function deleteCompany(payload){
                 <thead>
                 <tr>
                     <th>Logo</th>
+                    <th>Reference</th>
                     <th>Name</th>
                     <th>Tagline</th>
                     <th>Contact Person</th>
@@ -194,6 +195,7 @@ function deleteCompany(payload){
                     <td @click="viewCompany(company)">
                         <img class="table-img" :src="company.logo" :alt="company.name+'\'s logo'">
                     </td>
+                    <td @click="viewCompany(company)">{{ company.reference }}</td>
                     <td @click="viewCompany(company)">{{ company.name }}</td>
                     <td @click="viewCompany(company)">{{ company.description }}</td>
                     <td @click="viewCompany(company)">{{ company.contact_name }}</td>
@@ -233,10 +235,20 @@ function deleteCompany(payload){
         <div class="row">
             <!--     Logo, name & tagline       -->
             <div class="col-sm-3">
+              <div class="mb-4">
+                <p class="mb-1">Logo</p>
                 <img :src="activeCompany.logo" alt="" class="view_company_logo">
+              </div>
+
+              <div>
+                <p class="mb-1">Banner</p>
+                <img :src="activeCompany.banner" alt="" class="view_banner_logo">
+              </div>
             </div>
+
             <div class="col-sm-6">
                 <h3>{{ activeCompany.name }}</h3>
+              <p class="fw-bold">{{ activeCompany.reference }}</p>
                 <p class="text-italic">{{ activeCompany.description }}</p>
 
                 <div class="row">
@@ -284,7 +296,7 @@ function deleteCompany(payload){
 .table-img{
     max-height:30px;
 }
-.view_company_logo{
+.view_company_logo, .view_banner_logo{
     max-height: 130px;
     max-width: 150px;
     //border-radius: 50%;

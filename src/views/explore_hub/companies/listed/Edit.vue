@@ -191,8 +191,8 @@ function submit(){
     //add logo to payload, where necessary
     if(logoUpload.value != null) payload.append('company_logo', logoUpload.value);
 
-  //add banner to payload, where necessary
-  if(bannerUpload.value != null) payload.append('company_banner', bannerUpload.value);
+    //add banner to payload, where necessary
+    if(bannerUpload.value != null) payload.append('company_banner', bannerUpload.value);
 
     //add any new social handles
     if(newSocials.value.length){
