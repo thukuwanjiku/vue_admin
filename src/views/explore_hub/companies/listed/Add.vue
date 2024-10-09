@@ -34,6 +34,10 @@ const newSocialHandle = ref({platform:"", link:""});
 
 let logoUpload = ref(null);
 let logoFile = ref(null);
+
+let bannerUpload = ref(null);
+let bannerFile = ref(null);
+
 const isLoading = ref(false);
 const isAddingSocialHandles = ref(false);
 let aboutQuillEditor = ref(null);
@@ -81,16 +85,37 @@ function processUpload(event){
     };
     reader.readAsDataURL(file);
 }
+
+function bannerProcessUpload(event) {
+  bannerUpload.value = event.target.files[0];
+
+  const file = event.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = (e) => {
+    bannerFile.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 function removeUpload(){
     logoUpload.value = null;
     logoFile.value = null;
     $("#companyLogo").val("");
 }
+
+function removeBannerUpload() {
+  bannerUpload.value = null;
+  bannerFile.value = null;
+  $("#companyBanner").val("");
+}
+
 function selectSocialPlatform(social){
     newSocialHandle.value.platform = social;
     //if social platform is whatsapp, prefill the link field with whatsapp api link
     newSocialHandle.value.link = social == 'whatsapp' ? "https://wa.me/" : "";
 }
+
 function addSocial(){
     if(newSocialHandle.value.platform != 'whatsapp')
         newSocialHandle.value.link = newSocialHandle.value.link.replace(/\/+$/, '');
@@ -107,6 +132,7 @@ function addSocial(){
     //reset new social handle details
     newSocialHandle.value = {platform: "", link: ""};
 }
+
 function submit(){
     //validate that company about is provided
     let about = aboutQuillEditor.getSemanticHTML();
@@ -133,6 +159,9 @@ function submit(){
     //add logo to payload
     payload.append('company_logo', logoUpload.value);
 
+    //add banner to payload
+    payload.append('company_banner', bannerUpload.value);
+
     //where company socials are specified, add them to form data
     if(addedSocials.value.length){
         addedSocials.value.forEach((social, index) => {
@@ -145,25 +174,23 @@ function submit(){
     isLoading.value = true;
 
     //make api call
-    api.post(apiRoutes.ADD_EXPLORE_LISTED_COMPANY, payload)
-            .then(response => {
-                //show success response
-                $.growl.notice({message: response.data.message});
+    api.post(apiRoutes.ADD_EXPLORE_LISTED_COMPANY, payload).then(response => {
+        //show success response
+        $.growl.notice({message: response.data.message});
 
-                //get a copy of current companies list
-                let companies = JSON.parse(JSON.stringify(store.state.exploreHub.companies));
-                //add the new company to the copy
-                companies.unshift(response.data.data);
-                //overwrite the vuex companies list with the updated copy
-                store.commit('exploreHub/STORE_EXPLORE_LISTED_COMPANIES', companies)
+        //get a copy of current companies list
+        let companies = JSON.parse(JSON.stringify(store.state.exploreHub.companies));
+        //add the new company to the copy
+        companies.unshift(response.data.data);
+        //overwrite the vuex companies list with the updated copy
+        store.commit('exploreHub/STORE_EXPLORE_LISTED_COMPANIES', companies)
 
-                //DISMISS LOADER
-                isLoading.value = false;
+        //DISMISS LOADER
+        isLoading.value = false;
 
-                //navigate back to companies list
-                router.back();
-            })
-            .catch(error => isLoading.value = false);
+        //navigate back to companies list
+        router.back();
+    }).catch(error => isLoading.value = false);
 }
 
 </script>
@@ -236,7 +263,7 @@ function submit(){
                     </div>
                     <!-- End Quill Editor Default -->
 
-                    
+
                 </div>
             </div>
             <div class="col-md-6">
@@ -256,6 +283,23 @@ function submit(){
                         </div>
                     </div>
                 </div>
+
+              <!-- Company Banner -->
+              <div class="col-md-10 m-b-20">
+                <div class="form-floating">
+                  <input type="file" class="form-control" id="companyBanner" @change="bannerProcessUpload" accept=".png,.jpg,.jpeg,.gif">
+                  <label for="companyBanner">Company Banner</label>
+                </div>
+
+                <div class="d-flex flex-wrap m-t-10" v-if="bannerFile">
+                  <div class="p-1 uploaded-image">
+                    <img :src="bannerFile"  style="max-width:80px;max-height:60px;">
+                    <div class="remover" @click="removeBannerUpload">
+                      <i class="ri ri-close-line"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
                 <!-- Socials -->
                 <div class="col-md-10 m-b-20">
