@@ -1,4 +1,45 @@
 <script setup>
+
+import {computed, onMounted} from "vue";
+import api from "@/services/api";
+import {apiRoutes} from "@/services/apiRoutes";
+import {useStore} from "vuex";
+import {
+  trimParagraph,
+  formatChatTimestamp
+} from "@/services/Helpers";
+
+const store = useStore();
+
+let conversations = computed({
+  get: ()=> store.state.chat.conversations,
+  set: (data) => store.commit('chat/STORE_CUSTOMER_CONVERSATIONS', data)
+});
+
+let isLoading = computed({
+  get: ()=> store.state.chat.isFetchingCustomerConversations,
+  set: (value) => store.commit('chat/SET_IS_FETCHING_CUSTOMER_CONVERSATIONS', value)
+});
+
+let selectedConversation = computed({
+  get: ()=> store.state.chat.selectedConversation,
+  set: (data) => store.commit('chat/SET_SELECTED_CUSTOMER_CONVERSATIONS', data)
+});
+
+onMounted(()=>{
+  fetchCustomerConversations()
+})
+
+const fetchCustomerConversations = () => {
+  store.commit("chat/SET_IS_FETCHING_CUSTOMER_CONVERSATIONS", true);
+  api.get(apiRoutes.GET_CUSTOMER_CONVERSATIONS).then(response => {
+    store.commit("chat/STORE_CUSTOMER_CONVERSATIONS", response.data.data);
+    store.commit("chat/SET_IS_FETCHING_CUSTOMER_CONVERSATIONS", false);
+  }).catch(error => {
+    store.commit("chat/SET_IS_FETCHING_CUSTOMER_CONVERSATIONS", false)
+  });
+}
+
 const openChat = () => {
   console.log('open')
 }
@@ -15,20 +56,30 @@ const openChat = () => {
     <div class="row">
       <div class="col-md-3">
           <div class="card p-4">
-            <a href="#" @click="openChat()" class="d-flex border-bottom p-3 chat-box" v-for="i in 4" :key="i">
-              <div class="me-3">
-                <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" style="width: 60px;" alt="Avatar" />
-              </div>
-              <div>
-                <p class="fw-bold text-dark mb-0">Daniel</p>
-                <p class="mb-0 text-dark">Lorem ipsum....</p>
-              </div>
-            </a>
+            <div v-if="isLoading">
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                  <div class="spinner-border text-primary"></div>
+                  <p class="mt-2">Loading conversations. Please wait...</p>
+                </div>
+            </div>
+
+            <div v-else>
+              <a href="#" @click="openChat(conversation)" class="d-flex border-bottom p-3 chat-box" v-for="conversation in conversations" :key="`conversation-${conversation.id}`">
+                <div class="me-3">
+                  <img :src="conversation.conversation.data.customer_photo" class="rounded-circle" style="width: 60px;" :alt="conversation.conversation.data.customer_name" />
+                </div>
+                <div>
+                  <p class="fw-bold text-dark mb-0">{{ conversation.conversation.data.customer_name }}</p>
+                  <p class="mb-0 text-dark text-md mb-2">{{ trimParagraph(conversation.conversation.last_message.body) }}</p>
+                  <small class="text-muted">{{ formatChatTimestamp(conversation.conversation.last_message.updated_at) }}</small>
+                </div>
+              </a>
+            </div>
           </div>
       </div>
 
       <div class="col-md-9">
-          <div class="card">
+          <div class="card" v-if="selectedConversation">
             <div class="d-flex p-4">
               <div class="me-3">
                 <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" style="width: 60px;" alt="Avatar" />

@@ -117,6 +117,12 @@ const apiRoutes = {
     INVESTMENT_HUB_LISTING_REVIEWS: `${apiBaseUrl}/investment-hub/listing-reviews`,
     INVESTMENT_HUB_LISTING_REVIEWS_SUMMARY: `${apiBaseUrl}/investment-hub/listing-reviews-summary`,
 
+    /* -----------------------------
+     * CUSTOMER CARE
+     * -----------------------------
+     * */
+    GET_CUSTOMER_CONVERSATIONS: `${apiBaseUrl}/customer-care/get-admin-chat-conversations`,
+
 
     /* ---------------------------------------
     * ACCESS CONTROL ROUTES

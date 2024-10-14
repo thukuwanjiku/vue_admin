@@ -5,6 +5,7 @@ import auth from "@/store/modules/auth";
 import shared from "@/store/modules/shared";
 import exploreHub from "@/store/modules/explore_hub";
 import investmentHub from "@/store/modules/investment_hub";
+import chat from "@/store/modules/chat";
 
 export default createStore({
   state: {},
@@ -15,6 +16,7 @@ export default createStore({
     auth,
     shared,
     exploreHub,
-    investmentHub
+    investmentHub,
+    chat
   }
 })

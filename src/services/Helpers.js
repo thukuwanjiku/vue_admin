@@ -294,3 +294,29 @@ export function getNameInitials(fullName, numOfInitials = 2) {
     // Join the available initials up to the requested number and return it
     return initials.slice(0, numOfInitials).join('');
 }
+export function trimParagraph(paragraph, charLimit = 25) {
+    if (paragraph.length > charLimit) {
+        return paragraph.substring(0, charLimit) + '...';
+    }
+    return paragraph;
+}
+export function formatChatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    const options = { hour: '2-digit', minute: '2-digit' };
+
+    if (date >= today) {
+        return `Today ${date.toLocaleTimeString([], options)}`;
+    }
+    else if (date >= yesterday) {
+        return `Yesterday ${date.toLocaleTimeString([], options)}`;
+    }
+    else {
+        return date.toLocaleDateString();
+    }
+}
