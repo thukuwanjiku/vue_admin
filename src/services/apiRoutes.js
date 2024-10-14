@@ -122,6 +122,8 @@ const apiRoutes = {
      * -----------------------------
      * */
     GET_CUSTOMER_CONVERSATIONS: `${apiBaseUrl}/customer-care/get-admin-chat-conversations`,
+    GET_CONVERSATION_MESSAGES: `${apiBaseUrl}/customer-care/get-conversation-messages`,
+    SEND_MESSAGE_TO_CUSTOMER: `${apiBaseUrl}/customer-care/send-message-to-customer`,
 
 
     /* ---------------------------------------
