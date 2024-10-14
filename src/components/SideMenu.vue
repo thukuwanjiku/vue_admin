@@ -9,14 +9,13 @@ import {hasPermissionsWhichContain} from "@/services/Helpers";
     <aside id="sidebar" class="sidebar">
 
         <ul class="sidebar-nav" id="sidebar-nav">
-
+          <!-- Dashboard Nav -->
             <li class="nav-item" data-bs-parent="#sidebar-nav">
                 <router-link :to="{name:'dashboard'}" class="nav-link collapsed">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </router-link>
             </li>
-            <!-- End Dashboard Nav -->
 
             <!-- Explore Hub -->
             <li class="nav-item" v-if="hasPermissionsWhichContain(['explore_hub.'])">
@@ -91,12 +90,12 @@ import {hasPermissionsWhichContain} from "@/services/Helpers";
                 </ul>
             </li>
 
+          <li class="nav-item" data-bs-parent="#sidebar-nav">
+            <router-link :to="{name:'customer_care'}" class="nav-link collapsed">
+              <i class="bi bi-chat"></i>
+              <span>Customer Care</span>
+            </router-link>
+          </li>
         </ul>
-
     </aside>
-
 </template>
-
-<style scoped>
-
-</style>

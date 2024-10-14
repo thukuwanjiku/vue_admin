@@ -343,6 +343,15 @@ export default [
                     },
                 ]
             },
+
+            {
+                path: '/customer-care',
+                name: 'customer_care',
+                component: ()=> import("../views/customer_care/ChatWithCustomers.vue"),
+                meta: {
+                    title: `Chat With Customer ${pageTitleSuffix}`
+                }
+            }
         ]
     },
     {
