@@ -199,7 +199,7 @@ const sendMessage = () => {
     background: #f1f5f9;
   }
 
-  .message-container{
+  .message-container {
     margin-top: auto;
     margin-bottom: auto;
     margin-left: 10px;
@@ -209,7 +209,7 @@ const sendMessage = () => {
     position: relative;
   }
 
-  .message-container-send{
+  .message-container-send {
     margin-top: auto;
     margin-bottom: auto;
     margin-right: 10px;
@@ -220,7 +220,7 @@ const sendMessage = () => {
     position: relative;
   }
 
-  .message-time{
+  .message-time {
     margin-top: 2px;
     display: block;
     color: #94a3b8;
@@ -228,10 +228,10 @@ const sendMessage = () => {
     font-weight: 600;
   }
 
-  .message-time-send{
+  .message-time-send {
     margin-top: 2px;
     display: block;
-    color: #94a3b8;
+    color: #e2e8f0;
     font-size: 12px;
     font-weight: 600;
   }
