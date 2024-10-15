@@ -111,7 +111,7 @@ const sendMessage = () => {
                 </div>
                 <div>
                   <p class="fw-bold text-dark mb-0">{{ conversation.conversation.data.customer_name }}</p>
-                  <p class="mb-0 text-dark text-md mb-2">{{ trimParagraph(conversation.conversation.last_message.body) }}</p>
+                  <p class="mb-0 text-dark text-md mb-2">{{ conversation.conversation.last_message ? trimParagraph(conversation.conversation.last_message.body) : "Start Message" }}</p>
                   <small class="text-muted">{{ formatChatTimestamp(conversation.conversation.last_message.updated_at) }}</small>
                 </div>
               </a>
