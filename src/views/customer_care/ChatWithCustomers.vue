@@ -142,18 +142,29 @@ const sendMessage = () => {
 
               <hr class="my-0"/>
 
-              <div class="py-4 px-3" v-for="message in messages" :key="`chat-${selectedConversation.id}-message-${message.id}`">
-                <div class="d-flex justify-content-start mb-4" v-if="!message.is_sender">
-                  <div class="message-container">
-                    {{ message.body }}
-                    <span class="message-time">{{ formatChatTimestamp(message.created_at) }}</span>
+              <div>
+                <div v-if="messages.length > 0">
+                  <div class="py-4 px-3" v-for="message in messages" :key="`chat-${selectedConversation.id}-message-${message.id}`">
+                    <div class="d-flex justify-content-start mb-4" v-if="!message.is_sender">
+                      <div class="message-container">
+                        {{ message.body }}
+                        <span class="message-time">{{ formatChatTimestamp(message.created_at) }}</span>
+                      </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mb-4" v-else-if="message.is_sender">
+                      <div class="message-container-send">
+                        {{ message.body }}
+                        <span class="message-time-send">{{ formatChatTimestamp(message.created_at) }}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div class="d-flex justify-content-end mb-4" v-else-if="message.is_sender">
-                  <div class="message-container-send">
-                    {{ message.body }}
-                    <span class="message-time-send">{{ formatChatTimestamp(message.created_at) }}</span>
+                <div v-else>
+                  <div class="d-flex flex-col justify-content-center align-items-center py-4">
+                    <img src="/img/no_data.svg" alt="Chat Illustration" class="mb-4" width="250px"/>
+                    <p class="fw-medium">No messages present between you and {{ selectedConversation.conversation.data.customer_name }}.</p>
                   </div>
                 </div>
               </div>
