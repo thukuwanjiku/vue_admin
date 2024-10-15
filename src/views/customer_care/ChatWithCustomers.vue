@@ -69,21 +69,40 @@ const openChat = (conversation) => {
   });
 }
 
-const sendMessage = () => {
-  loadSendingMessage.value = true
-  form.value.conversation_id = store.state.chat.selectedConversation.conversation_id
+const sendMessage = async () => {
+  try {
+    loadSendingMessage.value = true;
+    const conversationId = store.state.chat.selectedConversation.conversation_id;
 
-  let payload = new FormData();
-  payload.append('message', form.value.message);
-  payload.append('conversation_id', form.value.conversation_id);
-  api.post(apiRoutes.SEND_MESSAGE_TO_CUSTOMER, payload).then(response => {
-    //show success response
-    $.growl.notice({message: response.data});
-    loadSendingMessage.value = false
-  }).catch(error => {
-    loadSendingMessage.value = false
-  });
-}
+    // Prepare the payload
+    const payload = new FormData();
+    payload.append('message', form.value.message);
+    payload.append('conversation_id', conversationId);
+
+    // Send the message
+    const response = await api.post(apiRoutes.SEND_MESSAGE_TO_CUSTOMER, payload);
+    $.growl.notice({ message: response.data });
+
+    // Reset message input
+    form.value.message = "";
+
+    // Fetch new messages after sending
+    await fetchNewMessages(conversationId);
+  } catch (error) {
+    console.error("Error sending message:", error);
+  } finally {
+    loadSendingMessage.value = false;
+  }
+};
+
+const fetchNewMessages = async (conversationId) => {
+  try {
+    const response = await api.post(apiRoutes.GET_CONVERSATION_MESSAGES, { conversation_id: conversationId });
+    store.commit("chat/STORE_CONVERSATION_MESSAGES", response.data.data);
+  } catch (error) {
+    console.error("Error fetching new messages:", error);
+  }
+};
 </script>
 
 <template>
@@ -142,10 +161,10 @@ const sendMessage = () => {
 
               <hr class="my-0"/>
 
-              <div>
+              <div class="pt-4">
                 <div v-if="messages.length > 0">
-                  <div class="py-4 px-3" v-for="message in messages" :key="`chat-${selectedConversation.id}-message-${message.id}`">
-                    <div class="d-flex justify-content-start mb-4" v-if="!message.is_sender">
+                  <div class="px-3" v-for="message in messages" :key="`chat-${selectedConversation.id}-message-${message.id}`">
+                    <div class="d-flex justify-content-start mb-3" v-if="!message.is_sender">
                       <div class="message-container">
                         {{ message.body }}
                         <span class="message-time">{{ formatChatTimestamp(message.created_at) }}</span>
@@ -207,6 +226,7 @@ const sendMessage = () => {
     background-color: #f1f5f9;
     padding: 15px;
     position: relative;
+    width: 50%;
   }
 
   .message-container-send {
@@ -218,10 +238,11 @@ const sendMessage = () => {
     color: #ffffff;
     padding: 15px;
     position: relative;
+    width: 50%;
   }
 
   .message-time {
-    margin-top: 2px;
+    margin-top: 4px;
     display: block;
     color: #94a3b8;
     font-size: 12px;
@@ -229,7 +250,7 @@ const sendMessage = () => {
   }
 
   .message-time-send {
-    margin-top: 2px;
+    margin-top: 4px;
     display: block;
     color: #e2e8f0;
     font-size: 12px;
