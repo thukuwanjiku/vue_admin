@@ -164,7 +164,7 @@ const sendMessage = () => {
                 <div v-else>
                   <div class="d-flex flex-col justify-content-center align-items-center py-4">
                     <img src="/img/no_data.svg" alt="Chat Illustration" class="mb-4" width="250px"/>
-                    <p class="fw-medium">No messages present between you and {{ selectedConversation.conversation.data.customer_name }}.</p>
+                    <p class="fw-medium">No messages present between you and <b>{{ selectedConversation.conversation.data.customer_name }}</b>.</p>
                   </div>
                 </div>
               </div>
@@ -221,18 +221,16 @@ const sendMessage = () => {
   }
 
   .message-time{
-    position: absolute;
-    left: 0;
-    bottom: -25px;
+    margin-top: 2px;
+    display: block;
     color: #94a3b8;
     font-size: 12px;
     font-weight: 600;
   }
 
   .message-time-send{
-    position: absolute;
-    right:0;
-    bottom: -25px;
+    margin-top: 2px;
+    display: block;
     color: #94a3b8;
     font-size: 12px;
     font-weight: 600;
