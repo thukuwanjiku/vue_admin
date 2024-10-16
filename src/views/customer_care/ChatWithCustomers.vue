@@ -129,7 +129,7 @@ const fetchNewMessages = async (conversationId) => {
                   <img :src="conversation.conversation.data.customer_photo" class="rounded-circle" style="width: 60px;" :alt="conversation.conversation.data.customer_name" />
                 </div>
                 <div>
-                  <p class="fw-bold text-dark mb-0">{{ conversation.conversation.data.customer_name }}</p>
+                  <p class="fw-bold text-dark mb-0">{{ conversation.conversation.data.customer_name }} - {{ conversation.conversation.data.module }}</p>
                   <p class="mb-0 text-dark text-md mb-2">{{ conversation.conversation.last_message ? trimParagraph(conversation.conversation.last_message.body) : "Start Message" }}</p>
                   <small class="text-muted">{{ conversation.conversation.last_message ? formatChatTimestamp(conversation.conversation.last_message.updated_at) : "" }}</small>
                 </div>
@@ -154,7 +154,7 @@ const fetchNewMessages = async (conversationId) => {
                   <img :src="selectedConversation.conversation.data.customer_photo" class="rounded-circle" style="width: 60px;" :alt="selectedConversation.conversation.data.customer_name" />
                 </div>
                 <div>
-                  <p class="fw-bold text-dark mb-0">{{ selectedConversation.conversation.data.customer_name }}</p>
+                  <p class="fw-bold text-dark mb-0">{{ selectedConversation.conversation.data.customer_name }} - {{ selectedConversation.conversation.data.module }}</p>
                   <p class="mb-0 text-dark">{{ selectedConversation.conversation.data.customer_email }}</p>
                 </div>
               </div>
@@ -167,14 +167,14 @@ const fetchNewMessages = async (conversationId) => {
                     <div class="d-flex justify-content-start mb-3" v-if="!message.is_sender">
                       <div class="message-container">
                         {{ message.body }}
-                        <span class="message-time">{{ formatChatTimestamp(message.created_at) }}</span>
+                        <span class="message-time"> {{ message.sender.name || message.sender.formatted_name }} - {{ formatChatTimestamp(message.created_at) }}</span>
                       </div>
                     </div>
 
                     <div class="d-flex justify-content-end mb-4" v-else-if="message.is_sender">
                       <div class="message-container-send">
                         {{ message.body }}
-                        <span class="message-time-send">{{ formatChatTimestamp(message.created_at) }}</span>
+                        <span class="message-time-send"> {{ message.sender.name || message.sender.formatted_name }} - {{ formatChatTimestamp(message.created_at) }}</span>
                       </div>
                     </div>
                   </div>
