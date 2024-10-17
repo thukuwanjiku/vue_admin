@@ -4,6 +4,7 @@ import {computed, onMounted, ref} from "vue";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
+import echoInstance from '@/utils/echo';
 import {
   trimParagraph,
   formatChatTimestamp
@@ -44,6 +45,11 @@ let messages = computed({
 
 onMounted(()=>{
   fetchCustomerConversations()
+  echoInstance.private('chat').listen('MessageSent', (e) => {
+      console.log(e)
+      fetchNewMessages(e.conversationId);
+      fetchCustomerConversations()
+		})  
 })
 
 const fetchCustomerConversations = () => {
