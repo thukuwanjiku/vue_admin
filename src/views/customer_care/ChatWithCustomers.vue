@@ -226,7 +226,7 @@ const fetchNewMessages = async (conversationId) => {
     background-color: #f1f5f9;
     padding: 15px;
     position: relative;
-    width: 50%;
+    width: 45%;
   }
 
   .message-container-send {
@@ -238,7 +238,7 @@ const fetchNewMessages = async (conversationId) => {
     color: #ffffff;
     padding: 15px;
     position: relative;
-    width: 50%;
+    width: 45%;
   }
 
   .message-time {
