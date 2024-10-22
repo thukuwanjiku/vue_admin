@@ -49,7 +49,7 @@ onMounted(()=>{
       console.log(e)
       fetchNewMessages(e.conversationId);
       fetchCustomerConversations()
-		})  
+		})
 })
 
 const fetchCustomerConversations = () => {
@@ -130,16 +130,25 @@ const fetchNewMessages = async (conversationId) => {
             </div>
 
             <div v-else>
-              <a href="#" @click="openChat(conversation)" :class="['d-flex p-3 chat-box', {'border-bottom': conversations.length > 1}]" v-for="(conversation, index) in conversations" :key="`conversation-${conversation.id}`">
-                <div class="me-3">
-                  <img :src="conversation.conversation.data.customer_photo" class="rounded-circle" style="width: 60px;" :alt="conversation.conversation.data.customer_name" />
+              <div v-if="conversations.length > 0">
+                <a href="#" @click="openChat(conversation)" :class="['d-flex p-3 chat-box', {'border-bottom': conversations.length > 1}]" v-for="(conversation, index) in conversations" :key="`conversation-${conversation.id}`">
+                  <div class="me-3">
+                    <img :src="conversation.conversation.data.customer_photo" class="rounded-circle" style="width: 60px;" :alt="conversation.conversation.data.customer_name" />
+                  </div>
+                  <div>
+                    <p class="fw-bold text-dark mb-0">{{ conversation.conversation.data.customer_name }} - {{ conversation.conversation.data.module }}</p>
+                    <p class="mb-0 text-dark text-md mb-2">{{ conversation.conversation.last_message ? trimParagraph(conversation.conversation.last_message.body) : "Start Message" }}</p>
+                    <small class="text-muted">{{ conversation.conversation.last_message ? formatChatTimestamp(conversation.conversation.last_message.updated_at) : "" }}</small>
+                  </div>
+                </a>
+              </div>
+              <div v-else>
+                <div class="d-flex flex-col justify-content-center align-items-center py-4">
+                  <p class="fw-bold text-center mb-3 text-lg">No tickets opened.</p>
+                  <img src="/img/no_data.svg" alt="Chat Illustration" class="mb-4" width="200px"/>
+                  <p class="fw-medium text-center">There are no chat conversations yet. No tickets opened yet.</p>
                 </div>
-                <div>
-                  <p class="fw-bold text-dark mb-0">{{ conversation.conversation.data.customer_name }} - {{ conversation.conversation.data.module }}</p>
-                  <p class="mb-0 text-dark text-md mb-2">{{ conversation.conversation.last_message ? trimParagraph(conversation.conversation.last_message.body) : "Start Message" }}</p>
-                  <small class="text-muted">{{ conversation.conversation.last_message ? formatChatTimestamp(conversation.conversation.last_message.updated_at) : "" }}</small>
-                </div>
-              </a>
+              </div>
             </div>
           </div>
       </div>
