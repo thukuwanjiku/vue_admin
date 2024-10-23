@@ -190,7 +190,10 @@ function submit(){
 
         //navigate back to companies list
         router.back();
-    }).catch(error => isLoading.value = false);
+    }).catch(error => {
+        isLoading.value = false
+        $.growl.notice({error: error.response?.data?.message ?? error.message ?? "An error occurred"});
+    });
 }
 
 </script>
