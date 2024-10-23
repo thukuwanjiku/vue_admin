@@ -28,6 +28,7 @@ const company = ref({
     contact_phone:"",
     email:"",
     about:"",
+    business_type: ""
 });
 const addedSocials = ref([]);
 const newSocialHandle = ref({platform:"", link:""});
@@ -41,6 +42,12 @@ let bannerFile = ref(null);
 const isLoading = ref(false);
 const isAddingSocialHandles = ref(false);
 let aboutQuillEditor = ref(null);
+
+const businessTypes = [
+    { label: "Sole Proprietorship", value: "Sole Proprietorship" },
+    { label: "Partnership", value: "Partnership" },
+    { label: "Limited Liability Company (LLC)", value: "Limited Liability Company" }
+];
 
 
 /* ------------------------------
@@ -316,6 +323,14 @@ function submit(){
                             <i class="ri ri-add-line" v-if="!addedSocials.length"></i>{{ addedSocials.length ? "Click to edit" : "Click to add" }}
                         </el-button>
                     </div>
+                </div>
+                <div class="col-md-10 m-b-20">
+                 <!-- Business Type Dropdown -->
+                <label for="businessType" class="mb-2">Business Type</label>
+                <select class="form-control" v-model="company.business_type" required>
+                    <option v-for="type in businessTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
+                </select>
+
                 </div>
 
             </div>

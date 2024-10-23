@@ -180,6 +180,7 @@ function deleteCompany(payload){
                     <th>Logo</th>
                     <th>Reference</th>
                     <th>Name</th>
+                    <th>Business Type</th>
                     <th>Tagline</th>
                     <th>Contact Person</th>
                     <th>Actions</th>
@@ -193,6 +194,7 @@ function deleteCompany(payload){
                     </td>
                     <td @click="viewCompany(company)">{{ company.reference }}</td>
                     <td @click="viewCompany(company)">{{ company.name }}</td>
+                    <td @click="viewCompany(company)">{{ company.business_type }}</td>
                     <td @click="viewCompany(company)">{{ company.description }}</td>
                     <td @click="viewCompany(company)">{{ company.contact_name }}</td>
                     <td>
@@ -243,7 +245,7 @@ function deleteCompany(payload){
                 </div>
             </div>
             <div class="col-sm-6">
-                <h3>{{ activeCompany.name }}</h3>
+                <h3>{{ activeCompany.name }} - {{ activeCompany.business_type }}</h3>
                 <p class="fw-bold">{{ activeCompany.reference }}</p>
                 <p class="text-italic">{{ activeCompany.description }}</p>
 
@@ -251,7 +253,7 @@ function deleteCompany(payload){
                     <div class="col-sm-6">
                         <h6 class="fw-bold">Contact</h6>
                         <p>
-                            {{ activeCompany.contact_name }}
+                            {{ activeCompany.contact_name }} 
                             <br>
                             {{ activeCompany.email }}
                             <br>
