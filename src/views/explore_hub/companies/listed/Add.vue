@@ -1,7 +1,7 @@
 <script setup>
 
 import {useRouter} from "vue-router";
-import {onMounted, ref, computed} from "vue";
+import {onMounted, ref, computed, watch} from "vue";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
@@ -48,6 +48,8 @@ const businessTypes = [
     { label: "Partnership", value: "Partnership" },
     { label: "Limited Liability Company (LLC)", value: "Limited Liability Company" }
 ];
+const requiredDocuments = ref([]);
+const documents = ref({});
 
 
 /* ------------------------------
@@ -77,10 +79,37 @@ onMounted(()=>{
     });
 });
 
+// Watch for business type change and update required documents
+watch(() => company.value.business_type, (newType) => {
+  documents.value = {}
+    if (newType === 'Sole Proprietorship') {
+        requiredDocuments.value = [
+            "Business Registration Certificate", "KRA PIN Certificate",
+            "Owner's National ID", "Owner's KRA PIN Certificate", "Bank Account Confirmation Letter (in business name)"
+        ];
+    } else if (newType === 'Partnership') {
+        requiredDocuments.value = [
+            "Partnership Deed", "Certificate of Registration", "Company KRA PIN Certificate", 
+            "Partners Resolution Letter", "Owner's National ID", "Bank Letter Stating Partnership Bank Details"
+        ];
+    } else if (newType === 'Limited Liability Company') {
+        requiredDocuments.value = [
+            "Business Registration Certificate", "Company KRA PIN Certificate", "Owner's National ID",
+            "Owner's KRA PIN Certificate", "Bank Account Confirmation Letter (in business name)"
+        ];
+    }
+});
+
 /* ------------------------------
 * Methods & functions
 * ------------------------------
 * */
+
+// Handle file uploads
+function handleFileUpload(event, documentType) {
+    documents.value[documentType] = event.target.files[0];
+}
+
 function processUpload(event){
     logoUpload.value = event.target.files[0];
 
@@ -163,7 +192,15 @@ function submit(){
                 payload.append(key, value)
             });
 
-    //add logo to payload
+     // Add documents
+     Object.keys(documents.value).forEach(doc => {
+        if (documents.value[doc]) {
+            payload.append(`documents[${doc}]`, documents.value[doc]);
+        }
+    });
+
+
+  //add logo to payload
     payload.append('company_logo', logoUpload.value);
 
     //add banner to payload
@@ -330,7 +367,16 @@ function submit(){
                 <select class="form-control" v-model="company.business_type" required>
                     <option v-for="type in businessTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
                 </select>
-
+                </div>
+                <div class="col-md-10 m-b-20">
+                        <!-- Document Upload Fields -->
+                        <div v-if="requiredDocuments.length">
+                          <h6>Please upload the following required documents</h6>
+                        <div class="form-floating mb-2" v-for="doc in requiredDocuments" :key="doc">
+                            <input  required class="form-control" type="file" @change="(event) => handleFileUpload(event, doc)" accept=".pdf,.doc,.docx" />
+                            <label :for="doc">{{ doc }}</label>
+                        </div>
+                    </div>
                 </div>
 
             </div>
