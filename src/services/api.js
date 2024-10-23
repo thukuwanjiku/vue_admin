@@ -47,22 +47,26 @@ api.interceptors.response.use(
             return response
         },
         (error) => {
+            console.log(error.response)
             //attempt to extract the error message
             let message = error.response?.data?.message ?? error.message ?? "An error occurred";
 
             /*if (error?.response?.status === 408) {
                 console.log("Request timed out");
             }*/
+
             if (error?.response?.status === 401) {
                 $.growl.error({ message: "You session has expired, please login and continue" });
                 store.commit('auth/LOGOUT');
                 router.replace({name: 'login'});
                 throw error;
             }
+
             if (error?.response?.status === 422) {
                 $.growl.warning({message});
                 throw error;
             }
+
             if (error?.response?.status === 403) {
                 $.growl.warning({message: "Oops! It looks like you don’t have permission to do that. Contact your admin to request access."});
                 throw error;
