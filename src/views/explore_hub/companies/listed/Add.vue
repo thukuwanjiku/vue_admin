@@ -192,7 +192,6 @@ function submit(){
         router.back();
     }).catch(error => {
         isLoading.value = false
-        $.growl.error({message: error.response?.data?.message ?? error.message ?? "An error occurred"});
     });
 }
 

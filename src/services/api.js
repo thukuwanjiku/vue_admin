@@ -68,6 +68,11 @@ api.interceptors.response.use(
                 throw error;
             }
 
+            if (error?.response?.status === 413) {
+                $.growl.warning({message: "Please upload a file that is 1MB or less in size."});
+                throw error;
+            }
+
             $.growl.error({message});
             throw error;
         })
