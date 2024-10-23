@@ -310,7 +310,7 @@ function submit(){
 
                     <div class="form-floating">
                         <input type="file" class="form-control" id="companyLogo" @change="processUpload" accept=".png,.jpg,.jpeg,.gif">
-                        <label for="companyLogo">Company Logo</label>
+                        <label for="companyLogo">Company Logo (Max 2MB)</label>
                     </div>
 
                     <div class="d-flex flex-wrap m-t-10" v-if="logoFile">
@@ -332,7 +332,7 @@ function submit(){
 
                 <div class="form-floating">
                   <input type="file" class="form-control" id="companyBanner" @change="processBannerUpload" accept=".png,.jpg,.jpeg,.gif">
-                  <label for="companyBanner">Company Banner</label>
+                  <label for="companyBanner">Company Banner (Max 2MB)</label>
                 </div>
 
                 <div class="d-flex flex-wrap m-t-10" v-if="bannerFile">
