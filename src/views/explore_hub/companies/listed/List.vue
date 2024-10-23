@@ -276,6 +276,17 @@ function deleteCompany(payload){
             <div class="alert alert-secondary  alert-dismissible fade show"
                  role="alert" v-html="activeCompany.about"></div>
         </div>
+
+        <hr class="m-0">
+        
+        <div class="row p-4" v-if="activeCompany.documents">
+            <h6 class="fw-bold">KYB Documents</h6>
+            <ul>
+                <li v-for="(url, name) in activeCompany.documents" :key="name">
+                    <a :href="url" download>{{ name }}</a>
+                </li>
+            </ul>
+        </div>
         <hr class="m-0">
         <div class="row p-4">
             <p>
