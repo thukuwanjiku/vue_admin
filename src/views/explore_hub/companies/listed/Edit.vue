@@ -38,6 +38,15 @@ const companySocials = ref([]);
 const newSocials = ref([]);
 const newSocialHandle = ref({platform:"", link:""});
 
+const businessTypes = [
+  { label: "Sole Proprietorship", value: "Sole Proprietorship" },
+  { label: "Partnership", value: "Partnership" },
+  { label: "Limited Liability Company (LLC)", value: "Limited Liability Company" }
+];
+const requiredDocuments = ref([]);
+const documents = ref({});
+const companyBusinessType = ref();
+
 /* ------------------------------
 * Computed Properties
 * ------------------------------
@@ -74,6 +83,10 @@ onMounted(()=>{
         return entry;
     });
 
+  // Load required documents based on current business type
+  companyBusinessType.value = company.value.business_type
+  setRequiredDocuments(company.value.business_type);
+
     //set the default content for the company's about
     $("#editCompanyAboutEditor").html(company.value["about"]);
 
@@ -90,28 +103,80 @@ onMounted(()=>{
 *
 */
 
+// Set required documents based on the business type
+function setRequiredDocuments(businessType) {
+  const documentTypes = {
+    "Sole Proprietorship": [
+      "Business Registration Certificate", "KRA PIN Certificate",
+      "Owner's National ID", "Owner's KRA PIN Certificate", "Bank Account Confirmation Letter (in business name)"
+    ],
+    "Partnership": [
+      "Partnership Deed", "Certificate of Registration", "Company KRA PIN Certificate",
+      "Partners Resolution Letter", "Owner's National ID", "Bank Letter Stating Partnership Bank Details"
+    ],
+    "Limited Liability Company": [
+      "Business Registration Certificate", "Company KRA PIN Certificate", "Owner's National ID",
+      "Owner's KRA PIN Certificate", "Bank Account Confirmation Letter (in business name)"
+    ]
+  };
+  requiredDocuments.value = documentTypes[businessType] || [];
+
+  // Clear documents when business type changes
+  if (companyBusinessType.value !== businessType) {
+    documents.value = {};
+  }else {
+    documents.value = company.value.documents;
+  }
+
+}
+
+// Handle file upload for documents
+function handleDocumentUpload(event, documentType) {
+  const file = event.target.files[0];
+
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error(`${documentType} file exceeds 2MB limit. Please upload a smaller file.`);
+    event.target.value = null;
+    return;
+  }
+
+  documents.value[documentType] = file;
+}
+
 function processUpload(event){
-    logoUpload.value = event.target.files[0];
+  const file = event.target.files[0];
 
-    const file = event.target.files[0];
-    const reader = new FileReader();
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error('Logo file size exceeds 2MB limit.');
+    event.target.value = null;
+    return;
+  }
 
-    reader.onload = (e) => {
-        logoFile.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
+  logoUpload.value = file;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    logoFile.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 function processBannerUpload(event){
-    bannerUpload.value = event.target.files[0];
+  const file = event.target.files[0];
 
-    const file = event.target.files[0];
-    const reader = new FileReader();
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error('Banner file size exceeds 2MB limit.');
+    event.target.value = null;
+    return;
+  }
 
-    reader.onload = (e) => {
-        bannerFile.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
+  bannerUpload.value = file;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    bannerFile.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 function removeUpload(){
@@ -193,6 +258,13 @@ function submit(){
 
     //add banner to payload, where necessary
     if(bannerUpload.value != null) payload.append('company_banner', bannerUpload.value);
+
+    //KYB Documents
+    Object.keys(documents.value).forEach(doc => {
+      if (documents.value[doc]) {
+        payload.append(`documents[${doc}]`, documents.value[doc]);
+      }
+    });
 
     //add any new social handles
     if(newSocials.value.length){
@@ -390,6 +462,24 @@ function submit(){
                         </div>
                     </div>
                 </div>
+              <!-- Business Type Dropdown -->
+              <div class="col-md-10 m-b-20">
+                <label for="businessType" class="mb-2">Business Type</label>
+                <select class="form-control" v-model="company.business_type" @change="setRequiredDocuments(company.business_type)" required>
+                  <option v-for="type in businessTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
+                </select>
+              </div>
+
+              <!-- Required Documents -->
+              <div class="col-md-10 m-b-20">
+                <div v-if="requiredDocuments.length">
+                  <h6>Update KYB Documents (Max 2MB per file | pdf, doc, docx)</h6>
+                  <div v-for="doc in requiredDocuments" :key="doc" class="form-floating mb-2">
+                    <input class="form-control" :required="companyBusinessType !== company.business_type"  type="file" @change="(event) => handleDocumentUpload(event, doc)" accept=".pdf,.doc,.docx" />
+                    <label :for="doc">{{ doc }}</label>
+                  </div>
+                </div>
+              </div>
             </div>
         </div>
 

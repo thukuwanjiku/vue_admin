@@ -388,7 +388,7 @@ function submit(){
               <!-- Document Upload Fields -->
                 <div class="col-md-10 m-b-20">
                         <div v-if="requiredDocuments.length">
-                          <h6>Please upload the following required documents (Max 2MB)</h6>
+                          <h6>Please upload the following required documents (Max 2MB per file | pdf, doc, docx)</h6>
                         <div class="form-floating mb-2" v-for="doc in requiredDocuments" :key="doc">
                             <input  required class="form-control" type="file" @change="(event) => handleFileUpload(event, doc)" accept=".pdf,.doc,.docx" />
                             <label :for="doc">{{ doc }}</label>
