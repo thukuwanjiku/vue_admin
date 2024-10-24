@@ -388,8 +388,6 @@ function submit(){
                   </div>
                 </div>
               </div>
-
-
             </div>
         </div>
 

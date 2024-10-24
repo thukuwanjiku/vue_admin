@@ -89,39 +89,52 @@ function fetchPaymentModes(){
                                 return entry;
                             }));
 }
-function processPrimaryMediaUpload(event){
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        primaryMedia.value = e.target.result;
-        primaryMediaFile.value = file;
-    };
-    reader.readAsDataURL(file);
+function processPrimaryMediaUpload(event) {
+  const file = event.target.files[0];
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error('Primary media file size exceeds 2MB limit. Please upload a smaller file.');
+    // Clear the input
+    event.target.value = null;
+    return;
+  }
 
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    primaryMedia.value = e.target.result;
+    primaryMediaFile.value = file;
+  };
+  reader.readAsDataURL(file);
 
-    //reset selection
-    $("#primaryListingMedia").val("");
+  // Reset selection
+  $("#primaryListingMedia").val("");
 }
-function processUpload(event){
-    const files = event.target.files;
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const reader = new FileReader();
 
-        reader.onload = (e) => {
-            media.value.push({
-                name: file.name,
-                url: e.target.result,
-            });
-            mediaFiles.value.push(file);
-        };
+function processUpload(event) {
+  const files = event.target.files;
 
-        reader.readAsDataURL(file);
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+
+    // Check if the file size exceeds 2MB
+    if (file.size > 2 * 1024 * 1024) {
+      ElMessage.error(`File "${file.name}" exceeds 2MB limit. Please upload a smaller file.`);
+      continue;
     }
 
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      media.value.push({
+        name: file.name,
+        url: e.target.result,
+      });
+      mediaFiles.value.push(file);
+    };
 
-    //reset selection
-    $("#listingMedia").val("");
+    reader.readAsDataURL(file);
+  }
+
+  // Reset selection
+  $("#listingMedia").val("");
 }
 function removePrimaryUpload(){
     primaryMedia.value = null;
@@ -394,7 +407,7 @@ function handleCreateListing(){
                         <input-label>Media</input-label>
 
                         <div class="p-l-10">
-                            <small>Primary Media</small><br>
+                            <small>Primary Media (Max 2MB)</small><br>
 
                             <input type="file" class="form-control" id="primaryListingMedia" @change="processPrimaryMediaUpload">
                             <div class="d-flex flex-wrap m-t-5" v-if="primaryMedia != null">
@@ -407,7 +420,7 @@ function handleCreateListing(){
                             </div>
                         </div>
                         <div class="p-l-10 m-t-10">
-                            <small>Other Media</small><br>
+                            <small>Other Media (each file max 2MB)</small><br>
 
                             <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
                             <div class="d-flex flex-wrap m-t-5">
