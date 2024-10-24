@@ -411,9 +411,9 @@ function handleCreateListing(){
                         <input-label>Media</input-label>
 
                         <div class="p-l-10">
-                            <small>Primary Media (Max 2MB)</small><br>
+                            <small>Primary Media (Max 2MB | png, jpg, jpeg, gif)</small><br>
 
-                            <input type="file" class="form-control" id="primaryListingMedia" @change="processPrimaryMediaUpload">
+                            <input type="file" class="form-control" id="primaryListingMedia" @change="processPrimaryMediaUpload" accept=".png,.jpg,.jpeg,.gif">
                             <div class="d-flex flex-wrap m-t-5" v-if="primaryMedia != null">
                                 <div class="p-1 uploaded-image">
                                     <img :src="primaryMedia"  style="max-width:80px;max-height:60px;">
@@ -424,9 +424,9 @@ function handleCreateListing(){
                             </div>
                         </div>
                         <div class="p-l-10 m-t-10">
-                            <small>Other Media (each file max 2MB)</small><br>
+                            <small>Other Media (Max 2MB per file | png, jpg, jpeg, gif)</small><br>
 
-                            <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
+                            <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload" accept=".png,.jpg,.jpeg,.gif">
                             <div class="d-flex flex-wrap m-t-5">
                                 <div class="p-1 uploaded-image" v-for="(file, index) in media" :key="'uploaded-media-'+index">
                                     <img :src="file.url"  style="max-width:80px;max-height:60px;">

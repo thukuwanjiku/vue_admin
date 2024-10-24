@@ -327,7 +327,7 @@ function submit(){
                 <div class="col-md-10 m-b-20">
                     <div class="form-floating">
                         <input type="file" class="form-control" id="companyLogo" @change="processUpload" accept=".png,.jpg,.jpeg,.gif">
-                        <label for="companyLogo">Company Logo (Max 2MB)</label>
+                        <label for="companyLogo">Company Logo (Max 2MB | png, jpg, jpeg, gif)</label>
                     </div>
 
                     <div class="d-flex flex-wrap m-t-10" v-if="logoFile">
@@ -344,7 +344,7 @@ function submit(){
               <div class="col-md-10 m-b-20">
                 <div class="form-floating">
                   <input type="file" class="form-control" id="companyBanner" @change="bannerProcessUpload" accept=".png,.jpg,.jpeg,.gif">
-                  <label for="companyBanner">Company Banner (Max 2MB)</label>
+                  <label for="companyBanner">Company Banner (Max 2MB | png, jpg, jpeg, gif)</label>
                 </div>
 
                 <div class="d-flex flex-wrap m-t-10" v-if="bannerFile">
@@ -381,7 +381,7 @@ function submit(){
               <!-- Document Upload Fields -->
               <div class="col-md-10 m-b-20">
                 <div v-if="requiredDocuments.length">
-                  <h6>Please upload the following required documents (Max 2MB)</h6>
+                  <h6>Please upload the following required documents (Max 2MB per file | pdf, doc, docx)</h6>
                   <div class="form-floating mb-2" v-for="doc in requiredDocuments" :key="doc">
                     <input  required class="form-control" type="file" @change="(event) => handleFileUpload(event, doc)" accept=".pdf,.doc,.docx" />
                     <label :for="doc">{{ doc }}</label>

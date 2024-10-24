@@ -518,8 +518,8 @@ function handleSaveEdits(){
                             </div>
 
                             <div class="col-md-10 m-t-10 p-l-10">
-                                <h6><small>Upload new primary media</small></h6>
-                                <input type="file" class="form-control" id="primaryListingMedia" @change="processPrimaryMediaUpload">
+                                <h6><small>Upload new primary media (Max 2MB | png, jpg, jpeg, gif)</small></h6>
+                                <input type="file" class="form-control" id="primaryListingMedia" @change="processPrimaryMediaUpload" accept=".png,.jpg,.jpeg,.gif">
                                 <div class="d-flex flex-wrap m-t-10" v-if="primaryMedia">
                                     <div class="p-1 uploaded-image">
                                         <img :src="primaryMedia"  style="max-width:80px;max-height:60px;">
@@ -561,8 +561,8 @@ function handleSaveEdits(){
                         </div>
 
                         <div class="col-md-10 m-t-10 p-l-10" v-if="checkHasPermission('investment_hub.listings.add_media')">
-                            <h6><small>Upload new media</small></h6>
-                            <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
+                            <h6><small>Upload new media (Max 2MB per file| png, jpg, jpeg, gif)</small></h6>
+                            <input type="file" multiple class="form-control" id="listingMedia" @change="processUpload" accept=".png,.jpg,.jpeg,.gif">
                             <div class="d-flex flex-wrap m-t-10">
                                 <div class="p-1 uploaded-image" v-for="(file, index) in media" :key="'uploaded-media-'+index">
                                     <img :src="file.url"  style="max-width:80px;max-height:60px;">
