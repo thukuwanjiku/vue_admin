@@ -107,27 +107,45 @@ watch(() => company.value.business_type, (newType) => {
 
 // Handle file uploads
 function handleFileUpload(event, documentType) {
-    documents.value[documentType] = event.target.files[0];
-}
-
-function processUpload(event){
-    logoUpload.value = event.target.files[0];
-
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-        logoFile.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
-}
-
-function bannerProcessUpload(event) {
-  bannerUpload.value = event.target.files[0];
-
   const file = event.target.files[0];
-  const reader = new FileReader();
 
+  // Check if the file size exceeds 2MB (2 * 1024 * 1024 bytes)
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error('File size exceeds 2MB limit. Please upload a smaller file.');
+    // Clear the file input
+    event.target.value = null;
+    return;
+  }
+  documents.value[documentType] = file;
+}
+
+function processUpload(event) {
+  const file = event.target.files[0];
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error('Logo file size exceeds 2MB limit. Please upload a smaller file.');
+    event.target.value = null;
+    logoUpload.value = null;
+    return;
+  }
+
+  logoUpload.value = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    logoFile.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function bannerProcessUpload(event) {
+  const file = event.target.files[0];
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error('Banner file size exceeds 2MB limit. Please upload a smaller file.');
+    event.target.value = null;
+    bannerUpload.value = null;
+    return;
+  }
+
+  bannerUpload.value = file;
+  const reader = new FileReader();
   reader.onload = (e) => {
     bannerFile.value = e.target.result;
   };
@@ -198,7 +216,6 @@ function submit(){
             payload.append(`documents[${doc}]`, documents.value[doc]);
         }
     });
-
 
   //add logo to payload
     payload.append('company_logo', logoUpload.value);
@@ -361,15 +378,15 @@ function submit(){
                         </el-button>
                     </div>
                 </div>
+              <!-- Business Type Dropdown -->
                 <div class="col-md-10 m-b-20">
-                 <!-- Business Type Dropdown -->
                 <label for="businessType" class="mb-2">Business Type</label>
                 <select class="form-control" v-model="company.business_type" required>
                     <option v-for="type in businessTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
                 </select>
                 </div>
+              <!-- Document Upload Fields -->
                 <div class="col-md-10 m-b-20">
-                        <!-- Document Upload Fields -->
                         <div v-if="requiredDocuments.length">
                           <h6>Please upload the following required documents</h6>
                         <div class="form-floating mb-2" v-for="doc in requiredDocuments" :key="doc">
@@ -378,7 +395,6 @@ function submit(){
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 

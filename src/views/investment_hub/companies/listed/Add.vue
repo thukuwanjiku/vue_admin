@@ -1,7 +1,7 @@
 <script setup>
 
 import {useRouter} from "vue-router";
-import {onMounted, ref, computed} from "vue";
+import {onMounted, ref, computed, watch} from "vue";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
@@ -28,6 +28,7 @@ const company = ref({
     contact_phone:"",
     email:"",
     about:"",
+  business_type: ""
 });
 const addedSocials = ref([]);
 const newSocialHandle = ref({platform:"", link:""});
@@ -41,6 +42,15 @@ let bannerFile = ref(null);
 const isLoading = ref(false);
 const isAddingSocialHandles = ref(false);
 let aboutQuillEditor = ref(null);
+
+const businessTypes = [
+  { label: "Sole Proprietorship", value: "Sole Proprietorship" },
+  { label: "Partnership", value: "Partnership" },
+  { label: "Limited Liability Company (LLC)", value: "Limited Liability Company" }
+];
+const requiredDocuments = ref([]);
+const documents = ref({});
+
 
 
 /* ------------------------------
@@ -66,28 +76,72 @@ onMounted(()=>{
     });
 });
 
+// Watch for business type change and update required documents
+watch(() => company.value.business_type, (newType) => {
+  documents.value = {}
+  if (newType === 'Sole Proprietorship') {
+    requiredDocuments.value = [
+      "Business Registration Certificate", "KRA PIN Certificate",
+      "Owner's National ID", "Owner's KRA PIN Certificate", "Bank Account Confirmation Letter (in business name)"
+    ];
+  } else if (newType === 'Partnership') {
+    requiredDocuments.value = [
+      "Partnership Deed", "Certificate of Registration", "Company KRA PIN Certificate",
+      "Partners Resolution Letter", "Owner's National ID", "Bank Letter Stating Partnership Bank Details"
+    ];
+  } else if (newType === 'Limited Liability Company') {
+    requiredDocuments.value = [
+      "Business Registration Certificate", "Company KRA PIN Certificate", "Owner's National ID",
+      "Owner's KRA PIN Certificate", "Bank Account Confirmation Letter (in business name)"
+    ];
+  }
+});
+
 /* ------------------------------
 * Methods & functions
 * ------------------------------
 * */
-function processUpload(event){
-    logoUpload.value = event.target.files[0];
 
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-        logoFile.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
-}
-
-function bannerProcessUpload(event) {
-  bannerUpload.value = event.target.files[0];
-
+// Handle file uploads
+function handleFileUpload(event, documentType) {
   const file = event.target.files[0];
-  const reader = new FileReader();
 
+  // Check if the file size exceeds 2MB (2 * 1024 * 1024 bytes)
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error('File size exceeds 2MB limit. Please upload a smaller file.');
+    event.target.value = null;
+    return;
+  }
+
+  documents.value[documentType] = file;
+}
+function processUpload(event) {
+  const file = event.target.files[0];
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error('Logo file size exceeds 2MB limit. Please upload a smaller file.');
+    event.target.value = null;
+    logoUpload.value = null;
+    return;
+  }
+
+  logoUpload.value = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    logoFile.value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function bannerProcessUpload(event) {
+  const file = event.target.files[0];
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error('Banner file size exceeds 2MB limit. Please upload a smaller file.');
+    event.target.value = null;
+    bannerUpload.value = null;
+    return;
+  }
+
+  bannerUpload.value = file;
+  const reader = new FileReader();
   reader.onload = (e) => {
     bannerFile.value = e.target.result;
   };
@@ -155,6 +209,13 @@ function submit(){
                 if(key == 'contact_phone') value = value.toString().replaceAll(" ", "");
                 payload.append(key, value)
             });
+
+    // Add documents
+    Object.keys(documents.value).forEach(doc => {
+      if (documents.value[doc]) {
+        payload.append(`documents[${doc}]`, documents.value[doc]);
+      }
+    });
 
     //add logo to payload
     payload.append('company_logo', logoUpload.value);
@@ -266,7 +327,7 @@ function submit(){
                 <div class="col-md-10 m-b-20">
                     <div class="form-floating">
                         <input type="file" class="form-control" id="companyLogo" @change="processUpload" accept=".png,.jpg,.jpeg,.gif">
-                        <label for="companyLogo">Company Logo</label>
+                        <label for="companyLogo">Company Logo (Max 2MB)</label>
                     </div>
 
                     <div class="d-flex flex-wrap m-t-10" v-if="logoFile">
@@ -283,7 +344,7 @@ function submit(){
               <div class="col-md-10 m-b-20">
                 <div class="form-floating">
                   <input type="file" class="form-control" id="companyBanner" @change="bannerProcessUpload" accept=".png,.jpg,.jpeg,.gif">
-                  <label for="companyBanner">Company Banner</label>
+                  <label for="companyBanner">Company Banner (Max 2MB)</label>
                 </div>
 
                 <div class="d-flex flex-wrap m-t-10" v-if="bannerFile">
@@ -310,6 +371,24 @@ function submit(){
                         </el-button>
                     </div>
                 </div>
+              <!-- Business Type Dropdown -->
+              <div class="col-md-10 m-b-20">
+                <label for="businessType" class="mb-2">Business Type</label>
+                <select class="form-control" v-model="company.business_type" required>
+                  <option v-for="type in businessTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
+                </select>
+              </div>
+              <!-- Document Upload Fields -->
+              <div class="col-md-10 m-b-20">
+                <div v-if="requiredDocuments.length">
+                  <h6>Please upload the following required documents</h6>
+                  <div class="form-floating mb-2" v-for="doc in requiredDocuments" :key="doc">
+                    <input  required class="form-control" type="file" @change="(event) => handleFileUpload(event, doc)" accept=".pdf,.doc,.docx" />
+                    <label :for="doc">{{ doc }}</label>
+                  </div>
+                </div>
+              </div>
+
 
             </div>
         </div>
