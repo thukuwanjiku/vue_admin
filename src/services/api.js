@@ -47,7 +47,6 @@ api.interceptors.response.use(
             return response
         },
         (error) => {
-            console.log("error", error)
             //attempt to extract the error message
             let message = error.response?.data?.message ?? error.message ?? "An error occurred";
 
