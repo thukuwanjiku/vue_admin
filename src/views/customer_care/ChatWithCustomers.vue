@@ -5,6 +5,7 @@ import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 import {useStore} from "vuex";
 import echoInstance from '@/utils/echo';
+import {ElMessage} from "element-plus";
 import {
   trimParagraph,
   formatChatTimestamp
@@ -13,7 +14,9 @@ import {
 const store = useStore();
 const form = ref({
   message: "",
-  conversation_id: ""
+  conversation_id: "",
+  image: "",
+  imagePreview: ""
 })
 
 const loadSendingMessage = ref(false)
@@ -52,6 +55,36 @@ onMounted(()=>{
 		})
 })
 
+const handleImageUpload = (event) => {
+  const file = event.target.files[0];
+
+  if (!file) {
+    form.value.image = null;
+    return;
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    ElMessage.error('Image file size exceeds 2MB limit. Please upload a smaller image.');
+    event.target.value = null;
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    form.value.imagePreview = e.target.result;
+  };
+  reader.readAsDataURL(file);
+
+  form.value.image = file;
+};
+
+const removeImage = () => {
+  form.value.image = null;
+  form.value.imagePreview = null;
+  document.getElementById('image-input').value = '';
+};
+
+
 const fetchCustomerConversations = () => {
   store.commit("chat/SET_IS_FETCHING_CUSTOMER_CONVERSATIONS", true);
   api.get(apiRoutes.GET_CUSTOMER_CONVERSATIONS).then(response => {
@@ -85,12 +118,17 @@ const sendMessage = async () => {
     payload.append('message', form.value.message);
     payload.append('conversation_id', conversationId);
 
+    if (form.value.image) {
+      payload.append('image', form.value.image);
+    }
+
     // Send the message
     const response = await api.post(apiRoutes.SEND_MESSAGE_TO_CUSTOMER, payload);
     $.growl.notice({ message: response.data });
 
     // Reset message input
     form.value.message = "";
+    removeImage();
 
     // Fetch new messages after sending
     await fetchNewMessages(conversationId);
@@ -217,9 +255,28 @@ const fetchNewMessages = async (conversationId) => {
 
               <div class="p-3">
                 <form @submit.prevent="sendMessage">
-                  <div class="d-flex">
-                    <input class="form-control me-3 border-0 border-bottom send-text-input rounded-0" v-model="form.message" placeholder="Start typing">
-                    <button class="btn btn-primary" type="submit" :disabled="loadSendingMessage">Send</button>
+                  <div class="input-group">
+                    <!-- File upload button inside input group -->
+                    <input type="file" id="image-input" @change="handleImageUpload" accept=".jpg,.jpeg,.png,.gif" class="d-none" ref="imageInput" />
+                    <span class="input-group-text">
+                    <i class="bi bi-paperclip" @click="$refs.imageInput.click()"></i>
+                  </span>
+
+                    <!-- Text input field -->
+                    <input class="form-control me-3 border-0 border-bottom send-text-input rounded-0" v-model="form.message"  placeholder="Type a message" :disabled="loadSendingMessage" />
+
+                    <!-- Send button -->
+                    <button class="btn btn-primary" type="submit" :disabled="loadSendingMessage">
+                      <i class="bi bi-send"></i>
+                    </button>
+                  </div>
+
+                  <!-- Show selected image preview -->
+                  <div v-if="form.imagePreview" class="mt-2 d-flex align-items-center">
+                    <img :src="form.imagePreview" alt="Image Preview" class="img-preview" />
+                    <button @click="removeImage" type="button" class="btn btn-sm btn-danger ms-2" style="border-radius: 50%;">
+                      <i class="bi bi-x"></i>
+                    </button>
                   </div>
                 </form>
               </div>
@@ -285,5 +342,37 @@ const fetchNewMessages = async (conversationId) => {
   .send-text-input:focus {
     box-shadow: unset !important;
     border-bottom: 1px solid #3b82f6 !important;
+  }
+  .input-group-text {
+    background-color: #f1f5f9;
+    cursor: pointer;
+  }
+
+  .send-text-input {
+    background-color: #f1f5f9;
+    border-radius: 50px;
+    padding: 10px;
+  }
+
+  .btn-primary {
+    background-color: #00bfa5;
+    border: none;
+    border-radius: 50px;
+  }
+
+  .img-preview {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+  .btn-danger {
+    background-color: #ff0000;
+    border: none;
+  }
+
+  .btn-danger i {
+    font-size: 16px;
+    color: #fff;
   }
 </style>
