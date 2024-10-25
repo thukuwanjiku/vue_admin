@@ -375,4 +375,10 @@ const fetchNewMessages = async (conversationId) => {
     font-size: 16px;
     color: #fff;
   }
+  .chat-image {
+  max-width: 200px; 
+  max-height: 200px;
+  border-radius: 10px;
+  object-fit: cover; 
+}
 </style>
