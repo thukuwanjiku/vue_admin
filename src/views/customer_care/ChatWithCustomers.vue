@@ -181,14 +181,24 @@ const fetchNewMessages = async (conversationId) => {
                   <div class="px-3" v-for="message in messages" :key="`chat-${selectedConversation.id}-message-${message.id}`">
                     <div class="d-flex justify-content-start mb-3" v-if="!message.is_sender">
                       <div class="message-container">
-                        {{ message.body }}
+                        <div v-if="message.type === 'image'">
+                           <img :src="message.body" alt="Image" class="chat-image"/>
+                        </div>
+                        <div v-else>
+                         {{ message.body }}
+                      </div>
                         <span class="message-time"> {{ message.sender.name || message.sender.formatted_name }} - {{ formatChatTimestamp(message.created_at) }}</span>
                       </div>
                     </div>
 
                     <div class="d-flex justify-content-end mb-4" v-else-if="message.is_sender">
                       <div class="message-container-send">
-                        {{ message.body }}
+                        <div v-if="message.type === 'image'">
+                           <img :src="message.body" alt="Image" class="chat-image"/>
+                        </div>
+                        <div v-else>
+                         {{ message.body }}
+                      </div>
                         <span class="message-time-send"> {{ message.sender.name || message.sender.formatted_name }} - {{ formatChatTimestamp(message.created_at) }}</span>
                       </div>
                     </div>
