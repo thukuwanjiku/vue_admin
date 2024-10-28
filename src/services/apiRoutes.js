@@ -125,6 +125,11 @@ const apiRoutes = {
     GET_CONVERSATION_MESSAGES: `${apiBaseUrl}/customer-care/get-conversation-messages`,
     SEND_MESSAGE_TO_CUSTOMER: `${apiBaseUrl}/customer-care/send-message-to-customer`,
 
+    /* -----------------------------
+     * Finance Institutions
+     * -----------------------------
+     * */
+    FINANCE_INSTITUTION_FETCH_MOBILE_MONEY: `${apiBaseUrl}/finance-institutions/get-mobile-money`,
 
     /* ---------------------------------------
     * ACCESS CONTROL ROUTES
