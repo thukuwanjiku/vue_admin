@@ -96,27 +96,11 @@ import {hasPermissionsWhichContain} from "@/services/Helpers";
           </li>
 
           <!-- Finance Institutions -->
-          <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#finance-institutions-nav" data-bs-toggle="collapse" href="#">
-              <i class="bx bx-building"></i><span>Finance Institutions</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="finance-institutions-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-              <li>
-                <router-link :to="{name:'finance_institutions.banks'}">
-                  <i class="bi bi-circle"></i><span>Commercial Banks</span>
-                </router-link>
-              </li>
-              <li>
-                <router-link :to="{name: 'finance_institutions.saccos'}">
-                  <i class="bi bi-circle"></i><span>Saccos</span>
-                </router-link>
-              </li>
-              <li>
-                <router-link :to="{name: 'finance_institutions.mobile_money'}">
-                  <i class="bi bi-circle"></i><span>Mobile Money Platform</span>
-                </router-link>
-              </li>
-            </ul>
+          <li class="nav-item" data-bs-parent="#sidebar-nav">
+            <router-link :to="{name:'finance_institutions'}" class="nav-link collapsed">
+              <i class="bx bx-building"></i>
+              <span>Finance Institutions</span>
+            </router-link>
           </li>
         </ul>
     </aside>

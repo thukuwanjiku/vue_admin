@@ -1,36 +1,43 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {checkHasPermission} from "@/services/Helpers";
 import store from "@/store";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
 
-const mobileMoney = ref([]);
-const loading = ref(false)
-
-onMounted(()=> {
-  fetchInstitutions();
+let institutions = computed({
+  get: ()=> store.state.financeInstitution.institutions,
+  set: (data) => store.commit('financeInstitution/STORE_INSTITUTIONS', data)
 });
 
-const fetchInstitutions = () => {
-  loading.value = true
+let isLoading = computed({
+  get: ()=> store.state.financeInstitution.isFetchingInstitutions,
+  set: (value) => store.commit('financeInstitution/SET_IS_FETCHING_INSTITUTIONS', value)
+});
 
-  api.post(apiRoutes.FINANCE_INSTITUTION_FETCH_MOBILE_MONEY).then(response => {
-    mobileMoney.value = response.data
-    loading.value = false
+onMounted(()=> {
+  fetchBanks();
+});
+
+const fetchBanks = () => {
+  store.commit("financeInstitution/SET_IS_FETCHING_INSTITUTIONS", true);
+
+  api.post(apiRoutes.FETCH_FINANCE_INSTITUTIONS).then(response => {
+    store.commit("financeInstitution/STORE_INSTITUTIONS", response.data);
+    store.commit("financeInstitution/SET_IS_FETCHING_INSTITUTIONS", false);
   }).catch(error => {
-    loading.value = false
+    store.commit("financeInstitution/SET_IS_FETCHING_INSTITUTIONS", false);
   })
 }
 
-const viewItem = () => {
+const viewInstitution = () => {
 
 }
 
 function handleEntryAction(payload){
   switch (payload.action){
     case 'view':
-      return viewItem(payload.item);
+      return viewInstitution(payload.item);
   }
 }
 </script>
@@ -38,19 +45,18 @@ function handleEntryAction(payload){
 <template>
   <div>
     <div class="pagetitle">
-      <h1>Mobile Money</h1>
+      <h1>Finance Institutions</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><router-link :to="{name:'dashboard'}">Dashboard</router-link></li>
-          <li class="breadcrumb-item">Finance Institutions</li>
-          <li class="breadcrumb-item active">Mobile Money</li>
+          <li class="breadcrumb-item">List</li>
         </ol>
       </nav>
     </div>
 
     <div class="card">
       <div class="card-body">
-        <div v-loading="loading" class="row">
+        <div v-loading="isLoading" class="row">
           <div class="col-12">
             <div class="table-responsive m-t-10">
               <table class="table table-hover">
@@ -60,27 +66,31 @@ function handleEntryAction(payload){
                   <th>Logo</th>
                   <th>Name</th>
                   <th>Acronym</th>
+                  <th>Type</th>
                   <th>Domain</th>
                   <th>Actions</th>
                 </tr>
                 </thead>
 
                 <tbody>
-                <tr v-if="mobileMoney.length" v-for="(item, index) in mobileMoney" :key="'mobile-money-'+index" :class="{'table-info': item.selected}" style="cursor: pointer;">
-                  <td @click="viewItem(item)">
+                <tr v-for="(institution, index) in institutions.data" :key="'institution'+index" :class="{'table-info': institution.selected}" style="cursor: pointer;">
+                  <td @click="viewInstitution(institution)">
                     {{ index+1 }}
                   </td>
                   <td>
-                    <img class="table-img" :src="item.logo_url" :alt="item.name+'\'s logo'">
+                    <img class="table-img" :src="institution.logo_url" :alt="institution.name+'\'s logo'">
                   </td>
                   <td>
-                    {{ item.name }}
+                    {{ institution.name }}
                   </td>
                   <td>
-                    {{ item.acronym }}
+                    {{ institution.acronym }}
                   </td>
                   <td>
-                    {{ item.domain }}
+                    {{ institution.institution_type }}
+                  </td>
+                  <td>
+                    {{ institution.domain }}
                   </td>
                   <td>
                     <el-dropdown trigger="click" @command="handleEntryAction">
@@ -89,7 +99,7 @@ function handleEntryAction(payload){
                       </el-button>
                       <template #dropdown>
                         <el-dropdown-menu>
-                          <el-dropdown-item :command="{action:'view',item}">View</el-dropdown-item>
+                          <el-dropdown-item :command="{action:'view',institution}">View</el-dropdown-item>
                         </el-dropdown-menu>
                       </template>
                     </el-dropdown>

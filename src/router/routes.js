@@ -355,48 +355,12 @@ export default [
 
             //Finance Institutions Routes
             {
-                path: 'finance-institutions',
-                children: [
-                    {
-                        path: 'banks',
-                        children: [
-                            {
-                                path: "",
-                                name: 'finance_institutions.banks',
-                                component: ()=> import('@/views/finance_institutions/banks/Main.vue'),
-                                meta: {
-                                    title: `Finance Institutions Banks ${pageTitleSuffix}`
-                                },
-                            },
-                        ]
-                    },
-                    {
-                        path: 'saccos',
-                        children: [
-                            {
-                                path: "",
-                                name: 'finance_institutions.saccos',
-                                component: ()=> import('@/views/finance_institutions/saccos/Main.vue'),
-                                meta: {
-                                    title: `Finance Institutions Saccos ${pageTitleSuffix}`
-                                },
-                            },
-                        ]
-                    },
-                    {
-                        path: 'mobile-money',
-                        children: [
-                            {
-                                path: "",
-                                name: 'finance_institutions.mobile_money',
-                                component: ()=> import('@/views/finance_institutions/mobile_money/Main.vue'),
-                                meta: {
-                                    title: `Finance Institutions Mobile Money ${pageTitleSuffix}`
-                                },
-                            },
-                        ]
-                    }
-                ]
+                path: '/finance-institutions',
+                name: 'finance_institutions',
+                component: ()=> import("../views/finance_institutions/Main.vue"),
+                meta: {
+                    title: `Finance Institutions ${pageTitleSuffix}`
+                }
             },
         ]
     },
