@@ -1,9 +1,15 @@
 <script setup>
 import {computed, onMounted, ref} from "vue";
 import {checkHasPermission} from "@/services/Helpers";
+import Pagination from "@/components/pagination/PaginationComponent"
 import store from "@/store";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
+import {ArrowDown, Plus} from "@element-plus/icons-vue";
+
+const filters = ref({
+  institution: ''
+})
 
 let institutions = computed({
   get: ()=> store.state.financeInstitution.institutions,
@@ -16,13 +22,18 @@ let isLoading = computed({
 });
 
 onMounted(()=> {
-  fetchBanks();
+  fetchInstitutions({});
 });
 
-const fetchBanks = () => {
+const fetchInstitutions = ({page = 1, perPage = 20}) => {
   store.commit("financeInstitution/SET_IS_FETCHING_INSTITUTIONS", true);
 
-  api.post(apiRoutes.FETCH_FINANCE_INSTITUTIONS).then(response => {
+  let filterData = {
+    page: page,
+    perPage: perPage
+  }
+
+  api.post(apiRoutes.FETCH_FINANCE_INSTITUTIONS, filterData).then(response => {
     store.commit("financeInstitution/STORE_INSTITUTIONS", response.data);
     store.commit("financeInstitution/SET_IS_FETCHING_INSTITUTIONS", false);
   }).catch(error => {
@@ -49,6 +60,7 @@ function handleEntryAction(payload){
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><router-link :to="{name:'dashboard'}">Dashboard</router-link></li>
+          <li class="breadcrumb-item">Finance Institutions</li>
           <li class="breadcrumb-item">List</li>
         </ol>
       </nav>
@@ -56,6 +68,15 @@ function handleEntryAction(payload){
 
     <div class="card">
       <div class="card-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="d-flex my-3">
+              <el-button @click="router.push({name: 'investment_hub.companies.add'})" type="primary" :icon="Plus" plain style="margin-right: 15px">Add Institution</el-button>
+              <el-input v-model="filters.institution" style="width: 240px" placeholder="Type to search" clearable />
+            </div>
+          </div>
+        </div>
+
         <div v-loading="isLoading" class="row">
           <div class="col-12">
             <div class="table-responsive m-t-10">
@@ -75,7 +96,7 @@ function handleEntryAction(payload){
                 <tbody>
                 <tr v-for="(institution, index) in institutions.data" :key="'institution'+index" :class="{'table-info': institution.selected}" style="cursor: pointer;">
                   <td @click="viewInstitution(institution)">
-                    {{ index+1 }}
+                    {{ institution.id }}
                   </td>
                   <td>
                     <img class="table-img" :src="institution.logo_url" :alt="institution.name+'\'s logo'">
@@ -107,6 +128,8 @@ function handleEntryAction(payload){
                 </tr>
                 </tbody>
               </table>
+
+              <Pagination :pagination="institutions" @pagination-change-page="fetchInstitutions"/>
             </div>
           </div>
         </div>
