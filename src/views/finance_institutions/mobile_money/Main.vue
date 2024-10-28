@@ -41,7 +41,7 @@ function handleEntryAction(payload){
       <h1>Mobile Money</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><router-link :to="{name:'dashboard'}">Mobile Money</router-link></li>
+          <li class="breadcrumb-item"><router-link :to="{name:'dashboard'}">Dashboard</router-link></li>
           <li class="breadcrumb-item">Finance Institutions</li>
           <li class="breadcrumb-item active">Mobile Money</li>
         </ol>

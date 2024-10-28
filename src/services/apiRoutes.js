@@ -130,6 +130,8 @@ const apiRoutes = {
      * -----------------------------
      * */
     FINANCE_INSTITUTION_FETCH_MOBILE_MONEY: `${apiBaseUrl}/finance-institutions/get-mobile-money`,
+    FINANCE_INSTITUTION_FETCH_BANKS: `${apiBaseUrl}/finance-institutions/get-commercial-banks`,
+    FINANCE_INSTITUTION_FETCH_SACCOS: `${apiBaseUrl}/finance-institutions/get-saccos`,
 
     /* ---------------------------------------
     * ACCESS CONTROL ROUTES
