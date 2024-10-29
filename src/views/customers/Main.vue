@@ -217,7 +217,8 @@ function restoreCustomer(customer) {
 
 <style scoped>
 .table-img{
-  max-height:40px;
+  height:40px;
+  width:40px;
   border-radius: 50%;
 }
 </style>
