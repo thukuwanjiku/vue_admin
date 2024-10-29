@@ -35,6 +35,15 @@ export default [
                 }
             },
 
+            {
+                path: '/customers',
+                name: 'customers',
+                component: () => import('../views/customers/Main.vue'),
+                meta: {
+                    title: `Customers ${pageTitleSuffix}`
+                }
+            },
+
             //Explore Hub Routes
             {
                 path: 'explore-hub',

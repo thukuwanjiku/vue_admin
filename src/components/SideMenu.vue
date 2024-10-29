@@ -14,6 +14,14 @@ import {hasPermissionsWhichContain} from "@/services/Helpers";
                 </router-link>
             </li>
 
+          <!-- Finance Institutions -->
+          <li class="nav-item" data-bs-parent="#sidebar-nav">
+            <router-link :to="{name:'customers'}" class="nav-link collapsed">
+              <i class="bi bi-people"></i>
+              <span>Customers</span>
+            </router-link>
+          </li>
+
             <!-- Explore Hub -->
             <li class="nav-item" v-if="hasPermissionsWhichContain(['explore_hub.'])">
                 <a class="nav-link collapsed" data-bs-target="#explore-hub-nav" data-bs-toggle="collapse" href="#">

@@ -17,6 +17,14 @@ const apiRoutes = {
     LOGIN: `${apiBaseUrl}/auth/login`,
 
     /* -----------------------------
+     * CUSTOMERS
+     * -----------------------------
+     * */
+    FETCH_CUSTOMERS: `${apiBaseUrl}/customers/fetch`,
+    DEACTIVATE_CUSTOMER_ACCOUNT: `${apiBaseUrl}/customers/deactivate-account`,
+    REACTIVATE_CUSTOMER_ACCOUNT: `${apiBaseUrl}/customers/reactivate-account`,
+
+    /* -----------------------------
      * EXPLORE HUB COMPANIES
      * -----------------------------
      * */
@@ -126,7 +134,7 @@ const apiRoutes = {
     SEND_MESSAGE_TO_CUSTOMER: `${apiBaseUrl}/customer-care/send-message-to-customer`,
 
     /* -----------------------------
-     * Finance Institutions
+     * FINANCE INSTITUTIONS
      * -----------------------------
      * */
     FETCH_FINANCE_INSTITUTIONS: `${apiBaseUrl}/finance-institutions/fetch`,

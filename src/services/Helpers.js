@@ -2,6 +2,7 @@ import axios from "axios";
 import store from "@/store";
 import api from "@/services/api";
 import {apiRoutes} from "@/services/apiRoutes";
+import moment from 'moment';
 
 /* --------------------------
 * Variables
@@ -319,4 +320,7 @@ export function formatChatTimestamp(timestamp) {
     else {
         return date.toLocaleDateString();
     }
+}
+export function formatFullDate(date) {
+    return moment(date).format('MMMM D, YYYY h:mma');
 }
