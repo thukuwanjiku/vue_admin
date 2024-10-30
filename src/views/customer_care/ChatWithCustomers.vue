@@ -171,7 +171,7 @@ const fetchNewMessages = async (conversationId) => {
               <div v-if="conversations.length > 0">
                 <a href="#" @click="openChat(conversation)" :class="['d-flex p-3 chat-box', {'border-bottom': conversations.length > 1}]" v-for="(conversation, index) in conversations" :key="`conversation-${conversation.id}`">
                   <div class="me-3">
-                    <img :src="conversation.conversation.data.customer_photo" class="rounded-circle" style="width: 60px;" :alt="conversation.conversation.data.customer_name" />
+                    <img :src="conversation.conversation.data.customer_profile_photo_url" class="rounded-circle" style="width: 60px;" :alt="conversation.conversation.data.customer_name" />
                   </div>
                   <div>
                     <p class="fw-bold text-dark mb-0">{{ conversation.conversation.data.customer_name }} - {{ conversation.conversation.data.module }}</p>
@@ -204,7 +204,7 @@ const fetchNewMessages = async (conversationId) => {
             <div v-if="selectedConversation">
               <div class="d-flex p-4">
                 <div class="me-3">
-                  <img :src="selectedConversation.conversation.data.customer_photo" class="rounded-circle" style="width: 60px;" :alt="selectedConversation.conversation.data.customer_name" />
+                  <img :src="selectedConversation.conversation.data.customer_profile_photo_url" class="rounded-circle" style="width: 60px;" :alt="selectedConversation.conversation.data.customer_name" />
                 </div>
                 <div>
                   <p class="fw-bold text-dark mb-0">{{ selectedConversation.conversation.data.customer_name }} - {{ selectedConversation.conversation.data.module }}</p>
