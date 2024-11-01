@@ -6,7 +6,7 @@
 * http://127.0.0.1:8000
 *
 * */
-const baseUrl = process.env.NODE_ENV === "development" ? process.env.VUE_APP_API_BASE_URL : "https://staging.myzola.io";
+const baseUrl = process.env.NODE_ENV === "development" ? process.env.VUE_APP_API_BASE_URL : "https://api.myzola.io";
 
 const apiBaseUrl = `${baseUrl}/api/admin`;
 
