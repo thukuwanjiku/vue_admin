@@ -28,12 +28,10 @@ onMounted(() => {
       </nav>
     </div>
 
-    {{customer}}
-
     <div class="card">
       <div class="card-body">
         <div class="py-3">
-          <h3>Personal Account Details</h3>
+          <p class="fw-bold">Personal Account Details</p>
 
           <div class="row">
             <div class="col-4">
@@ -97,24 +95,24 @@ onMounted(() => {
             <div class="col-4">
               <div>
                 <b>Employment Status</b>
-                <p>{{ customer.employment_status }}</p>
+                <p>{{ customer.employment_status ?? "N/A" }}</p>
               </div>
 
               <div>
                 <b>Occupation Industry</b>
-                <p>{{ customer.occupation_industry }}</p>
+                <p>{{ customer.occupation_industry ?? "N/A" }}</p>
               </div>
 
               <div>
                 <b>Job Title</b>
-                <p>{{ customer.job_title }}</p>
+                <p>{{ customer.job_title ?? "N/A" }}</p>
               </div>
             </div>
           </div>
 
           <hr/>
 
-          <h3>Finance Account Details</h3>
+          <p class="fw-bold">Finance Account Details</p>
         </div>
       </div>
     </div>
