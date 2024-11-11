@@ -36,7 +36,7 @@ onMounted(() => {
           <div class="row">
             <div class="col-4">
               <div class="mb-3">
-                <img class="table-img me-2" :src="customer.user?.profile_photo_url" :alt="customer.formatted_name+'\'s logo'">
+                <img class="table-img me-2" :src="customer.user?.profile_photo_url" :alt="customer.formatted_name+'\'s logo'" width="200">
               </div>
 
               <div>
