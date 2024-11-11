@@ -10,10 +10,13 @@ import {
   formatFullDate
 } from "@/services/Helpers";
 import {ElMessage, ElMessageBox} from "element-plus";
+import {useRouter} from "vue-router/dist/vue-router";
 
 const filters = ref({
   customer: ''
 })
+
+const router = useRouter();
 
 let customers = computed({
   get: ()=> store.state.customers.customers,
@@ -56,8 +59,14 @@ function handleEntryAction(payload){
   }
 }
 
-function viewCustomer() {
-
+function viewCustomer(customer) {
+  store.commit("customers/STORE_VIEWED_CUSTOMER", JSON.parse(JSON.stringify(customer)));
+  return router.push({
+    name: 'customers.view',
+    params:{
+      listingTitleSlug: customer.formatted_name.toString().replaceAll(" ", "-")
+    }
+  })
 }
 
 function confirmDeactivation(customer) {
@@ -133,7 +142,7 @@ function restoreCustomer(customer) {
         <div class="row">
           <div class="col-12">
             <div class="d-flex my-3">
-              <el-input v-model="filters.institution" style="width: 240px" placeholder="Type to search" clearable />
+              <el-input v-model="filters.customer" style="width: 240px" placeholder="Type to search" clearable />
             </div>
           </div>
         </div>
@@ -150,6 +159,7 @@ function restoreCustomer(customer) {
                   <th>No. Of Accounts</th>
                   <th>Registered On</th>
                   <th>Account Activated On</th>
+                  <th>Last Login Time</th>
                   <th>Actions</th>
                 </tr>
                 </thead>
@@ -162,7 +172,11 @@ function restoreCustomer(customer) {
                   <td>
                     <div class="d-flex align-items-center">
                       <img class="table-img me-2" :src="customer.user.profile_photo_url" :alt="customer.formatted_name+'\'s logo'">
-                      <p class="mb-0">{{ customer.formatted_name }}</p>
+                      <div>
+                        <p class="mb-2">{{ customer.formatted_name }}</p>
+                        <p class="mb-0">{{ customer.user.email }}</p>
+                        <p class="mb-0">{{ customer.user.phone_number }}</p>
+                      </div>
                     </div>
                   </td>
                   <td>
@@ -184,7 +198,11 @@ function restoreCustomer(customer) {
                   </td>
 
                   <td>
-                    {{ formatFullDate(customer.user.verified_at) }}
+                    {{ customer.user.verified_at ? formatFullDate(customer.user.verified_at) : 'Not Activated' }}
+                  </td>
+
+                  <td>
+                    {{ formatFullDate(customer.user.last_login_at) }}
                   </td>
 
                   <td>
