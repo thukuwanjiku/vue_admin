@@ -231,8 +231,8 @@ function deleteCompany(payload){
                       </small>
                     </td>
                     <td>
-                      <span :class="{'badge bg-danger': company.status === 'Pending', 'badge bg-success': company.status === 'Approved'}" >
-                        Pending
+                      <span :class="{'badge bg-warning': company.status === 'pending', 'badge bg-success': company.status === 'approved'}" >
+                       {{company.status }}
                       </span>
                     </td>
                       <td>
@@ -330,7 +330,7 @@ function deleteCompany(payload){
           </ul>
         </div>
       </div>
-      
+
       <div class="row border-top pt-3 mb-4">
         <div class="col-md-6">
           <h6 class="fw-bold">Bank Details</h6>
