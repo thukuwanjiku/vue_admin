@@ -253,7 +253,7 @@ function deleteCompany(payload){
                           </el-dropdown>
                       </td>
                   </tr>
-                  <tr v-else><td colspan="5" class="text-center p-3">No data</td></tr>
+                  <tr v-else><td colspan="8" class="text-center p-3">No data</td></tr>
                   </tbody>
               </table>
           </div>

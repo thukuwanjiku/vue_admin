@@ -193,14 +193,51 @@ function deleteCompany(payload){
                 <tbody>
                 <tr v-if="companies.length" v-for="(company, index) in companies"
                     :key="'investment_hub-companies-'+index" style="cursor: pointer;">
-                    <td @click="viewCompany(company)">
-                        <img class="table-img" :src="company.logo" :alt="company.name+'\'s logo'">
-                    </td>
-                    <td @click="viewCompany(company)">{{ company.reference }}</td>
-                    <td @click="viewCompany(company)">{{ company.name }}</td>
-                  <td @click="viewCompany(company)">{{ company.business_type }}</td>
-                    <td @click="viewCompany(company)">{{ company.description }}</td>
-                    <td @click="viewCompany(company)">{{ company.contact_name }}</td>
+                  <td @click="viewCompany(company)">
+                    <img class="table-img" :src="company.logo_url" :alt="company.business_name + '\'s logo'" />
+                    <br />
+                    <small>{{ company.reference }}</small>
+                  </td>
+                  <td @click="viewCompany(company)">
+                    <span class="text-center">{{ company.business_name }}</span>
+                    <br />
+                    <small>{{ company.business_tagline  }}</small>
+                  </td>
+                  <td @click="viewCompany(company)">
+                    <span class="text-center">{{ company.business_type }}</span>
+                    <br />
+                    <small>{{ company.business_industry.name  }}</small>
+                  </td>
+                  <td @click="viewCompany(company)">
+                    <span class="text-center">{{ company.business_country.name }}</span>
+                    <br />
+                    <small>{{ company.business_address.formatted_address  }}</small>
+                  </td>
+                  <td @click="viewCompany(company)">
+                    <span>{{ company.business_website }}</span>
+                    <br />
+                    <small>
+                      {{ company.business_phone_number }} |
+                      <a :href="'mailto:' + company.business_email">
+                        {{ company.business_email }}
+                      </a>
+                    </small>
+                  </td>
+                  <td @click="viewCompany(company)">
+                    <span>{{ company.partner_contact_person.formatted_name }}</span>
+                    <br />
+                    <small>
+                      {{ company.partner_contact_person.user.phone_number }} |
+                      <a :href="'mailto:' + company.partner_contact_person.user.email">
+                        {{ company.partner_contact_person.user.email }}
+                      </a>
+                    </small>
+                  </td>
+                  <td>
+                      <span :class="{'badge bg-warning': company.status === 'pending', 'badge bg-success': company.status === 'approved'}" >
+                       {{company.status }}
+                      </span>
+                  </td>
                     <td>
                         <el-dropdown trigger="click" @command="handleEntryAction">
                             <el-button plain type="primary" size="small"
@@ -218,7 +255,7 @@ function deleteCompany(payload){
                         </el-dropdown>
                     </td>
                 </tr>
-                <tr v-else><td colspan="5" class="text-center p-3">No data</td></tr>
+                <tr v-else><td colspan="8" class="text-center p-3">No data</td></tr>
                 </tbody>
             </table>
         </div>
