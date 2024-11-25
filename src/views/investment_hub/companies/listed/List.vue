@@ -181,13 +181,14 @@ function deleteCompany(payload){
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Logo</th>
-                    <th>Reference</th>
-                    <th>Name</th>
+                  <th>Logo</th>
+                  <th>Business Name</th>
                   <th>Business Type</th>
-                    <th>Tagline</th>
-                    <th>Contact Person</th>
-                    <th>Actions</th>
+                  <th>Business Address</th>
+                  <th>Business Contact</th>
+                  <th>Contact Person</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -265,79 +266,216 @@ function deleteCompany(payload){
     </div>
 
     <!-- Modal to view company -->
-    <el-dialog
-            v-if="activeCompany"
-            v-model="isViewingCompany"
-            width="60%"
-            align-center
-            :fullscreen="isSmallScreen">
-        <div class="row">
-            <!--     Logo, name & tagline       -->
-            <div class="col-sm-3">
-              <div class="mb-4">
-                <p class="mb-1">Logo</p>
-                <img :src="activeCompany.logo" alt="" class="view_company_logo">
-              </div>
-
-              <div>
-                <p class="mb-1">Banner</p>
-                <img :src="activeCompany.banner" alt="" class="view_banner_logo">
-              </div>
-            </div>
-
-            <div class="col-sm-6">
-                <h3>{{ activeCompany.name }}</h3>
-              <p class="fw-bold">{{ activeCompany.reference }}</p>
-                <p class="text-italic">{{ activeCompany.description }}</p>
-
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h6 class="fw-bold">Contact</h6>
-                        <p>
-                            {{ activeCompany.contact_name }}
-                            <br>
-                            {{ activeCompany.email }}
-                            <br>
-                            {{ activeCompany.contact_phone }}
-                        </p>
-                    </div>
-                    <div v-if="activeCompany.socials.length" class="col-sm-6">
-                        <h6>Social Media Handles</h6>
-                        <div class="d-inline-flex">
-                            <social-handle v-for="(social, index) in activeCompany.socials"
-                                           :key="'form-current-socials-'+index"
-                                           v-bind="social"></social-handle>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row p-4 pb-1" v-if="activeCompany.about">
-            <h6 class="fw-bold">About</h6>
-            <div class="alert alert-secondary  alert-dismissible fade show"
-                 role="alert" v-html="activeCompany.about"></div>
-        </div>
-      <hr class="m-0">
-
-      <div class="row p-4" v-if="activeCompany.documents">
-        <h6 class="fw-bold">KYB Documents</h6>
-        <ul>
-          <li v-for="(url, name) in activeCompany.documents" :key="name">
-            <a :href="url" download>{{ name }}</a>
-          </li>
-        </ul>
+  <el-dialog
+      v-if="activeCompany"
+      v-model="isViewingCompany"
+      width="70%"
+      class="view-company-modal"
+  >
+    <div class="container">
+      <div class="text-center mb-4">
+        <h3 class="h4 fw-bold mb-0">{{ activeCompany.business_name }}</h3>
+        <p class="text-muted">{{ activeCompany.business_tagline }}</p>
+        <p class="mb-0">
+          <a :href="activeCompany.business_website" target="_blank" class="text-primary">
+            {{ activeCompany.business_website }}
+          </a>
+        </p>
+        <p class="text-secondary">
+          {{ activeCompany.business_type }} | {{ activeCompany.business_industry.name }}
+        </p>
       </div>
-        <hr class="m-0">
-        <div class="row p-4">
-            <p>
-                <strong>Added</strong><br>
 
-                By: {{ activeCompany.added_by }}
-                <br>
-                At: {{ activeCompany.added_at }}
-            </p>
+      <div class="border-top pt-3 mb-4">
+        <h6 class="fw-bold">Description</h6>
+        <p v-if="activeCompany.bio" v-html="activeCompany.bio"></p>
+        <p v-else class="text-muted">No description available.</p>
+      </div>
+
+      <div class="row border-top pt-3 mb-4">
+        <div class="col-md-6">
+          <h6 class="fw-bold">Company Contact</h6>
+          <ul class="list-unstyled">
+            <li>
+              <i class="bi bi-envelope-fill text-muted me-2"></i>
+              <a :href="'mailto:' + activeCompany.business_email" class="text-primary">
+                {{ activeCompany.business_email }}
+              </a>
+            </li>
+            <li>
+              <i class="bi bi-telephone-fill text-muted me-2"></i>
+              {{ activeCompany.business_phone_number }}
+            </li>
+            <li>
+              <i class="bi bi-geo-alt-fill text-muted me-2"></i>
+              {{ activeCompany.business_address.formatted_address }}
+            </li>
+          </ul>
         </div>
-    </el-dialog>
+
+        <div class="col-md-6">
+          <h6 class="fw-bold">Contact Person</h6>
+          <ul class="list-unstyled">
+            <li>
+              <i class="bi bi-person-fill text-muted me-2"></i>
+              {{ activeCompany.partner_contact_person.formatted_name }}
+            </li>
+            <li>
+              <i class="bi bi-envelope-fill text-muted me-2"></i>
+              <a :href="'mailto:' + activeCompany.partner_contact_person.user.email" class="text-primary">
+                {{ activeCompany.partner_contact_person.user.email }}
+              </a>
+            </li>
+            <li>
+              <i class="bi bi-telephone-fill text-muted me-2"></i>
+              {{ activeCompany.partner_contact_person.user.phone_number }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row border-top pt-3 mb-4">
+        <div class="col-md-6">
+          <h6 class="fw-bold">Bank Details</h6>
+          <ul class="list-unstyled">
+            <li v-for="(bank, index) in activeCompany.banks" :key="index">
+              <strong>{{ bank.bank_name }}</strong> ({{ bank.bank_branch }})<br />
+              Account Name: {{ bank.bank_account_name }}<br />
+              Account Number: {{ bank.bank_account_number }}
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h6 class="fw-bold">Company Documents</h6>
+          <ul class="list-unstyled">
+            <li v-if="activeCompany.documents.business_registration_certificate_file_path">
+              <a :href="activeCompany.documents.business_registration_certificate_file_url" target="_blank" class="text-primary">
+                Business Registration Certificate
+              </a>
+            </li>
+            <li v-if="activeCompany.documents.company_kra_pin_certificate_file_path">
+              <a :href="activeCompany.documents.company_kra_pin_certificate_file_url" target="_blank" class="text-primary">
+                KRA PIN Certificate
+              </a>
+            </li>
+            <li v-if="activeCompany.documents.business_permit_certificate_file_path">
+              <a :href="activeCompany.documents.business_permit_certificate_file_url" target="_blank" class="text-primary">
+                Business Permit
+              </a>
+            </li>
+            <li v-if="activeCompany.documents.partnership_deed_file_path">
+              <a :href="activeCompany.documents.partnership_deed_file_url" target="_blank" class="text-primary">
+                Partnership Deed
+              </a>
+            </li>
+            <li v-if="activeCompany.documents.partners_resolution_letter_file_path">
+              <a :href="activeCompany.documents.partners_resolution_letter_file_url" target="_blank" class="text-primary">
+                Partners Resolution Letter
+              </a>
+            </li>
+            <li v-if="activeCompany.documents.cr12_certificate_file_path">
+              <a :href="activeCompany.documents.cr12_certificate_file_url" target="_blank" class="text-primary">
+                CR12 Certificate
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Directors Information -->
+      <div v-if="activeCompany.directors.length" class="border-top pt-3 mb-4">
+        <h6 class="fw-bold">Directors</h6>
+        <table class="table table-bordered table-hover text-center">
+          <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>ID Document</th>
+            <th>KRA PIN Document</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="director in activeCompany.directors" :key="director.id">
+            <td>{{ director.first_name }} {{ director.last_name }}</td>
+            <td>{{ director.email }}</td>
+            <td>{{ director.phone_number }}</td>
+            <td>
+              <a :href="director.id_file_url" target="_blank" class="text-primary">
+                Download
+              </a>
+            </td>
+            <td>
+              <a :href="director.kra_pin_file_url" target="_blank" class="text-primary">
+                Download
+              </a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div v-if="Object.keys(activeCompany.business_socials).length" class="border-top pt-3 mb-4">
+        <div class="d-flex justify-content-center gap-3">
+          <a
+              v-if="activeCompany.business_socials.linkedin"
+              :href="activeCompany.business_socials.linkedin"
+              target="_blank"
+              class="text-primary"
+          >
+            <i class="bi bi-linkedin fs-5"></i>
+          </a>
+          <a
+              v-if="activeCompany.business_socials.twitter"
+              :href="activeCompany.business_socials.twitter"
+              target="_blank"
+              class="text-primary"
+          >
+            <i class="bi bi-twitter fs-5"></i>
+          </a>
+          <a
+              v-if="activeCompany.business_socials.facebook"
+              :href="activeCompany.business_socials.facebook"
+              target="_blank"
+              class="text-primary"
+          >
+            <i class="bi bi-facebook fs-5"></i>
+          </a>
+          <a
+              v-if="activeCompany.business_socials.instagram"
+              :href="activeCompany.business_socials.instagram"
+              target="_blank"
+              class="text-danger"
+          >
+            <i class="bi bi-instagram fs-5"></i>
+          </a>
+          <a
+              v-if="activeCompany.business_socials.youtube"
+              :href="activeCompany.business_socials.youtube"
+              target="_blank"
+              class="text-danger"
+          >
+            <i class="bi bi-youtube fs-5"></i>
+          </a>
+          <a
+              v-if="activeCompany.business_socials.tiktok"
+              :href="activeCompany.business_socials.tiktok"
+              target="_blank"
+              class="text-dark"
+          >
+            <i class="bi bi-tiktok fs-5"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <template #footer>
+      <div class="text-end">
+        <button class="btn btn-secondary" @click="isViewingCompany = false">Close</button>
+      </div>
+    </template>
+  </el-dialog>
 
 </template>
 
