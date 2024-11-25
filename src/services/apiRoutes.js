@@ -82,6 +82,8 @@ const apiRoutes = {
     GET_INVESTMENT_HUB_LISTED_COMPANIES: `${apiBaseUrl}/investment-hub/get-listed-companies`,
     ADD_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/add-listed-company`,
     EDIT_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/edit-listed-company`,
+    APPROVE_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/approve-listed-company`,
+    REJECT_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/reject-listed-company`,
     ARCHIVE_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/archive-listed-company`,
     DELETE_INVESTMENT_HUB_LISTED_COMPANY: `${apiBaseUrl}/investment-hub/delete-listed-company`,
     INVESTMENT_HUB_COMPANY_REVIEWS: `${apiBaseUrl}/investment-hub/company-reviews`,

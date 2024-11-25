@@ -245,7 +245,11 @@ function deleteCompany(payload){
                               <template #dropdown>
                                   <el-dropdown-menu>
                                       <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.view')" :command="{action:'view',company}">View</el-dropdown-item>
-                                      <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.edit')" :command="{action:'edit',company}">Edit</el-dropdown-item>
+                                      <!--<el-dropdown-item v-if="checkHasPermission('explore_hub.companies.edit')" :command="{action:'edit',company}">Edit</el-dropdown-item>-->
+                                      <div v-if="company.status === 'pending'">
+                                        <el-dropdown-item :command="{action:'view',company}">Approve</el-dropdown-item>
+                                        <el-dropdown-item :command="{action:'view',company}">Reject</el-dropdown-item>
+                                      </div>
                                       <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.archive')" :command="{action:'archive',company}">Archive</el-dropdown-item>
                                       <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.delete')" :command="{action:'delete',company}">Delete</el-dropdown-item>
                                   </el-dropdown-menu>

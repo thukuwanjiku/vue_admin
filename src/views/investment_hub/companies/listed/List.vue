@@ -62,6 +62,12 @@ function handleEntryAction(payload){
         case 'edit':
             return editCompany(payload.company);
 
+        case 'approve':
+          return approveCompany(payload.company);
+
+        case 'reject':
+          return rejectCompany(payload.company);
+
         case 'archive':
             return confirmArchive(payload.company);
 
@@ -87,6 +93,38 @@ function editCompany(company){
 
     //navigate to edit route
     router.push({name: 'investment_hub.companies.edit'});
+}
+
+function approveCompany(company) {
+  //show loader
+  isLoading.value = true;
+
+  //make api call
+  api.post(apiRoutes.APPROVE_INVESTMENT_HUB_LISTED_COMPANY, company)
+      .then(response => {
+        //refresh companies list
+        fetchInvestmentHubCompanies();
+
+        //show success message
+        $.growl.notice({message: response.data.message});
+      })
+      .catch(error => isLoading.value = false)
+}
+
+function rejectCompany(company) {
+  //show loader
+  isLoading.value = true;
+
+  //make api call
+  api.post(apiRoutes.REJECT_INVESTMENT_HUB_LISTED_COMPANY, company)
+      .then(response => {
+        //refresh companies list
+        fetchInvestmentHubCompanies();
+
+        //show success message
+        $.growl.notice({message: response.data.message});
+      })
+      .catch(error => isLoading.value = false)
 }
 
 function confirmArchive(company){
@@ -235,7 +273,7 @@ function deleteCompany(payload){
                     </small>
                   </td>
                   <td>
-                      <span :class="{'badge bg-warning': company.status === 'pending', 'badge bg-success': company.status === 'approved'}" >
+                      <span :class="{'badge bg-warning': company.status === 'pending', 'badge bg-success': company.status === 'approved', 'badge bg-danger': company.status === 'rejected'}" >
                        {{company.status }}
                       </span>
                   </td>
@@ -248,7 +286,11 @@ function deleteCompany(payload){
                             <template #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item v-if="checkHasPermission('investment_hub.companies.view')" :command="{action:'view',company}">View</el-dropdown-item>
-                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.companies.edit')" :command="{action:'edit',company}">Edit</el-dropdown-item>
+                                    <!--<el-dropdown-item v-if="checkHasPermission('investment_hub.companies.edit')" :command="{action:'edit',company}">Edit</el-dropdown-item>-->
+                                  <div v-if="company.status === 'pending'">
+                                    <el-dropdown-item :command="{action:'approve',company}">Approve</el-dropdown-item>
+                                    <el-dropdown-item :command="{action:'reject',company}">Reject</el-dropdown-item>
+                                  </div>
                                     <el-dropdown-item v-if="checkHasPermission('investment_hub.companies.archive')" :command="{action:'archive',company}">Archive</el-dropdown-item>
                                     <el-dropdown-item v-if="checkHasPermission('investment_hub.companies.delete')" :command="{action:'delete',company}">Delete</el-dropdown-item>
                                 </el-dropdown-menu>
