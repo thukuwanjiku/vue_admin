@@ -478,7 +478,6 @@ function deleteCompany(payload){
     </template>
   </el-dialog>
 
-
 </template>
 
 <style scoped>
