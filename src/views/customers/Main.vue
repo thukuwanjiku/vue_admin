@@ -76,7 +76,7 @@ function confirmDeactivation(customer) {
     inputPlaceholder: "Type here why you want to deactivate",
     inputValidator: (value)=> {
       if(!value || !value.length){
-        return "Please give a reason";
+        return "Please type a reason";
       }
       return true;
     },
