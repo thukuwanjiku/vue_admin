@@ -39,8 +39,6 @@ let isLoading = computed({
     set: (value) => store.commit('exploreHub/SET_IS_FETCHING_COMPANIES', value)
 });
 
-
-
 /* -----------------------------
  * Component Lifecycle Hooks
  * -----------------------------
