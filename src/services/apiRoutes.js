@@ -31,6 +31,8 @@ const apiRoutes = {
     GET_EXPLORE_LISTED_COMPANIES: `${apiBaseUrl}/explore-hub/get-listed-companies`,
     ADD_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/add-listed-company`,
     EDIT_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/edit-listed-company`,
+    APPROVE_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/approve-listed-company`,
+    REJECT_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/reject-listed-company`,
     ARCHIVE_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/archive-listed-company`,
     DELETE_EXPLORE_LISTED_COMPANY: `${apiBaseUrl}/explore-hub/delete-listed-company`,
     EXPLORE_HUB_COMPANY_REVIEWS: `${apiBaseUrl}/explore-hub/company-reviews`,

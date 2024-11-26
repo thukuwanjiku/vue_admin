@@ -8,10 +8,10 @@ import {useRouter} from "vue-router";
 import {ElMessageBox} from "element-plus";
 import {ArrowDown, Plus} from "@element-plus/icons-vue";
 import {
-    checkHasPermission, fetchExploreHubArchivedCompanies,
-    fetchExploreHubCompanies,
-    hasPermissionsWhichContain,
-    isSmallScreen
+  checkHasPermission, fetchExploreHubArchivedCompanies,
+  fetchExploreHubCompanies, fetchInvestmentHubCompanies,
+  hasPermissionsWhichContain,
+  isSmallScreen
 } from "@/services/Helpers";
 import SocialHandle from "@/components/SocialHandle.vue";
 import AccessDenied from "@/components/AccessDenied.vue";
@@ -61,6 +61,12 @@ function handleEntryAction(payload){
         case 'edit':
             return editCompany(payload.company);
 
+        case 'approve':
+          return approveCompany(payload.company);
+
+        case 'reject':
+          return rejectCompany(payload.company);
+
         case 'archive':
             return confirmArchive(payload.company);
 
@@ -84,6 +90,38 @@ function editCompany(company){
 
     //navigate to edit route
     router.push({name: 'explore_hub.companies.edit'});
+}
+
+function approveCompany(company) {
+  //show loader
+  isLoading.value = true;
+
+  //make api call
+  api.post(apiRoutes.APPROVE_EXPLORE_LISTED_COMPANY, company)
+      .then(response => {
+        //refresh companies list
+        fetchInvestmentHubCompanies();
+
+        //show success message
+        $.growl.notice({message: response.data.message});
+      })
+      .catch(error => isLoading.value = false)
+}
+
+function rejectCompany(company) {
+  //show loader
+  isLoading.value = true;
+
+  //make api call
+  api.post(apiRoutes.REJECT_EXPLORE_LISTED_COMPANY, company)
+      .then(response => {
+        //refresh companies list
+        fetchInvestmentHubCompanies();
+
+        //show success message
+        $.growl.notice({message: response.data.message});
+      })
+      .catch(error => isLoading.value = false)
 }
 
 function confirmArchive(company){
@@ -245,8 +283,8 @@ function deleteCompany(payload){
                                       <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.view')" :command="{action:'view',company}">View</el-dropdown-item>
                                       <!--<el-dropdown-item v-if="checkHasPermission('explore_hub.companies.edit')" :command="{action:'edit',company}">Edit</el-dropdown-item>-->
                                       <div v-if="company.status === 'pending'">
-                                        <el-dropdown-item :command="{action:'view',company}">Approve</el-dropdown-item>
-                                        <el-dropdown-item :command="{action:'view',company}">Reject</el-dropdown-item>
+                                        <el-dropdown-item :command="{action:'approve',company}">Approve</el-dropdown-item>
+                                        <el-dropdown-item :command="{action:'reject',company}">Reject</el-dropdown-item>
                                       </div>
                                       <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.archive')" :command="{action:'archive',company}">Archive</el-dropdown-item>
                                       <el-dropdown-item v-if="checkHasPermission('explore_hub.companies.delete')" :command="{action:'delete',company}">Delete</el-dropdown-item>
