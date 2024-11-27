@@ -502,7 +502,7 @@ function rejectListing(payload){
                     </el-dropdown-item>
 
                     <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.approve') && ((listing.status == 'pending'))" :command="{action:'approve',listing}">Approve</el-dropdown-item>
-                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.approve') && (!listing.is_creator && listing.status == 'waiting_approval')" :command="{action:'reject',listing}">Reject</el-dropdown-item>
+                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.approve') && (listing.status == 'pending')" :command="{action:'reject',listing}">Reject</el-dropdown-item>
 
                     <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" :command="{action:'edit',listing}">Edit</el-dropdown-item>
                     <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.archive') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" :command="{action:'archive',listing}">Archive</el-dropdown-item>
