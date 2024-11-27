@@ -431,14 +431,14 @@ function rejectListing(payload){
                 <thead>
                 <tr>
                     <!--<th>Select</th>-->
-                    <th>ID</th>
-                    <th>Title</th>
+                    <th>Reference</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
                     <th>Company</th>
                     <th>Placement</th>
                     <th>Status</th>
-                    <th>Action</th>
-                    <th>By</th>
-                    <th>Payment Status</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -451,10 +451,16 @@ function rejectListing(payload){
                         <el-checkbox v-model="listing.selected"></el-checkbox>
                     </td>-->
                     <td @click="viewListing(listing)">
-                        {{ listing.listing_id }}
+                        {{ listing.reference }}
                     </td>
-                    <td @click="viewListing(listing)">{{ listing.title }}</td>
-                    <td @click="viewListing(listing)">{{ listing.company.name }}</td>
+                    <td @click="viewListing(listing)">{{ listing.product_name }}</td>
+                    <td @click="viewListing(listing)">{{ listing.category.name }}</td>
+                    <td @click="viewListing(listing)">{{ listing.formatted_price}}</td>
+                    <td @click="viewListing(listing)">
+                      <span v-if="listing.stock_availability">{{ listing.stock_availability}}</span>
+                      <span v-else>N/A</span>
+                    </td>
+                    <td @click="viewListing(listing)">{{ listing.partner_company.business_name }}</td>
                     <td @click="viewListing(listing)">
                         <el-tag
                                 v-if="listing.placement == 'top_picks'"
@@ -480,18 +486,6 @@ function rejectListing(payload){
                         <span class="badge bg-warning" v-if="listing.status == 'waiting_approval'">{{ startCase(listing.status) }}</span>
                         <span class="badge bg-success" v-if="listing.status == 'approved'">{{ startCase(listing.status) }}</span>
                         <span class="badge bg-danger" v-if="listing.status == 'rejected'">{{ startCase(listing.status) }}</span>
-                    </td>
-                    <td @click="viewListing(listing)">{{ listing.last_action }}</td>
-                    <td @click="viewListing(listing)">{{ listing.last_action_by }}</td>
-                    <td @click="viewListing(listing)">
-                        <div v-if="listing.is_paid" class="text-success d-flex align-items-center">
-                            <i class="bi bi-circle big-dot m-r-8" style="background:green;"></i>
-                            <small>Confirmed</small>
-                        </div>
-                        <div v-if="!listing.is_paid" class="text-danger d-flex align-items-center">
-                            <i class="bi bi-circle big-dot m-r-8" style="background:red;"></i>
-                            <small>Not Paid</small>
-                        </div>
                     </td>
                     <td>
                         <el-dropdown trigger="click" @command="handleEntryAction">
