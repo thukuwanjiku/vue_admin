@@ -168,7 +168,7 @@ function viewListing(listing){
     return router.push({
         name: 'explore_hub.listings.view',
         params:{
-            listingTitleSlug: listing.title.toString().replaceAll(" ", "-")
+            listingTitleSlug: listing.product_name.toString().replaceAll(" ", "-")
         }
     })
 }
