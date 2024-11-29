@@ -436,6 +436,8 @@ function rejectListing(payload){
                     <th>Category</th>
                     <th>Price</th>
                     <th>Stock</th>
+                    <th>Start Date</th>
+                     <th>End Date Date</th>
                     <th>Company</th>
                     <th>Placement</th>
                     <th>Status</th>
@@ -460,6 +462,8 @@ function rejectListing(payload){
                       <span v-if="listing.stock_availability">{{ listing.stock_availability}}</span>
                       <span v-else>N/A</span>
                     </td>
+                  <td @click="viewListing(listing)">{{ listing.formatted_start_date}}</td>
+                  <td @click="viewListing(listing)">{{ listing.formatted_end_date}}</td>
                     <td @click="viewListing(listing)">{{ listing.partner_company.business_name }}</td>
                     <td @click="viewListing(listing)">
                         <el-tag

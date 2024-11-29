@@ -449,7 +449,7 @@ function rejectListing(payload){
       <h6 class="fw-bold">Running Dates</h6>
       <div class="text-muted">
         <p class="mb-2"><strong>Start Date:</strong> {{ listing.formatted_start_date }}</p>
-        <p><strong>End Date:</strong> {{ listing.formatted_end_date || "Ongoing" }}</p>
+        <p><strong>End Date:</strong> {{ listing.formatted_end_date}}</p>
       </div>
     </div>
 
