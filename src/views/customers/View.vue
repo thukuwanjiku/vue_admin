@@ -68,6 +68,14 @@ onMounted(() => {
                 <b>Number Of Finance Accounts</b>
                 <p>{{ customer.number_of_accounts }}</p>
               </div>
+
+              <div>
+                <b>Number Of Devices</b>
+                <p class="mb-2">{{ customer.user?.devices.length }}</p>
+                <span v-if="customer.user?.devices.length > 0" v-for="(device, index) in customer.user?.devices" :key="index" class="mb-1">
+                  V {{ device.build_number}}({{ device.app_version }})
+                </span>
+              </div>
             </div>
 
             <div class="col-4">

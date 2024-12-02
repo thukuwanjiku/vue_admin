@@ -160,6 +160,7 @@ function restoreCustomer(customer) {
                   <th>Registered On</th>
                   <th>Account Activated On</th>
                   <th>Last Login Time</th>
+                  <th>No Of Devices</th>
                   <th>Actions</th>
                 </tr>
                 </thead>
@@ -202,7 +203,14 @@ function restoreCustomer(customer) {
                   </td>
 
                   <td>
-                    {{ formatFullDate(customer.user.last_login_at) }}
+                    {{ customer.user.last_login_at ? formatFullDate(customer.user.last_login_at) : 'Not Authenticated' }}
+                  </td>
+
+                  <td>
+                    <p class="mb-2">{{ customer.user.devices.length }}</p>
+                    <span v-if="customer.user.devices.length > 0" v-for="(device, index) in customer.user.devices" :key="index" class="mb-1">
+                      V {{ device.build_number}}({{ device.app_version }})
+                    </span>
                   </td>
 
                   <td>
