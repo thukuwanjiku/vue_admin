@@ -168,7 +168,7 @@ function viewListing(listing){
     return router.push({
         name: 'investment_hub.listings.view',
         params:{
-            listingTitleSlug: listing.title.toString().replaceAll(" ", "-")
+            listingTitleSlug: listing.product_name.toString().replaceAll(" ", "-")
         }
     })
 }
@@ -426,102 +426,100 @@ function rejectListing(payload){
         <br>
 
         <!-- Datatable -->
-        <div class="table-responsive m-t-10" v-if="checkHasPermission('investment_hub.listings.view')">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <!--<th>Select</th>-->
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Company</th>
-                    <th>Placement</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                    <th>By</th>
-                    <th>Payment Status</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-if="listings.length" v-for="(listing, index) in listings"
-                    :key="'investment_hub-active-listings-'+index"
-                    :class="{'table-info': listing.selected}"
-                    style="cursor: pointer;">
-                    <!--<td class="text-center">
-                        <el-checkbox v-model="listing.selected"></el-checkbox>
-                    </td>-->
-                    <td @click="viewListing(listing)">
-                        {{ listing.listing_id }}
-                    </td>
-                    <td @click="viewListing(listing)">{{ listing.title }}</td>
-                    <td @click="viewListing(listing)">{{ listing.company.name }}</td>
-                    <td @click="viewListing(listing)">
-                        <el-tag
-                                v-if="listing.placement == 'top_picks'"
-                                type="primary"
-                                effect="light"
-                                round
-                                size="small"
-                        >
-                            {{ startCase(listing.placement) }}
-                        </el-tag>
-                        <el-tag
-                                v-if="listing.placement == 'popular'"
-                                type="warning"
-                                effect="light"
-                                round
-                                size="small"
-                        >
-                            {{ startCase(listing.placement) }}
-                        </el-tag>
-                    </td>
-                    <td @click="viewListing(listing)">
-                        <span class="badge bg-secondary" v-if="listing.status == 'pending'">{{ startCase(listing.status) }}</span>
-                        <span class="badge bg-warning" v-if="listing.status == 'waiting_approval'">{{ startCase(listing.status) }}</span>
-                        <span class="badge bg-success" v-if="listing.status == 'approved'">{{ startCase(listing.status) }}</span>
-                        <span class="badge bg-danger" v-if="listing.status == 'rejected'">{{ startCase(listing.status) }}</span>
-                    </td>
-                    <td @click="viewListing(listing)">{{ listing.last_action }}</td>
-                    <td @click="viewListing(listing)">{{ listing.last_action_by }}</td>
-                    <td @click="viewListing(listing)">
-                        <div v-if="listing.is_paid" class="text-success d-flex align-items-center">
-                            <i class="bi bi-circle big-dot m-r-8" style="background:green;"></i>
-                            <small>Confirmed</small>
-                        </div>
-                        <div v-if="!listing.is_paid" class="text-danger d-flex align-items-center">
-                            <i class="bi bi-circle big-dot m-r-8" style="background:red;"></i>
-                            <small>Not Paid</small>
-                        </div>
-                    </td>
-                    <td>
-                        <el-dropdown trigger="click" @command="handleEntryAction">
-                            <el-button plain type="primary"
-                                       size="small">
-                                Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
-                            </el-button>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.view')" :command="{action:'view',listing}">View</el-dropdown-item>
+      <div class="table-responsive m-t-10" v-if="checkHasPermission('explore_hub.listings.view')">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <!--<th>Select</th>-->
+            <th>Reference</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Start Date</th>
+            <th>End Date Date</th>
+            <th>Company</th>
+            <th>Placement</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-if="listings.length" v-for="(listing, index) in listings"
+              :key="'explore_hub-active-listings-'+index"
+              :class="{'table-info': listing.selected}"
+              style="cursor: pointer;">
+            <!--<td class="text-center">
+                <el-checkbox v-model="listing.selected"></el-checkbox>
+            </td>-->
+            <td @click="viewListing(listing)">
+              {{ listing.reference }}
+            </td>
+            <td @click="viewListing(listing)">{{ listing.product_name }}</td>
+            <td @click="viewListing(listing)">{{ listing.category.name }}</td>
+            <td @click="viewListing(listing)">{{ listing.formatted_price}}</td>
+            <td @click="viewListing(listing)">
+              <span v-if="listing.stock_availability">{{ listing.stock_availability}}</span>
+              <span v-else>N/A</span>
+            </td>
+            <td @click="viewListing(listing)">{{ listing.formatted_start_date}}</td>
+            <td @click="viewListing(listing)">{{ listing.formatted_end_date}}</td>
+            <td @click="viewListing(listing)">{{ listing.partner_company.business_name }}</td>
+            <td @click="viewListing(listing)">
+              <el-tag
+                  v-if="listing.placement == 'top_picks'"
+                  type="primary"
+                  effect="light"
+                  round
+                  size="small"
+              >
+                {{ startCase(listing.placement) }}
+              </el-tag>
+              <el-tag
+                  v-if="listing.placement == 'popular'"
+                  type="warning"
+                  effect="light"
+                  round
+                  size="small"
+              >
+                {{ startCase(listing.placement) }}
+              </el-tag>
+            </td>
+            <td @click="viewListing(listing)">
+              <span class="badge bg-secondary" v-if="listing.status == 'pending'">{{ startCase(listing.status) }}</span>
+              <span class="badge bg-warning" v-if="listing.status == 'waiting_approval'">{{ startCase(listing.status) }}</span>
+              <span class="badge bg-success" v-if="listing.status == 'approved'">{{ startCase(listing.status) }}</span>
+              <span class="badge bg-danger" v-if="listing.status == 'rejected'">{{ startCase(listing.status) }}</span>
+            </td>
+            <td>
+              <el-dropdown trigger="click" @command="handleEntryAction">
+                <el-button plain type="primary"
+                           size="small">
+                  Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.view')" :command="{action:'view',listing}">View</el-dropdown-item>
 
-                                    <el-dropdown-item v-if="!checkHasPermission('investment_hub.listings.approve') && listing.is_creator && ['pending', 'rejected'].includes(listing.status)" :command="{action:'submit_for_approval',listing}">
-                                        {{ listing.status == 'pending' ? 'Submit for Approval' : 'Re-submit for Approval' }}
-                                    </el-dropdown-item>
+                    <el-dropdown-item v-if="!checkHasPermission('explore_hub.listings.approve') && listing.is_creator && ['pending', 'rejected'].includes(listing.status)" :command="{action:'submit_for_approval',listing}">
+                      {{ listing.status == 'pending' ? 'Submit for Approval' : 'Re-submit for Approval' }}
+                    </el-dropdown-item>
 
-                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.approve') && ((listing.status == 'pending' && listing.is_creator) || (listing.status == 'waiting_approval'))" :command="{action:'approve',listing}">Approve</el-dropdown-item>
-                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.approve') && (!listing.is_creator && listing.status == 'waiting_approval')" :command="{action:'reject',listing}">Reject</el-dropdown-item>
+                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.approve') && ((listing.status == 'pending'))" :command="{action:'approve',listing}">Approve</el-dropdown-item>
+                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.approve') && (listing.status == 'pending')" :command="{action:'reject',listing}">Reject</el-dropdown-item>
 
-                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" :command="{action:'edit',listing}">Edit</el-dropdown-item>
-                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.archive') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" :command="{action:'archive',listing}">Archive</el-dropdown-item>
-                                    <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.delete') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" :command="{action:'delete',listing}">Delete</el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-                    </td>
-                </tr>
-                <tr v-else><td colspan="8" class="text-center p-3">No data, change filters and try again</td></tr>
-                </tbody>
-            </table>
-        </div>
+                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" :command="{action:'edit',listing}">Edit</el-dropdown-item>
+                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.archive') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" :command="{action:'archive',listing}">Archive</el-dropdown-item>
+                    <el-dropdown-item v-if="checkHasPermission('explore_hub.listings.delete') && (listing.status != 'approved' || checkHasPermission('explore_hub.listings.modify_approved_listing'))" :command="{action:'delete',listing}">Delete</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </td>
+          </tr>
+          <tr v-else><td colspan="8" class="text-center p-3">No data, change filters and try again</td></tr>
+          </tbody>
+        </table>
+      </div>
         <div v-else>
             <access-denied></access-denied>
         </div>

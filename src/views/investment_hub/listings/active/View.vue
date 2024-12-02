@@ -69,7 +69,7 @@ onMounted(()=>{
     listing.value = JSON.parse(JSON.stringify(store.state.investmentHub.viewedListing));
 
     //copy listing media to variable for managing them
-    listingMedia.value = JSON.parse(JSON.stringify(listing.value.media));
+  listingMedia.value = JSON.parse(JSON.stringify(listing.value.secondary_media_formatted_links));
 
     //get available payment methods
     fetchPaymentModes();
@@ -270,7 +270,7 @@ function goToReviews(){
     return router.push({
         name: 'investment_hub.listings.reviews',
         params:{
-            listingTitleSlug: listing.value.title.toString().replaceAll(" ", "-")
+            listingTitleSlug: listing.value.product_name.toString().replaceAll(" ", "-")
         }
     })
 }
@@ -392,266 +392,98 @@ function rejectListing(payload){
 </script>
 
 <template>
-
-    <div class="row" v-if="Object.keys(listing).length" v-loading="isLoading">
-        <div class="col-sm-12 mb-3 d-inline-flex align-items-center"
-             :class="{
-                'justify-content-end': !isSmallScreen,
-                'justify-content-between': isSmallScreen
-             }">
-            <div class="p-1 m-r-10 d-flex align-items-center flex-wrap"
-            >
-                <template v-if="!isSmallScreen">
-                    <el-button v-if="!checkHasPermission('investment_hub.listings.approve') && listing.is_creator && ['pending', 'rejected'].includes(listing.status)" @click="confirmSubmitForApproval" type="primary" :icon="TopRight" text bg>
-                        {{ listing.status == 'pending' ? "Submit for Approval" : "Re-submit for Approval" }}
-                    </el-button>
-
-                    <el-button v-if="checkHasPermission('investment_hub.listings.approve') && ((listing.status == 'pending' && listing.is_creator) || (listing.status == 'waiting_approval'))" @click="confirmApprove" type="primary" :icon="CircleCheck" text bg>Approve</el-button>
-                    <el-button v-if="checkHasPermission('investment_hub.listings.approve') && (!listing.is_creator && listing.status == 'waiting_approval')" @click="confirmReject" type="danger" :icon="CloseBold" text bg>Reject</el-button>
-
-                    <el-button v-if="checkHasPermission('investment_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" @click="goEditListing" type="primary" :icon="Edit" text bg>Edit Listing</el-button>
-                    <el-button v-if="checkHasPermission('investment_hub.listings.add_payment') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" @click="isAddingPayments = true" type="primary" :icon="Money" text bg>Add Payment</el-button>
-                    <el-button v-if="checkHasPermission('investment_hub.listings.add_media') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" @click="isAddingMedia = true" type="primary" :icon="PictureFilled" text bg>Add Media</el-button>
-                    <el-button v-if="listing.has_reviews && checkHasPermission('investment_hub.reviewed_listings.view')" @click="goToReviews" type="primary" :icon="Comment" text bg>Browse Listing Reviews</el-button>
-                </template>
-
-                <el-dropdown trigger="click" @command="handleActionsClick" v-if="isSmallScreen">
-                    <el-button plain size="large">
-                        Listing Actions<el-icon class="el-icon--right"><arrow-down /></el-icon>
-                    </el-button>
-                    <template #dropdown>
-                        <el-dropdown-menu>
-                            <el-dropdown-item v-if="!checkHasPermission('investment_hub.listings.approve') && listing.is_creator && ['pending', 'rejected'].includes(listing.status)" command="submit_for_approval" :icon="TopRight">
-                                {{ listing.status == 'pending' ? "Submit for Approval" : "Re-submit for Approval" }}
-                            </el-dropdown-item>
-
-                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.approve') && ((listing.status == 'pending' && listing.is_creator) || (listing.status == 'waiting_approval'))" command="approve" :icon="CircleCheck">Approve Listing</el-dropdown-item>
-                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.approve') && (!listing.is_creator && listing.status == 'waiting_approval')" command="reject" :icon="CloseBold">Reject Listing</el-dropdown-item>
-
-                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.edit') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" command="edit" :icon="Edit">Edit Listing</el-dropdown-item>
-                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.add_payment')" command="add_payments" :icon="Money">Add Payment</el-dropdown-item>
-                            <el-dropdown-item v-if="checkHasPermission('investment_hub.listings.add_media') && (listing.status != 'approved' || checkHasPermission('investment_hub.listings.modify_approved_listing'))" command="add_media" :icon="PictureFilled">Add Media</el-dropdown-item>
-                            <el-dropdown-item v-if="checkHasPermission('investment_hub.reviewed_listings.view') && listing.has_reviews" command="browse_reviews" :icon="Comment">Browse Reviews</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </template>
-                </el-dropdown>
-            </div>
-
-            <close-button></close-button>
-        </div>
-
-        <!-- Media Carousel -->
-        <div class="col-md-12">
-            <Carousel :itemsToShow="2" :wrapAround="true" :transition="500" :autoplay="2000">
-                <Slide v-for="(file, index) in listing.media" :key="'view-listing-media-'+file.id">
-
-                    <div class="w-100 listing_carousel_primary_media">
-                        <img :src="file.path" class="d-block w-100 carousel__item" style="max-height:300px;">
-
-                        <div class="primary_indicator" v-show="file.is_primary">primary</div>
-                    </div>
-                </Slide>
-
-                <template #addons>
-                    <Navigation />
-                    <Pagination />
-                </template>
-            </Carousel>
-        </div>
-
-        <!-- Title -->
-        <div class="col-md-12 m-t-20">
-            <h5 class="mz-color">{{ listing.title }}</h5>
-        </div>
-
-        <!-- Company Details -->
-        <div class="col-md-12 d-flex align-items-center">
-            <div class="listing_company_logo">
-                <img :src="listing.company.logo" :alt="listing.company.name+'\'s logo'">
-            </div>
-            <div>
-                <h6 class="m-0">{{ listing.company.name }}</h6>
-                <h6 class="m-0"><small>{{ listing.company.description }}</small></h6>
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="col-md-12 m-t-20">
-            <h6>Description</h6>
-            <div class="alert alert-secondary  alert-dismissible fade show listing_desc"
-                 role="alert" v-html="listing.description"></div>
-        </div>
-
-        <!-- Payments -->
-        <div class="col-md-12 m-t-20">
-            <h6>Payments</h6>
-            <div class="col-md-12 d-flex flex-wrap align-items-center" v-if="listing.payments.length">
-                <div class="p-1 view_listing_payment" v-for="payment in listing.payments" :key="'listing-payment-'+payment.id">
-                    <small>
-                        <strong>Mode</strong>: {{ startCase(payment.mode) }} <br>
-                        <strong>Amount</strong>: {{ moneyFormatter(payment.amount, 'KES') }}<br>
-                        <strong>Reference</strong>:
-                        <template v-show="payment.reference && payment.reference.length && payment.reference != payment.mode">
-                            {{ payment.reference }}
-                        </template>
-                        <br>
-                        <strong>Added</strong>: {{ payment.added_at }}
-                    </small>
-                </div>
-            </div>
-            <div class="col-md-12" v-if="!listing.payments.length">
-                <small class="text-italic text-muted">No payments added</small>
-            </div>
-        </div>
-
-        <!-- Running Dates -->
-        <div class="col-md-12 m-t-20">
-            <p class="m-0">
-                {{ listing.start_date_desc }}
-                <strong>{{ listing.start_at_formatted }}</strong>
-                &nbsp;-&nbsp;
-                <strong>{{ listing.end_at_formatted }}</strong>
-            </p>
-        </div>
+  <div class="container listing-view-page" v-if="Object.keys(listing).length" v-loading="isLoading">
+    <!-- Header Section -->
+    <div class="text-center mb-2">
+      <h3 class="h4 fw-bold">{{ listing.product_name }}</h3>
+      <p class="text-muted mb-2">{{ listing.partner_company.business_name }}</p>
+      <p>
+        <el-tag
+            :type="listing.status === 'approved' ? 'success' : listing.status === 'pending' ? 'warning' : 'danger'"
+            effect="dark">
+          {{ listing.status }}
+        </el-tag>
+      </p>
     </div>
 
-    <!-- Modal to add payments -->
-    <el-dialog
-            custom-class="el-dialog-width"
-            width="45%"
-            :fullscreen="isSmallScreen"
-            v-model="isAddingPayments">
+    <!-- Primary Image -->
+    <div class="text-center mb-4">
+      <img :src="listing.primary_media_file_url" alt="Primary Image" class="img-fluid rounded">
+    </div>
 
-        <div v-loading="isModalLoading">
-            <div class="col-md-12 m-b-20">
-                <input-label>Select Payment Mode</input-label>
-                <div class="col-md-12 m-t-10 d-flex flex-wrap">
-
-                    <div class="p-1 payment-mode hov-pointer" :class="{'selected': mode.name == newPayment.mode}"
-                         v-for="mode in paymentModes"
-                         :key="'all-payment-modes-'+mode.name"
-                         @click="newPayment.mode = mode.name">
-
-                        <div class="col-md-12 d-flex align-items-center">
-                            <img :src="mode.image"  style="max-width:40px;max-height:20px;">
-                            &nbsp;&nbsp;
-                            <h6 class="m-0">{{ startCase(mode.name) }}</h6>
-                        </div>
-
-                        <div class="selected_indicator" v-show="newPayment.mode == mode.name">
-                            <i class="ri ri-check-line"></i>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <input-label>Payment Amount</input-label>
-                    <el-input placeholder="Enter payment amount" v-model="newPayment.amount"></el-input>
-
-                </div>
-                <div class="col-md-6">
-                    <input-label>Transaction Reference</input-label>
-                    <el-input placeholder="Enter reference code" v-model="newPayment.reference"></el-input>
-                </div>
-            </div>
-            <br>
-            <div class="col-md-12">
-                <el-button type="primary" @click="acceptNewPayment">Add Payment</el-button>
-            </div>
-        </div>
-
-    </el-dialog>
-
-    <!-- Modal to add images -->
-    <el-dialog
-            custom-class="el-dialog-width"
-            width="45%"
-            :fullscreen="isSmallScreen"
-            v-model="isAddingMedia">
-
-        <div v-loading="isModalLoading">
-            <div class="col-md-12 m-b-20">
-                <h6>Upload additional listing media here</h6>
+    <!-- Details Section -->
+    <div class="border-top pt-3 mb-4">
+      <h6 class="fw-bold">Details</h6>
+      <div class="text-muted">
+        <p class="mb-2"><strong>Reference:</strong> {{ listing.reference }}</p>
+        <p class="mb-2"><strong>Category:</strong> {{ listing.category.name }}</p>
+        <p class="mb-2"><strong>Price:</strong> {{ listing.formatted_price }}</p>
+        <p class="mb-2">
+          <strong>Stock:</strong>
+          <span v-if="listing.stock_availability">{{ listing.stock_availability }}</span>
+          <span v-else class="text-muted">N/A</span>
+        </p>
+        <p>
+          <strong>Placement:</strong>
+          <span
+              :class="{
+          'text-primary': listing.placement === 'top_picks',
+          'text-warning': listing.placement === 'popular'
+        }"
+              class="fw-bold">
+        {{ startCase(listing.placement) }}
+      </span>
+        </p>
+      </div>
+    </div>
 
 
-                <div class="p-l-10">
-                    <small>Primary Media</small><br>
+    <!-- Description -->
+    <div class="border-top pt-3 mb-4">
+      <h6 class="fw-bold">Description</h6>
+      <p v-html="listing.description" class="text-muted"></p>
+    </div>
 
-                    <input style="max-width:400px;" type="file" class="form-control" id="primaryListingMedia" @change="processPrimaryMediaUpload">
-                    <div class=" m-t-5" v-if="primaryMedia != null">
-                        <div class="d-flex">
-                            <div class="p-1 uploaded-image">
-                                <img :src="primaryMedia"  style="max-width:80px;max-height:60px;">
-                                <div class="remover" @click="removePrimaryUpload">
-                                    <i class="ri ri-close-line"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <small class="text-danger text-italic">*Will replace previous primary media</small>
-                    </div>
-                </div>
-                <div class="p-l-10 m-t-10">
-                    <small>Other Media</small><br>
+    <!-- Dates Section -->
+    <div class="border-top pt-3 mb-4">
+      <h6 class="fw-bold">Running Dates</h6>
+      <div class="text-muted">
+        <p class="mb-2"><strong>Start Date:</strong> {{ listing.formatted_start_date }}</p>
+        <p><strong>End Date:</strong> {{ listing.formatted_end_date }}</p>
+      </div>
+    </div>
 
-                    <input style="max-width:400px;" type="file" multiple class="form-control" id="listingMedia" @change="processUpload">
-                    <div class="d-flex flex-wrap m-t-5">
-                        <div class="p-1 uploaded-image" v-for="(file, index) in media" :key="'uploaded-media-'+index">
-                            <img :src="file.url"  style="max-width:80px;max-height:60px;">
-                            <div class="remover" @click="removeUpload(index)">
-                                <i class="ri ri-close-line"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <br>
-            <div class="col-md-12">
-                <el-button type="primary" @click="saveNewMedia">Save Media</el-button>
-            </div>
-        </div>
-
-    </el-dialog>
-
+    <!-- Media Carousel -->
+    <div class="border-top pt-3 mb-4">
+      <h6 class="fw-bold">Gallery</h6>
+      <Carousel :itemsToShow="2" :wrapAround="true" :transition="500" :autoplay="2000">
+        <Slide
+            v-for="(image, index) in listingMedia"
+            :key="'secondary-media-'+index">
+          <img :src="image" alt="Secondary Media" class="img-fluid rounded">
+        </Slide>
+        <template #addons>
+          <Navigation />
+          <Pagination />
+        </template>
+      </Carousel>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.carousel__viewport {
-    perspective: 2000px;
+.listing-view-page {
+  font-family: 'Roboto', sans-serif;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.carousel__track {
-    transform-style: preserve-3d;
-}
-
-.carousel__slide--sliding {
-    transition: 0.5s;
-}
-
-.carousel__slide {
-    opacity: 0.9;
-    transform: rotateY(-20deg) scale(0.9);
-}
-
-.carousel__slide--active ~ .carousel__slide {
-    transform: rotateY(20deg) scale(0.9);
-}
-
-.carousel__slide--prev {
-    opacity: 1;
-    transform: rotateY(-10deg) scale(0.95);
-}
-
-.carousel__slide--next {
-    opacity: 1;
-    transform: rotateY(10deg) scale(0.95);
-}
-
-.carousel__slide--active {
-    opacity: 1;
-    transform: rotateY(0) scale(1.1);
+.img-fluid {
+  max-height: 300px;
+  object-fit: cover;
 }
 </style>
